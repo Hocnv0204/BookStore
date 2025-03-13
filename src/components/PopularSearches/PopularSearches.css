@@ -1,0 +1,26 @@
+.popular-searches {
+    padding: 20px;
+}
+
+.search-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.search-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.search-link {
+    font-size: 14px;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.search-link:hover {
+    color: #00c853;
+    text-decoration: underline;
+}
