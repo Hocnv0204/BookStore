@@ -1,6 +1,7 @@
 .header {
     background-color: #00c853;
     color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
@@ -29,7 +30,7 @@
 .logo {
     height: 40px;
     width: auto;
-    display: block;
+    color: currentColor;
 }
 
 .site-name {
@@ -48,6 +49,10 @@
     .logo {
         height: 32px;
     }
+
+    .header-container {
+        padding: 8px 12px;
+    }
 }
 
 .search-container {
@@ -61,11 +66,17 @@
 
 .search-input {
     width: 100%;
-    padding: 6px 32px 6px 10px;
+    padding: 8px 36px 8px 12px;
     border-radius: 4px;
     border: none;
     font-size: 14px;
     outline: none;
+    background-color: rgba(255, 255, 255, 0.9);
+    transition: background-color 0.2s ease;
+}
+
+.search-input:focus {
+    background-color: white;
 }
 
 .search-button {
@@ -73,8 +84,8 @@
     right: 4px;
     top: 50%;
     transform: translateY(-50%);
-    height: 24px;
-    width: 24px;
+    height: 28px;
+    width: 28px;
     padding: 0;
     background-color: transparent;
     border: none;
@@ -82,19 +93,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+.search-button:hover {
+    color: #333;
 }
 
 .search-button .icon {
-    width: 16px;
-    height: 16px;
-    display: block;
-    color: #666;
+    width: 18px;
+    height: 18px;
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 20px;
     font-size: 14px;
 }
 
@@ -103,6 +118,7 @@
     text-decoration: none;
     white-space: nowrap;
     transition: opacity 0.2s ease;
+    font-weight: 500;
 }
 
 .header-link:hover {
@@ -113,11 +129,29 @@
     display: flex;
     align-items: center;
     gap: 6px;
+    position: relative;
+    padding-right: 8px;
 }
 
 .cart-link .icon {
     width: 20px;
     height: 20px;
-    display: block;
     flex-shrink: 0;
+}
+
+.cart-count {
+    background-color: white;
+    color: #00c853;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    position: absolute;
+    top: -8px;
+    right: 0;
 }

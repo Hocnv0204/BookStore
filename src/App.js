@@ -1,4 +1,5 @@
 import React from "react";
+import { BrowserRouter } from "react-router-dom";
 // import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 // import HomePage from "./components/HomePage";
 import Header from "./components/Header/Header";
@@ -7,11 +8,13 @@ import AuthPage from "./components/Auth/AuthPage";
 
 function App() {
   return (
-    <div>
-      <Header />
-      <AuthPage />
-      <Footer />
-    </div>
+    <BrowserRouter>
+      <div>
+        <Header />
+        <AuthPage />
+        <Footer />
+      </div>
+    </BrowserRouter>
   );
 }
 
