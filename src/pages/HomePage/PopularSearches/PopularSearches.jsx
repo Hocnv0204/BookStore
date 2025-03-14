@@ -30,13 +30,6 @@ function PopularSearches() {
       "sách làm giàu",
       "sách dạy nấu ăn",
     ],
-    [
-      "sách cho con",
-      "sách doanh nhân",
-      "sách dạy kỹ năng giao tiếp",
-      "sách phong thủy cổ",
-      "sách làm lý và tình yêu",
-    ],
   ];
 
   return (

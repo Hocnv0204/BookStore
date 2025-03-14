@@ -1,17 +1,21 @@
+import { Link } from "react-router-dom"; // Import Link từ react-router-dom
 import "./BookSection.css";
 
 function BookSection({ books }) {
   return (
     <div className="book-grid">
       {books.map((book) => (
-        <a href="#" key={book.id} className="book-card">
+        <Link
+          to={`/product/${book.id}`} // Đường dẫn động đến trang chi tiết sản phẩm
+          key={book.id}
+          className="book-card"
+        >
           <div className="book-image-container">
             <img
               src={book.imageUrl || "/placeholder.svg"}
               alt={book.title}
               className="book-image"
             />
-
             {book.discount > 0 && (
               <div className="discount-badge">-{book.discount}%</div>
             )}
@@ -25,14 +29,13 @@ function BookSection({ books }) {
             <span className="current-price">
               {book.price.toLocaleString()}đ
             </span>
-
             {book.originalPrice > book.price && (
               <span className="original-price">
                 {book.originalPrice.toLocaleString()}đ
               </span>
             )}
           </div>
-        </a>
+        </Link>
       ))}
     </div>
   );

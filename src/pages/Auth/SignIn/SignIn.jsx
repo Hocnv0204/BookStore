@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./SignIn.css";
-import Header from "../../Header/Header";
-import Footer from "../../Footer/Footer";
+import Header from "../../../components/Header/Header";
+import Footer from "../../../components/Footer/Footer";
 function SignIn({ onSwitch }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

@@ -1,0 +1,80 @@
+/* Comments Section */
+.comments-section {
+    margin-top: 48px;
+    border-top: 1px solid #e5e5e5;
+    padding-top: 24px;
+}
+
+.comments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.comments-title {
+    display: flex;
+    align-items: center;
+}
+
+.message-icon {
+    margin-right: 8px;
+}
+
+.login-link {
+    color: #00b468;
+    cursor: pointer;
+}
+
+.comment-form {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e5e5e5;
+    flex-shrink: 0;
+}
+
+.comment-input-container {
+    flex-grow: 1;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    padding: 8px;
+}
+
+.comment-input {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.comment-toolbar {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    color: #999;
+}
+
+.toolbar-left,
+.toolbar-right {
+    display: flex;
+    gap: 8px;
+}
+
+.toolbar-button {
+    padding: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+}
+
+.toolbar-button:hover {
+    color: #555;
+}

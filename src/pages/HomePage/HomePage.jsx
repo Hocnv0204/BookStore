@@ -1,12 +1,12 @@
 import "./HomePage.css";
-import Header from "../Header/Header";
-import SideNavigation from "../SideNavigation/SideNavigation";
-import BookCategoryGrid from "../BookCategoryGrid/BookCategoryGrid";
-import BookSection from "../BookSection/BookSection";
-import PopularSearches from "../PopularSearches/PopularSearches";
-import Banner from "../Banner/Banner";
-import Footer from "../Footer/Footer";
-
+import Header from "../../components/Header/Header";
+import SideNavigation from "./SideNavigation/SideNavigation";
+import BookCategoryGrid from "./BookCategoryGrid/BookCategoryGrid";
+import BookSection from "../../components/BookSection/BookSection";
+import PopularSearches from "./PopularSearches/PopularSearches";
+import Banner from "./Banner/Banner";
+import Footer from "../../components/Footer/Footer";
+import { Link } from "react-router-dom";
 // Sample data
 const upcomingBooks = [
   {
@@ -164,9 +164,30 @@ function HomePage() {
           <Banner />
 
           <div className="section">
-            <div className="section-header">
-              <span>Danh Mục</span>
-            </div>
+            <Link to="/category/new" className="section-header">
+              Sách Mới
+            </Link>
+            <BookSection books={newBooks} />
+          </div>
+
+          <div className="section">
+            <Link to="/category/best-seller" className="section-header">
+              Sách Bán Chạy
+            </Link>
+            <BookSection books={bestSellerBooks} />
+          </div>
+
+          <div className="section">
+            <Link to="/category/upcoming-release" className="section-header">
+              Sắp Phát Hành
+            </Link>
+            <BookSection books={upcomingBooks} />
+          </div>
+
+          <div className="section">
+            <a href="#" className="section-header">
+              Danh Mục
+            </a>
             <BookCategoryGrid />
           </div>
 
@@ -175,30 +196,6 @@ function HomePage() {
               <span>Thường Được Tìm Kiếm</span>
             </div>
             <PopularSearches />
-          </div>
-
-          <div className="section">
-            <div className="section-header">
-              <span>Sắp Phát Hành</span>
-              <span className="view-all">Xem tất cả</span>
-            </div>
-            <BookSection books={upcomingBooks} />
-          </div>
-
-          <div className="section">
-            <div className="section-header">
-              <span>Sách Bán Chạy</span>
-              <span className="view-all">Xem tất cả</span>
-            </div>
-            <BookSection books={bestSellerBooks} />
-          </div>
-
-          <div className="section">
-            <div className="section-header">
-              <span>Sách Mới</span>
-              <span className="view-all">Xem tất cả</span>
-            </div>
-            <BookSection books={newBooks} />
           </div>
         </div>
       </div>

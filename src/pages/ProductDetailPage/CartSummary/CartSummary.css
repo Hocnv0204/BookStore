@@ -1,0 +1,36 @@
+/* Cart Summary */
+.cart-summary {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-top: 1px solid #e5e5e5;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cart-total {
+    font-size: 14px;
+}
+
+.cart-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.notification-button {
+    background: none;
+    border: none;
+    color: #ffa600;
+    cursor: pointer;
+}
+
+.cart-button {
+    background: none;
+    border: none;
+    color: #ff3300;
+    cursor: pointer;
+}
