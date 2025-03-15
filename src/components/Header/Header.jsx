@@ -65,8 +65,8 @@ function Header() {
         </div>
 
         <div className="header-actions">
-          <Link to="/auth" className="header-link">
-            Đăng nhập
+          <Link to="/information" className="header-link">
+            Tài khoản của bạn
           </Link>
           <Link to="/cart" className="header-link cart-link">
             <span>Giỏ hàng</span>

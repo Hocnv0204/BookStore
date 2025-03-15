@@ -15,6 +15,12 @@
     border-bottom: 1px solid #f0f0f0;
 }
 
+.category-link:hover {
+    background-color: #f9f9f9;
+    color: #00CC66;
+    /* Chuyển text sang màu xanh khi hover */
+}
+
 .category-item:last-child {
     border-bottom: none;
 }

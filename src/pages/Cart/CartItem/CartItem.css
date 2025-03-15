@@ -1,0 +1,191 @@
+.main-cart-item {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.main-cart-item h1 {
+    color: #2B6CAA;
+    font-size: 28px;
+    font-weight: 500;
+    margin: 0;
+    padding: 20px;
+}
+
+/* Table Styles */
+.cart-items {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header Styles */
+.cart-items th {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    font-weight: 500;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.column-product {
+    width: 45%;
+}
+
+.column-quantity {
+    width: 20%;
+    text-align: center;
+}
+
+.column-price {
+    width: 20%;
+    text-align: right;
+}
+
+.column-action {
+    width: 15%;
+    text-align: center;
+}
+
+/* Item Styles */
+.cart-item td {
+    padding: 15px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+}
+
+.product-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-image {
+    width: 80px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.item-details {
+    flex: 1;
+}
+
+.item-details h3 {
+    font-size: 16px;
+    color: #333;
+    margin: 0 0 5px 0;
+}
+
+.item-code {
+    color: #666;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+.item-price {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.current-price {
+    color: #EE2624;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 14px;
+}
+
+/* Quantity Controls */
+.item-quantity {
+    text-align: center;
+}
+
+.item-quantity select {
+    width: 80px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Total Price Column */
+.item-total {
+    text-align: right;
+    color: #EE2624;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+/* Delete Button */
+.item-delete {
+    text-align: center;
+}
+
+.delete-button {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    padding: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-button:hover {
+    color: #EE2624;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .cart-items {
+        display: block;
+    }
+
+    .cart-items thead {
+        display: none;
+    }
+
+    .cart-items tbody tr {
+        display: block;
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .cart-items td {
+        display: block;
+        padding: 5px 0;
+        border: none;
+        text-align: center;
+    }
+
+    .product-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .item-details {
+        text-align: center;
+    }
+
+    .item-price {
+        justify-content: center;
+    }
+
+    .item-total {
+        text-align: center;
+        margin-top: 10px;
+    }
+
+    .delete-button {
+        margin-top: 10px;
+    }
+}

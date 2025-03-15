@@ -23,7 +23,7 @@ function Comments() {
           <span>Thảo luận</span>
         </div>
         <div className="login-link">
-          <Link to="/auth">Đăng nhập</Link>
+          <Link to="/auth/signin">Đăng nhập</Link>
         </div>
       </div>
 

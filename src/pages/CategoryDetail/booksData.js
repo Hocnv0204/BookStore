@@ -72,3 +72,4 @@ export const booksData = [
     author: "Ki Ando",
   },
 ];
+export default booksData;

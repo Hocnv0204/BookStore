@@ -1,39 +1,43 @@
 import React from "react";
 import "./RelatedBook.css";
 import { Link } from "react-router-dom";
+
 function RelatedBooks({ title, books }) {
   return (
-    <div className="section">
-      <h2 className="section-title">{title}</h2>
-      <div className="book-grid">
-        {[1, 2, 3, 4, 5].map((item) => (
-          <Link to={`/product/${item}`} key={item} className="book-card">
-            <div key={item} className="book-card">
-              {item % 2 === 0 && <div className="sale-badge">-20%</div>}
-              <img
-                src={`https://via.placeholder.com/150x200`}
-                alt={`Book ${item}`}
-                className="book-image"
-              />
-              <div className="book-info">
-                <h3 className="book-title">
-                  Thiên Quan Tứ Phúc - Bản Hoạt Hình Màu
-                </h3>
-                <div className="book-price">
-                  {item * 50000}
-                  <sup>đ</sup>
-                </div>
-                {item % 2 === 0 && (
-                  <div className="book-original-price">
-                    {item * 60000}
-                    <sup>đ</sup>
-                  </div>
-                )}
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+    <div className="book-grid">
+      {books.map((book) => (
+        <Link
+          to={`/product/${book.id}`} // Đường dẫn động đến trang chi tiết sản phẩm
+          key={book.id}
+          className="book-card"
+        >
+          <div className="book-image-container">
+            <img
+              src={book.imageUrl || "/placeholder.svg"}
+              alt={book.title}
+              className="book-image"
+            />
+            {book.discount > 0 && (
+              <div className="discount-badge">-{book.discount}%</div>
+            )}
+          </div>
+
+          <h3 className="book-title">{book.title}</h3>
+
+          {book.author && <p className="book-author">{book.author}</p>}
+
+          <div className="book-price">
+            <span className="current-price">
+              {book.price.toLocaleString()}đ
+            </span>
+            {book.originalPrice > book.price && (
+              <span className="original-price">
+                {book.originalPrice.toLocaleString()}đ
+              </span>
+            )}
+          </div>
+        </Link>
+      ))}
     </div>
   );
 }

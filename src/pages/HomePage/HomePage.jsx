@@ -154,7 +154,7 @@ const newBooks = [
 
 function HomePage() {
   return (
-    <div className="app">
+    <div className="home-page">
       <Header />
 
       <div className="main-container">

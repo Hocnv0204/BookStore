@@ -1,0 +1,105 @@
+/* Nền mờ khi modal mở */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Hộp modal */
+.modal-box {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 420px;
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Tiêu đề modal */
+.modal-box h2 {
+    margin-top: 0;
+    font-size: 20px;
+    text-align: center;
+    color: #333;
+}
+
+/* Nhãn (label) */
+.modal-box label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+/* Ô nhập liệu */
+.modal-box input,
+.modal-box textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Chỉnh lại input date để đồng bộ */
+.modal-box input[type="date"] {
+    font-size: 14px;
+    padding: 6px;
+}
+
+/* Khu vực nút bấm */
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+}
+
+/* Nút hủy */
+.modal-buttons button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+/* Nút Hủy */
+.modal-buttons button:first-child {
+    background: #ccc;
+    color: black;
+}
+
+.modal-buttons button:first-child:hover {
+    background: #b3b3b3;
+}
+
+/* Nút Lưu */
+.save-button {
+    background: #28a745;
+    color: white;
+}
+
+.save-button:hover {
+    background: #218838;
+}
+
+/* Hiệu ứng mở modal */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

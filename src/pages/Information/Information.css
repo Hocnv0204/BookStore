@@ -1,0 +1,33 @@
+.app {
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+.main-title {
+    color: #0d5c91;
+    padding: 20px;
+    margin: 0;
+    font-size: 1.8rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.content-wrapper {
+    display: flex;
+    min-height: calc(100vh - 80px);
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+}

@@ -2,8 +2,10 @@ import { useState } from "react";
 import "./SignUp.css";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
+import { useNavigate } from "react-router-dom";
 
-function SignUp({ onSwitch }) {
+function SignUp() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -128,7 +130,7 @@ function SignUp({ onSwitch }) {
           <div className="switch-form">
             <button
               type="button"
-              onClick={onSwitch}
+              onClick={() => navigate("/auth/signin")}
               className="switch-form-link"
             >
               Đã có tài khoản? Đăng nhập

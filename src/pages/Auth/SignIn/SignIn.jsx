@@ -2,11 +2,12 @@ import { useState } from "react";
 import "./SignIn.css";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
-function SignIn({ onSwitch }) {
+import { useNavigate } from "react-router-dom";
+function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   const handleSubmit = (e) => {
     e.preventDefault();
     // Handle login logic here
@@ -98,7 +99,7 @@ function SignIn({ onSwitch }) {
           <div className="create-account">
             <button
               type="button"
-              onClick={onSwitch}
+              onClick={() => navigate("/auth/signup")}
               className="create-account-link"
             >
               Tạo tài khoản

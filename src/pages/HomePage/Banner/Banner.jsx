@@ -5,7 +5,7 @@ function Banner() {
     <div className="banner">
       <a href="#">
         <img
-          src="https://via.placeholder.com/1000x400"
+          src="https://nobita.vn/wp-content/uploads/2018/01/loai-3-01.jpg"
           alt="Banner Văn Học Lịch Sử"
           className="banner-image"
         />

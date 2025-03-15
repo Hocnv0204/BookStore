@@ -4,11 +4,10 @@ import Header from "../../components/Header/Header";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import ProductContainer from "./ProductDetails/ProductContainer";
 import Section from "./Section/Section";
-import BookGrid from "./BookCard/BookCard";
 import Pagination from "./Pagination/Pagination";
 import Comments from "./Comments/Comments";
-import CartSummary from "./CartSummary/CartSummary";
 import Footer from "../../components/Footer/Footer";
+import RelatedBook from "./RelatedBooks/RelatedBook";
 
 function ProductPage() {
   // Sample book data for related books
@@ -68,6 +67,7 @@ function ProductPage() {
         />
 
         <Section
+          className="introduction-section"
           title="Giới Thiệu Sách"
           content={
             <div className="description">
@@ -85,6 +85,7 @@ function ProductPage() {
         />
 
         <Section
+          className="author-section"
           title="Thông Tin Tác Giả"
           content={
             <div className="description">
@@ -99,6 +100,7 @@ function ProductPage() {
         />
 
         <Section
+          className="details-section"
           title="Thông Tin Chi Tiết"
           content={
             <div className="details-grid">
@@ -117,20 +119,24 @@ function ProductPage() {
         </div>
 
         <Section
+          className="related-books-section"
           title="Sách Cùng Tác Giả"
-          content={<BookGrid books={relatedBooks} />}
+          content={
+            <RelatedBook title="Sách Cùng Tác Giả" books={relatedBooks} />
+          }
         />
 
         <Section
           title="Có Thể Bạn Quan Tâm"
-          content={<BookGrid books={recommendedBooks} />}
+          content={
+            <RelatedBook title="Sách Cùng Tác Giả" books={recommendedBooks} />
+          }
         />
 
         <Pagination />
         <Comments />
       </main>
 
-      <CartSummary />
       <Footer />
     </div>
   );
