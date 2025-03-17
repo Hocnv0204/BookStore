@@ -1,0 +1,52 @@
+.header-admin {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background-color: #fff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.header-admin-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.header-admin-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    border: none;
+}
+
+.button.primary {
+    background-color: #0070f3;
+    color: white;
+}
+
+.button.primary:hover {
+    background-color: #005bd1;
+}
+
+.button.secondary {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.button.secondary:hover {
+    background-color: #f5f5f5;
+}

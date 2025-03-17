@@ -1,0 +1,128 @@
+.table-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    overflow: hidden;
+}
+
+.table thead {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    z-index: 10;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-content {
+    max-height: 400px;
+    overflow-y: auto;
+    display: block;
+    table-layout: fixed;
+}
+
+.actions-cell {
+    width: 50px;
+    text-align: center;
+    position: relative;
+}
+
+.table td,
+th {
+    width: 150px;
+    height: 50px;
+    text-align: center;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.table th {
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+.table td {
+    padding: 12px 24px;
+    font-size: 14px;
+    color: #333;
+    border-bottom: 1px solid #e5e7eb;
+    max-width: 150px;
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+td.more-container {
+    position: relative;
+}
+
+
+
+
+.book-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.description {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: #666;
+}
+
+.book-table tr:hover .action-buttons {
+    opacity: 1;
+}
+
+
+
+
+/* Style chung cho các nút trong dropdown */
+.edit-button,
+.del-button {
+    background: none;
+    /* Bỏ nền mặc định */
+    border: none;
+    /* Bỏ viền mặc định */
+    border-radius: 5px;
+    padding: 8px 15px;
+    /* Khoảng cách bên trong nút */
+    text-align: left;
+    /* Căn trái text */
+    font-size: 14px;
+    /* Kích thước chữ */
+    cursor: pointer;
+    /* Con trỏ tay khi hover */
+    display: flex;
+    /* Dùng flex để căn icon và text */
+    align-items: center;
+    /* Căn giữa icon và text */
+    gap: 8px;
+    /* Khoảng cách giữa icon và text */
+    color: #333;
+    /* Màu chữ mặc định */
+    transition: all 0.2s ease;
+    /* Hiệu ứng mượt khi hover */
+}
+
+/* Style cho SVG trong nút */
+.edit-button svg,
+.del-button svg {
+    width: 16px;
+    /* Kích thước SVG */
+    height: 16px;
+}
+
+.edit-button:hover,
+.del-button:hover {
+    background-color: #00CC64;
+    /* Màu nền khi hover */
+}

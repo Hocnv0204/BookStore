@@ -1,45 +1,26 @@
 import "./Header.css";
 import { Link } from "react-router-dom";
-
+import { useState, useEffect } from "react";
 function Header() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    setUser(user);
+  }, []);
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+  };
   return (
     <header className="header">
       <div className="header-container">
         <Link to="/" className="home-link">
-          <svg
-            className="logo"
-            width="64"
-            height="64"
-            viewBox="0 0 64 64"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M16 12h32v40H16V12z"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M16 12c0 13.333 32 13.333 32 0"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M16 52c0-13.333 32-13.333 32 0"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M32 12v40"
-              stroke="currentColor"
-              strokeWidth="3"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="site-name">Book Store</span>
+          <img
+            src="https://nobita.vn/wp-content/uploads/2018/01/logo-22.png"
+            alt="Logo"
+          />
+          {/* <span className="site-name">Book Store</span> */}
         </Link>
 
         <div className="search-container">
@@ -65,8 +46,24 @@ function Header() {
         </div>
 
         <div className="header-actions">
-          <Link to="/information" className="header-link">
-            Tài khoản của bạn
+          <Link to="/auth/signin" className="header-link">
+            <div
+              className="account-menu"
+              onMouseEnter={() => setIsOpen(true)}
+              onMouseLeave={() => setIsOpen(false)}
+            >
+              <span className="account-text">
+                {user ? `Xin chào, ${user.name}` : "Tài khoản của bạn"}
+              </span>
+              {user && isOpen && (
+                <div className="dropdown-menu">
+                  <Link to="/information">Quản lý tài khoản</Link>
+                  <Link to="/auth/signin" onClick={() => handleLogout}>
+                    Đăng xuất
+                  </Link>
+                </div>
+              )}
+            </div>
           </Link>
           <Link to="/cart" className="header-link cart-link">
             <span>Giỏ hàng</span>
@@ -83,7 +80,7 @@ function Header() {
               <circle cx="20" cy="21" r="1" />
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
             </svg>
-            <span className="cart-count">0</span>
+            <span className="cart-count">4</span>
           </Link>
         </div>
       </div>

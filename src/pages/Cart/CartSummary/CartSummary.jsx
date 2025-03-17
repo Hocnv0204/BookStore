@@ -12,7 +12,9 @@ const CartSummary = ({ total }) => {
         <Link to="/order">
           <button className="button-order">ĐẶT HÀNG</button>
         </Link>
-        <button className="button-continue">CHỌN THÊM SẢN PHẨM</button>
+        <Link to="/">
+          <button className="button-continue">CHỌN THÊM SẢN PHẨM</button>
+        </Link>
       </div>
     </div>
   );

@@ -1,0 +1,40 @@
+.sidebar-admin {
+    width: 256px;
+    background-color: #1e1e2d;
+    color: white;
+    padding: 24px;
+}
+
+.sidebar-admin-header {
+    margin-bottom: 32px;
+}
+
+.sidebar-admin-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.sidebar-admin-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.nav-item:hover {
+    background-color: #2d2d3a;
+}
+
+.nav-item.active {
+    background-color: #2d2d3a;
+}

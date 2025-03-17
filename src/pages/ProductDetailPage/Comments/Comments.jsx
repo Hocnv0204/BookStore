@@ -22,13 +22,18 @@ function Comments() {
           </svg>
           <span>Thảo luận</span>
         </div>
-        <div className="login-link">
+        {/* <div className="login-link">
           <Link to="/auth/signin">Đăng nhập</Link>
-        </div>
+        </div> */}
       </div>
 
       <div className="comment-form">
-        <div className="avatar"></div>
+        <div className="avatar">
+          <img
+            src="https://nano-ceramic.vn/wp-content/uploads/2024/12/300-hinh-anh-dai-dien-dep-cho-facebook-tiktok-zalo-79.jpg"
+            alt="Avatar"
+          />
+        </div>
         <div className="comment-input-container">
           <input
             type="text"

@@ -16,8 +16,10 @@
 }
 
 .category-link:hover {
-    background-color: #f9f9f9;
-    color: #00CC66;
+    background-color: #00C853;
+    color: #fff;
+    transform: translateX(10px);
+
     /* Chuyển text sang màu xanh khi hover */
 }
 
@@ -31,12 +33,10 @@
     align-items: center;
     padding: 12px 16px;
     color: #333;
-    transition: background-color 0.2s;
+    transition: transform 0.3s ease-in-out;
+
 }
 
-.category-link:hover {
-    background-color: #f9f9f9;
-}
 
 @media (max-width: 768px) {
     .side-navigation {

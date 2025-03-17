@@ -1,5 +1,4 @@
-"use client";
-
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import "./CheckoutForm.css";
 
@@ -205,10 +204,11 @@ function CheckoutForm() {
             ></textarea>
           </div>
         </div>
-
-        <button type="submit" className="submit-button">
-          ĐẶT HÀNG
-        </button>
+        <Link to="/">
+          <button type="submit" className="submit-button">
+            ĐẶT HÀNG
+          </button>
+        </Link>
       </div>
     </form>
   );

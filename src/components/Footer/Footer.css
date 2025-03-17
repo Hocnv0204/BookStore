@@ -14,6 +14,11 @@
     gap: 32px;
 }
 
+.footer-content .footer-list li:hover {
+    color: #00C853;
+    cursor: pointer;
+}
+
 @media (min-width: 768px) {
     .footer-content {
         grid-template-columns: repeat(4, 1fr);
@@ -26,6 +31,14 @@
 }
 
 .footer-list {
+    list-style: none;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.footer-list-contact {
     list-style: none;
     font-size: 14px;
     display: flex;

@@ -39,29 +39,49 @@ const CartItem = ({ cartItems, handleQuantityChange, handleDelete }) => {
                 </div>
               </td>
               <td className="item-quantity">
-                <select
+                <input
+                  type="number"
                   value={item.quantity}
-                  onChange={(e) =>
-                    handleQuantityChange(item.id, parseInt(e.target.value))
-                  }
-                >
-                  {[1, 2, 3, 4, 5].map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    let newValue;
+                    // Nếu input rỗng, đặt giá trị mặc định là 1
+                    if (inputValue === "") {
+                      newValue = 1;
+                    } else {
+                      // Chuyển đổi thành số nguyên
+                      newValue = parseInt(inputValue, 10);
+                      // Kiểm tra giá trị hợp lệ
+                      if (isNaN(newValue)) {
+                        newValue = 1; // Nếu không phải số, đặt về 1
+                      } else {
+                        // Giới hạn giá trị: tối thiểu 1, tối đa 999 (hoặc tùy bạn)
+                        newValue = Math.max(1, Math.min(999, newValue));
+                      }
+                    }
+
+                    // Gọi hàm để cập nhật số lượng
+                    handleQuantityChange(item.id, newValue);
+                  }}
+                  min="1" // Giới hạn giao diện không cho nhập dưới 1
+                  max="999" // Giới hạn tối đa (tùy chọn)
+                  step="1" // Chỉ cho phép tăng/giảm từng đơn vị
+                  className="quantity-input"
+                />
               </td>
               <td className="item-total">
                 {(item.price * item.quantity).toLocaleString()} đ
               </td>
               <td className="item-delete">
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="delete-button"
-                >
-                  <i className="fas fa-trash"></i>
-                </button>
+              <button
+  onClick={() => handleDelete(item.id)}
+  className="delete-button"
+>
+  <i className="fas fa-trash"></i>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+  </svg>
+</button>
               </td>
             </tr>
           ))}

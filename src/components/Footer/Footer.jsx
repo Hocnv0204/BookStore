@@ -6,7 +6,7 @@ function Footer() {
       <div className="footer-content">
         <div className="footer-section">
           <h3 className="footer-heading">• Hỗ Trợ Khách Hàng</h3>
-          <ul className="footer-list">
+          <ul className="footer-list-contact">
             <li>• Email: nguyenhh1102@gmail.com</li>
             <li className="footer-phone">
               • Hotline:
@@ -30,7 +30,7 @@ function Footer() {
         <div className="footer-section">
           <h3 className="footer-heading">• Giới Thiệu</h3>
           <ul className="footer-list">
-            <li>•About me </li>
+            <li>• About me </li>
             <li>• Quên Mật Khẩu</li>
             <li>• Về nobita</li>
             <li>• Tuyển dụng</li>
@@ -65,7 +65,7 @@ function Footer() {
 
         <div className="certification">
           <img
-            src="/placeholder.svg?height=50&width=180"
+            src="https://cdn0.fahasa.com/media/wysiwyg/Logo-NCC/logo-bo-cong-thuong-da-thong-bao1.png"
             alt="Certification"
             className="certification-image"
           />

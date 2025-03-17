@@ -90,6 +90,9 @@ function SignIn() {
             <a href="/forgot-password" className="forgot-password-link">
               Quên mật khẩu?
             </a>
+            <a href="/admin" className="sign-admin">
+              Đăng nhập với Admin
+            </a>
           </div>
 
           <button type="submit" className="login-button">

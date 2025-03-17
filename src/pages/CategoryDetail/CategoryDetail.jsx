@@ -4,29 +4,31 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import BookSection from "../../components/BookSection/BookSection";
-import Pagination from "./Pagination/Pagination";
-import { booksData } from "./booksData";
+import { booksData } from "../../data/booksData";
 import ProductsHeader from "./ProductsHeader/ProductsHeader";
-
+import { categories } from "../../data/category";
+import { useParams } from "react-router-dom";
 function CategoryDetail() {
+  const { title } = useParams(); // Lấy title từ URL
+  const category = categories.find((item) => item.title === title);
+
+  const booksCategory = booksData.filter(
+    (book) => book.category.toLowerCase === category.name.toLowerCase
+  );
   return (
     <div className="category-detail">
       <Header />
 
       <main className="main-content">
         <Breadcrumb
-          paths={[
-            { name: "Nobita.vn", url: "/" },
-            { name: "Nhà Sách Trên Mạng", url: "/nha-sach" },
-            { name: "Sách mới", url: "/sach-moi" },
-          ]}
+          categoryName={category.name}
+          categoryTitle={category.title}
         />
 
-        <ProductsHeader title="Sách mới" />
+        <ProductsHeader title={category.name} />
 
-        <BookSection books={booksData} />
+        <BookSection books={booksCategory} />
 
-        <Pagination totalPages={27} currentPage={1} />
         <Footer />
       </main>
     </div>

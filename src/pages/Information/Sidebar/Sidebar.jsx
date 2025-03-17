@@ -11,7 +11,6 @@ const orderMenuItems = [
 const accountMenuItems = [
   { id: "update-info", label: "Cập Nhật Thông Tin Tài Khoản" },
   { id: "change-password", label: "Đổi Password" },
-  { id: "logout", label: "Đăng Xuất" },
 ];
 
 function Sidebar({ activeItem, onItemClick, onClickAccount }) {

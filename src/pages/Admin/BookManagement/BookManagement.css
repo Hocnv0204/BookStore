@@ -1,0 +1,51 @@
+.add-container .add-btn {
+    background-color: #00C853;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Hiệu ứng hover */
+.add-container .add-btn:hover {
+    background-color: #00b04f;
+    box-shadow: 0 4px 8px rgba(0, 200, 83, 0.3);
+}
+
+/* Hiệu ứng khi nhấn */
+.add-container .add-btn:active {
+    background-color: #009844;
+    box-shadow: none;
+    transform: scale(0.98);
+}
+
+/* Nếu có icon trong nút */
+.add-container .add-btn i {
+    font-size: 18px;
+}
+
+
+.book-management-search-container {
+    text-align: left;
+}
+
+#searchInput {
+    width: 300px;
+    padding: 12px 24px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #00C853;
+}

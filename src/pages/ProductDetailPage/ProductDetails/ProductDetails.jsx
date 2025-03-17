@@ -1,6 +1,6 @@
 import React from "react";
 import "./ProductDetails.css";
-
+import { Link } from "react-router-dom";
 function ProductDetails({ title, author, price }) {
   return (
     <div className="product-details">
@@ -55,8 +55,9 @@ function ProductDetails({ title, author, price }) {
         <sup>đ</sup>
       </div>
 
-      <button className="buy-button">Mua ngay</button>
-
+      <Link to="/cart">
+        <button className="buy-button">Mua ngay</button>
+      </Link>
       <div className="benefits">
         <div className="benefit-item">
           <svg

@@ -1,0 +1,205 @@
+/* .modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    margin-bottom: 10px;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+.cancel-btn {
+    background: #ccc;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-btn {
+    background: #00C853;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.open-modal-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 0;
+    /* Loại bỏ padding gốc để tự xử lý trong các phần con */
+    border-radius: 8px;
+    width: 400px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    height: 80vh;
+    /* Giới hạn chiều cao của modal */
+    max-height: 80vh;
+    /* Đảm bảo không vượt quá màn hình */
+    overflow: hidden;
+    /* Ngăn nội dung tràn ra ngoài */
+}
+
+.modal-content-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Chiếm toàn bộ chiều cao của modal */
+}
+
+.modal-content h2 {
+    margin: 0;
+    padding: 20px;
+    font-size: 20px;
+    color: #333;
+    background: white;
+    position: sticky;
+    /* Giữ tiêu đề cố định khi cuộn */
+    top: 0;
+    z-index: 1;
+    /* Đảm bảo tiêu đề nằm trên nội dung */
+    border-bottom: 1px solid #ccc;
+    /* Thêm viền dưới để phân biệt */
+}
+
+.scrollable-content {
+    flex: 1;
+    /* Chiếm không gian còn lại giữa tiêu đề và nút */
+    padding: 0 20px;
+    /* Padding bên trong nội dung */
+    overflow-y: auto;
+    /* Cho phép cuộn dọc */
+}
+
+.scrollable-content form {
+    display: flex;
+    flex-direction: column;
+}
+
+.scrollable-content label {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.scrollable-content input,
+.scrollable-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    /* Đảm bảo padding không làm tăng kích thước */
+}
+
+.scrollable-content input[type="file"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+.modal-buttons {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    background: white;
+    /* Nền trắng để không bị chồng lấn */
+    border-top: 1px solid #ccc;
+    /* Thêm viền trên để phân biệt */
+}
+
+.cancel-btn {
+    background: #ccc;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.cancel-btn:hover {
+    background: #bbb;
+}
+
+.add-btn {
+    background: #00C853;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.add-btn:hover {
+    background: #009E40;
+}
+
+.open-modal-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.open-modal-btn:hover {
+    background: #0056b3;
+}

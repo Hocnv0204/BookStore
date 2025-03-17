@@ -2,11 +2,15 @@ import "./OrderTable.css";
 
 function OrderTable({ orders = [] }) {
   return (
-    <div className="order-table-container">
+    <div className="order-table">
       <div className="table-header">
         <h2>DANH SÁCH ĐƠN HÀNG</h2>
         <div className="search-container">
-          <input type="text" placeholder="Search" className="search-input" />
+          <input
+            type="text"
+            placeholder="Tìm kiếm theo mã đơn hàng"
+            className="search-input"
+          />
         </div>
       </div>
 
@@ -27,7 +31,7 @@ function OrderTable({ orders = [] }) {
             {orders.length === 0 ? (
               <tr>
                 <td colSpan="7" className="no-records">
-                  No matching records found
+                  Không có đơn hàng
                 </td>
               </tr>
             ) : (

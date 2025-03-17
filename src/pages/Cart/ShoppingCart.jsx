@@ -4,26 +4,13 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import CartItem from "./CartItem/CartItem";
 import CartSummary from "./CartSummary/CartSummary";
-
+import { booksData } from "../../data/booksData";
 const ShoppingCart = () => {
-  const cartItems = [
-    {
-      id: "id_5074",
-      image: "https://via.placeholder.com/80x100",
-      title: "Tháng 12 - Tập 2 - Tặng Kèm Bookmark",
-      price: 126000,
-      originalPrice: 168000,
-      quantity: 1,
-    },
-    {
-      id: "id_5154",
-      image: "https://via.placeholder.com/80x100",
-      title: "Tiệm sách cũ Suzuro",
-      price: 75000,
-      originalPrice: 89000,
-      quantity: 1,
-    },
-  ];
+  const cartItems = booksData.slice(0, 4).map((item) => ({
+    ...item,
+    quantity: 3,
+    originalPrice: item.price + 10000,
+  }));
 
   const handleQuantityChange = (id, value) => {
     console.log("Quantity changed:", id, value);

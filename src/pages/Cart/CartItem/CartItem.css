@@ -22,7 +22,7 @@
 /* Header Styles */
 .cart-items th {
     padding: 15px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid #ddd;
     font-weight: 500;
     color: #333;
@@ -69,6 +69,7 @@
 
 .item-details {
     flex: 1;
+    text-align: center;
 }
 
 .item-details h3 {
@@ -84,7 +85,6 @@
 }
 
 .item-price {
-    display: flex;
     align-items: center;
     gap: 10px;
     margin-top: 8px;
@@ -107,18 +107,9 @@
     text-align: center;
 }
 
-.item-quantity select {
-    width: 80px;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    text-align: center;
-    font-size: 14px;
-}
-
 /* Total Price Column */
 .item-total {
-    text-align: right;
+    text-align: center;
     color: #EE2624;
     font-weight: 500;
     font-size: 16px;
@@ -127,65 +118,131 @@
 /* Delete Button */
 .item-delete {
     text-align: center;
+    /* Căn giữa nút trong ô */
+    padding: 8px;
+    /* Khoảng cách bên trong ô */
 }
 
+/* Style cho nút xóa */
 .delete-button {
-    background: none;
+    /* Kích thước và hình dạng */
+    width: 40px;
+    /* Tăng nhẹ để chứa cả SVG */
+    height: 40px;
+    /* Chiều cao */
+    border-radius: 8px;
+    /* Bo góc nhẹ thay vì tròn hoàn toàn */
     border: none;
-    color: #666;
-    cursor: pointer;
-    padding: 8px;
-    display: inline-flex;
+    /* Bỏ viền mặc định */
+
+    /* Màu sắc */
+    background-color: #00CC64;
+    /* Đỏ nhẹ nhàng */
+    color: #fff;
+    /* Màu biểu tượng trắng */
+
+    /* Căn chỉnh nội dung */
+    /* display: flex; */
+    /* Dùng flex để căn giữa */
     align-items: center;
     justify-content: center;
+    gap: 5px;
+    /* Khoảng cách giữa các biểu tượng (nếu dùng cả hai) */
+
+    /* Con trỏ và hiệu ứng */
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    /* Đảm bảo không có padding/margin thừa */
+    padding: 0;
 }
 
+/* Style cho biểu tượng Font Awesome */
+.delete-button i {
+    font-size: 18px;
+    /* Kích thước biểu tượng */
+}
+
+/* Style cho SVG */
+.delete-button svg {
+    width: 18px;
+    /* Kích thước SVG */
+    height: 18px;
+    fill: #fff;
+    /* Màu trắng cho SVG */
+}
+
+/* Hiệu ứng khi hover */
 .delete-button:hover {
-    color: #EE2624;
+    background-color: #d00000;
+    /* Đỏ đậm hơn */
+    transform: scale(1.05);
+    /* Phóng to nhẹ */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .cart-items {
-        display: block;
-    }
+/* Hiệu ứng khi nhấn */
+.delete-button:active {
+    background-color: #a00000;
+    /* Đỏ tối hơn */
+    transform: scale(0.95);
+    /* Thu nhỏ nhẹ */
+}
 
-    .cart-items thead {
-        display: none;
-    }
+/* Loại bỏ outline khi focus */
+.delete-button:focus {
+    outline: none;
+}
 
-    .cart-items tbody tr {
-        display: block;
-        padding: 15px;
-        border-bottom: 1px solid #ddd;
-    }
+.quantity-input {
+    /* Kích thước và căn chỉnh */
+    width: 60px;
+    /* Chiều rộng nhỏ gọn */
+    height: 35px;
+    /* Chiều cao vừa phải */
+    padding: 5px 10px;
+    /* Khoảng cách bên trong */
+    text-align: center;
+    /* Căn giữa số */
 
-    .cart-items td {
-        display: block;
-        padding: 5px 0;
-        border: none;
-        text-align: center;
-    }
+    /* Viền và nền */
+    border: 1px solid #ccc;
+    /* Viền nhẹ */
+    border-radius: 5px;
+    /* Bo góc nhẹ */
+    background-color: #fff;
+    /* Nền trắng */
 
-    .product-info {
-        flex-direction: column;
-        gap: 10px;
-    }
+    /* Phông chữ */
+    font-size: 16px;
+    /* Kích thước chữ */
+    font-family: Arial, sans-serif;
+    /* Phông chữ đơn giản */
+    color: #333;
+    /* Màu chữ tối */
 
-    .item-details {
-        text-align: center;
-    }
+    /* Hiệu ứng khi tương tác */
+    transition: all 0.2s ease;
+    /* Hiệu ứng mượt khi thay đổi */
 
-    .item-price {
-        justify-content: center;
-    }
+    /* Xóa nút tăng giảm mặc định của trình duyệt */
+    -moz-appearance: textfield;
+    /* Firefox */
+}
 
-    .item-total {
-        text-align: center;
-        margin-top: 10px;
-    }
 
-    .delete-button {
-        margin-top: 10px;
-    }
+
+/* Hiệu ứng khi focus */
+.quantity-input:focus {
+    outline: none;
+    /* Bỏ viền mặc định khi focus */
+    border-color: #007bff;
+    /* Viền xanh khi focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    /* Hiệu ứng bóng nhẹ */
+}
+
+/* Hiệu ứng khi hover */
+.quantity-input:hover {
+    border-color: #999;
+    /* Viền đậm hơn khi hover */
 }

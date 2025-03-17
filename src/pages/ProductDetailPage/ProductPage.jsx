@@ -7,31 +7,22 @@ import Section from "./Section/Section";
 import Pagination from "./Pagination/Pagination";
 import Comments from "./Comments/Comments";
 import Footer from "../../components/Footer/Footer";
-import RelatedBook from "./RelatedBooks/RelatedBook";
-
+import BookSection from "../../components/BookSection/BookSection";
+import { booksData } from "../../data/booksData";
+import { useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 function ProductPage() {
   // Sample book data for related books
-  const relatedBooks = [1, 2, 3, 4, 5].map((item) => ({
-    id: item,
-    title: "Thiên Quan Tứ Phúc - Bản Hoạt Hình Màu",
-    price: item * 50000,
-    originalPrice: item % 2 === 0 ? item * 60000 : null,
-    discount: item % 2 === 0 ? "-20%" : null,
-    image: `https://via.placeholder.com/150x200`,
-  }));
 
-  const recommendedBooks = [1, 2, 3, 4, 5].map((item) => ({
-    id: item,
-    title:
-      item % 3 === 0
-        ? "Collect Book Camphong/end 2025"
-        : "Thiên Quan Tứ Phúc - Tập 1",
-    price: item * 45000,
-    originalPrice: item % 2 === 1 ? item * 55000 : null,
-    discount: item % 2 === 1 ? "-15%" : null,
-    image: `https://via.placeholder.com/150x200`,
-  }));
-
+  const { id } = useParams();
+  const book = booksData.find((book) => book.id === Number(id));
+  const Author = book.author;
+  const relatedBooks = booksData
+    .filter((book) => book.author === Author && book.id !== Number(id))
+    .slice(0, 5);
+  const recommendedBooks = booksData
+    .slice(0, 5)
+    .filter((book) => book.id !== Number(id));
   // Book details data
   const bookDetails = [
     { label: "Mã hàng:", value: "8935235789876" },
@@ -50,27 +41,21 @@ function ProductPage() {
   return (
     <div className="app-container">
       <Header />
-      <Breadcrumb
-        links={[
-          { text: "Trang chủ", url: "/", isActive: false },
-          { text: "Văn Sách Tiếng Việt", url: "/van-sach", isActive: false },
-          { text: "Collect Book Camphong/end 2025", url: "#", isActive: true },
-        ]}
-      />
+      <Breadcrumb categoryName={book.category} bookTitle={book.title} />
 
       <main className="main-content">
         <ProductContainer
-          title="Collect Book Camphong/end 2025"
-          author="Phạm Công Tự,Chí Phèo"
-          price="499.000"
-          image="https://via.placeholder.com/400"
+          title={book.title}
+          image={book.image}
+          price={book.price}
+          author={book.author}
         />
 
         <Section
           className="introduction-section"
           title="Giới Thiệu Sách"
           content={
-            <div className="description">
+            <div className="intro-description">
               <p>
                 Cuộc sống hiện nay ở thời Collect book trong một thế giới Phong
                 cách 2025 như thế nào? Hãy khám phá ngay!
@@ -85,55 +70,45 @@ function ProductPage() {
         />
 
         <Section
-          className="author-section"
-          title="Thông Tin Tác Giả"
-          content={
-            <div className="description">
-              <p>
-                Jordan Peterson là nhà tâm lý học người Canada, nhà phê bình văn
-                hóa và giáo sư tâm lý học tại Đại học Toronto. Ông được biết đến
-                như một tác giả, diễn giả và người sáng lập ra chủ nghĩa cá thể
-                hóc búa.
-              </p>
-            </div>
-          }
-        />
-
-        <Section
           className="details-section"
           title="Thông Tin Chi Tiết"
           content={
-            <div className="details-grid">
-              {bookDetails.map((detail, index) => (
-                <React.Fragment key={index}>
-                  <div className="details-label">{detail.label}</div>
-                  <div className="details-value">{detail.value}</div>
-                </React.Fragment>
-              ))}
-            </div>
+            <table className="details-table">
+              <tbody>
+                {bookDetails.map((detail, index) => (
+                  <tr
+                    key={index}
+                    className={index % 2 === 0 ? "even-row" : "odd-row"}
+                  >
+                    <td className="details-label">{detail.label}</td>
+                    <td className="details-value">{detail.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           }
         />
-
-        <div className="buy-button-container">
-          <button className="buy-button">Mua ngay</button>
-        </div>
-
+        <Link to="/cart">
+          <div className="buy-button-container">
+            <button className="buy-button">Mua ngay</button>
+          </div>
+        </Link>
         <Section
           className="related-books-section"
           title="Sách Cùng Tác Giả"
           content={
-            <RelatedBook title="Sách Cùng Tác Giả" books={relatedBooks} />
+            <BookSection title="Sách Cùng Tác Giả" books={relatedBooks} />
           }
         />
 
         <Section
           title="Có Thể Bạn Quan Tâm"
           content={
-            <RelatedBook title="Sách Cùng Tác Giả" books={recommendedBooks} />
+            <BookSection title="Có Thể Bạn Quan Tâm" books={recommendedBooks} />
           }
         />
 
-        <Pagination />
+        {/* <Pagination /> */}
         <Comments />
       </main>
 

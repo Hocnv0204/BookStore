@@ -1,0 +1,74 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.invoice {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.invoice-container {
+    flex: 1;
+    display: flex;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    overflow: hidden;
+}
+
+.invoice-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 70%;
+}
+
+.sort-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 150px;
+}
+
+.sort-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 200px;
+    /* Khớp với chiều rộng của nút */
+}
+
+/* Style cho từng tùy chọn trong dropdown */
+.sort-option {
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sort-option:hover {
+    background-color: #f5f5f5;
+}

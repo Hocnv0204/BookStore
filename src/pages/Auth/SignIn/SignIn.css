@@ -83,6 +83,17 @@
     text-decoration: underline;
 }
 
+.sign-admin {
+    color: #00c853;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.sign-admin:hover {
+    text-decoration: underline;
+}
+
+
 .login-button {
     width: 100%;
     background-color: #00c853;

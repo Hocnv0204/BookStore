@@ -8,6 +8,8 @@
 .book-card {
     display: flex;
     flex-direction: column;
+    height: 250px;
+    width: 200px;
 }
 
 .book-image-container {
@@ -80,4 +82,130 @@
     .book-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* BookSection.css */
+
+/* Container chính chứa các sản phẩm */
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* 4 cột, mỗi cột chiếm 1 phần bằng nhau */
+    gap: 20px;
+    /* Khoảng cách giữa các sản phẩm */
+    padding: 20px;
+}
+
+/* Style cho từng sản phẩm */
+.book-card {
+    text-decoration: none;
+    /* Bỏ gạch chân của Link */
+    color: inherit;
+    /* Giữ màu chữ mặc định */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    transition: transform 0.2s;
+}
+
+.book-card:hover {
+    transform: scale(1.05);
+    /* Hiệu ứng phóng to khi hover */
+}
+
+.book-image-container {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    /* Chiều cao cố định cho ảnh */
+    overflow: hidden;
+}
+
+.book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Đảm bảo ảnh không bị méo */
+}
+
+.discount-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+.book-title {
+    font-size: 16px;
+    margin: 10px 0 5px;
+    height: 40px;
+    /* Giới hạn chiều cao tiêu đề */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* display: -webkit-box; */
+    -webkit-line-clamp: 2;
+    /* Giới hạn tiêu đề 2 dòng */
+    -webkit-box-orient: vertical;
+    white-space: nowrap;
+
+}
+
+.book-author {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.book-price {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.current-price {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e60000;
+}
+
+.original-price {
+    font-size: 14px;
+    color: #999;
+    text-decoration: line-through;
+}
+
+/* Style cho phân trang */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+
+.pagination button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.pagination button:hover {
+    background-color: #ddd;
+}
+
+.pagination button.active {
+    background-color: #00CC66;
+    color: white;
+    border-color: #00CC66;
+}
+
+.pagination button:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
 }

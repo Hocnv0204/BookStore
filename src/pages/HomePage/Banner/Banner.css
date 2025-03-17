@@ -1,14 +1,65 @@
-.banner {
+/* .banner {
     width: 100%;
     margin-bottom: 30px;
-    border-radius: 6px;
+    
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
+} */
 
-.banner-image {
+/* .banner-image {
     width: 100%;
     aspect-ratio: 21 / 9;
     object-fit: cover;
     display: block;
+} */
+
+.banner {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    /* Tùy chỉnh kích thước tối đa */
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 6px;
+}
+
+.banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+}
+
+.dots-container {
+    position: absolute;
+    bottom: 10px;
+    /* Cách đáy banner 10px */
+    left: 50%;
+    transform: translateX(-50%);
+    /* Căn giữa theo chiều ngang */
+    display: flex;
+    gap: 8px;
+    /* Khoảng cách giữa các chấm */
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    background-color: rgba(255, 255, 255, 0.5);
+    /* Màu xám nhạt, mờ */
+    border-radius: 50%;
+    /* Tạo hình tròn */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    /* Hiệu ứng chuyển màu mượt mà */
+}
+
+.dot.active {
+    background-color: #00CC64;
+    /* Màu trắng sáng khi active */
+}
+
+.dot:hover {
+    background-color: rgba(255, 255, 255, 0.8);
+    /* Hiệu ứng hover */
 }
