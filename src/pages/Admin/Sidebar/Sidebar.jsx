@@ -33,7 +33,7 @@ function Sidebar() {
             location.pathname === "/invoice" ? "active" : ""
           }`}
         >
-          <span>Quản Lý Hóa Đơn</span>
+          <span>Quản Lý Đơn Hàng</span>
         </NavLink>
       </nav>
     </div>

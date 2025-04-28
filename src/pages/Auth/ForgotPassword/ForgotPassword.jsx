@@ -30,7 +30,7 @@ const ForgotPassword = () => {
             Gửi yêu cầu
           </button>
         </form>
-        <a href="/login" className="back-to-login">
+        <a href="/auth/signin" className="back-to-login">
           Quay lại đăng nhập
         </a>
       </div>
