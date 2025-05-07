@@ -1,15 +1,15 @@
 package com.bookstore.backend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto {
     private Long id ;
     private String fullName ;
@@ -17,5 +17,5 @@ public class UserDto {
     private LocalDate dob ;
     private String gender ;
     private String username ;
-    private String password ;
+    private Set<String> roles ;
 }

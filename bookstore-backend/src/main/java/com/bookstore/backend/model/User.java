@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Set;
+
 @Entity
 @Getter
 @Setter
@@ -23,4 +25,5 @@ public class User {
     private String email ;
     private LocalDate dob ;
     private String gender ;
+    private Set<String> roles ;
 }

@@ -1,37 +1,35 @@
 package com.bookstore.backend.mapper;
 
+import com.bookstore.backend.common.enums.Role;
 import com.bookstore.backend.dto.UserDto;
+import com.bookstore.backend.dto.request.UserCreationRequest;
+import com.bookstore.backend.dto.request.UserUpdateRequest;
 import com.bookstore.backend.model.User;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Builder;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
-@Component
-@RequiredArgsConstructor
-public class UserMapper {
-    private final PasswordEncoder passwordEncoder ;
-    public  User toEntity(UserDto dto){
-        User user = User.builder()
-                .fullName(dto.getFullName())
-                .dob(dto.getDob())
-                .email(dto.getEmail())
-                .username(dto.getUsername())
-                .gender(dto.getGender())
-                .password(passwordEncoder.encode(dto.getPassword()))
-                .build() ;
-        return user ;
-    }
-    public  UserDto toDto(User user){
-        UserDto dto = UserDto.builder()
-                .id(user.getId())
-                .fullName(user.getFullName())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .gender(user.getGender())
-                .dob(user.getDob())
-                .build() ;
-        return dto ;
-    }
+import java.util.Set;
+import java.util.stream.Collectors;
+
+
+@Mapper(componentModel = "spring", builder = @Builder(disableBuilder = false))
+public interface UserMapper {
+
+    User toUser(UserCreationRequest request);
+
+    void updateUser(@MappingTarget User user, UserUpdateRequest request);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "username", target = "username")
+    @Mapping(source = "fullName", target = "fullName")
+    @Mapping(source = "email", target = "email")
+    @Mapping(source = "dob", target = "dob")
+    @Mapping(source = "gender", target = "gender")
+    @Mapping(source = "roles", target = "roles")
+    UserDto toUserDto(User user);
 
 }
+
+

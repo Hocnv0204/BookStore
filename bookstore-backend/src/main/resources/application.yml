@@ -26,7 +26,10 @@ spring:
       enabled: true
     livereload:
       enabled: true
-
+  jwt:
+    signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+    valid-duration: 30
+    refreshable-duration: 120
 
 logging:
   level:

@@ -1,0 +1,15 @@
+package com.bookstore.backend.dto.response;
+
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@Builder
+
+public class AuthenticationResponse {
+    String accessToken;
+    String refreshToken ;
+    boolean authenticated ;
+}
