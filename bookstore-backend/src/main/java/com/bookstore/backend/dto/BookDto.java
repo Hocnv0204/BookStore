@@ -13,9 +13,7 @@ public class BookDto {
     private String description ;
     private Integer quantityStock ;
     private Double price ;
-    private AuthorDto authorDto  ;
     private String imageUrl ;
-    private CategoryDto categoryDto ;
-
-
+    private Long authorId ;
+    private Long categoryId ;
 }

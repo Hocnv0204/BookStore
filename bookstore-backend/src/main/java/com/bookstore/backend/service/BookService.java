@@ -1,11 +1,20 @@
 package com.bookstore.backend.service;
 
 import com.bookstore.backend.dto.BookDto;
-import java.util.List ;
+import com.bookstore.backend.dto.request.BookRequest;
+import com.bookstore.backend.dto.response.PageResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
 public interface BookService {
-    List<BookDto> getAllBooks() ;
-    BookDto getBookById(Long id) ;
-    BookDto createBook(BookDto bookDto) ;
-    BookDto updateBook(Long id , BookDto bookDto) ;
-    void deleteBookById(Long id) ;
+    PageResponse<BookDto> getAllBooks(Pageable pageable);
+    BookDto getBookById(Long id);
+    BookDto getBookByName(String name);
+    BookDto createBook(BookRequest request, MultipartFile image);
+    BookDto updateBook(Long id, BookRequest request, MultipartFile image);
+    void deleteBook(Long id);
+    PageResponse<BookDto> searchBooks(String keyword, Pageable pageable);
+    PageResponse<BookDto> getBooksByCategory(Long categoryId, Pageable pageable);
+    PageResponse<BookDto> getBooksByAuthor(Long authorId, Pageable pageable);
+    PageResponse<BookDto> getBooksByPriceRange(Double minPrice, Double maxPrice, Pageable pageable);
 }

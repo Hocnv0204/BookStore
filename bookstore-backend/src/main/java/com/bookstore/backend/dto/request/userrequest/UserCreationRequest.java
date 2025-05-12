@@ -1,4 +1,4 @@
-package com.bookstore.backend.dto.request;
+package com.bookstore.backend.dto.request.userrequest;
 
 import lombok.Getter;
 import lombok.Setter;

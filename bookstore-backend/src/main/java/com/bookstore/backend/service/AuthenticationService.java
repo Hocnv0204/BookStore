@@ -1,12 +1,11 @@
 package com.bookstore.backend.service;
 
 
-import com.bookstore.backend.dto.UserDto;
 import com.bookstore.backend.dto.request.*;
+import com.bookstore.backend.dto.request.userrequest.*;
 import com.bookstore.backend.dto.response.AuthenticationResponse;
 import com.bookstore.backend.dto.response.IntrospectResponse;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jwt.SignedJWT;
 
 import java.text.ParseException;
 

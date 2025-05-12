@@ -2,40 +2,40 @@ package com.bookstore.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "books")
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id ;
+    Long id;
 
-    @Column(name = "title" , nullable = false)
-    private String title ;
+    @Column(nullable = false)
+    String title;
 
-    @Column (name = "quantity_stock")
-    private Integer quantityStock ;
+    @Column(nullable = false)
+    String description;
 
-    @Column (name = "price")
-    private Double price ;
+    @Column(nullable = false)
+    Double price;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    private Author author ;
+    @Column(nullable = false)
+    Integer quantityStock;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category ;
+    String imageUrl;
 
-    @Column(name = "description" , length = 1000)
-    private String description ;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", nullable = false)
+    Author author;
 
-    @Column(name = "image_url")
-    private String imageUrl ;
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    Category category;
 }

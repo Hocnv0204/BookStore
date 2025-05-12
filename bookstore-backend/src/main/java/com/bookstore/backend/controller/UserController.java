@@ -1,48 +1,94 @@
 package com.bookstore.backend.controller;
 
-import com.bookstore.backend.dto.UserDto;
-import com.bookstore.backend.dto.request.UserCreationRequest;
-import com.bookstore.backend.dto.request.UserUpdateRequest;
+import com.bookstore.backend.dto.UserResponse;
+import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
 import com.bookstore.backend.dto.response.ApiResponse;
+import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("users")
 @RequiredArgsConstructor
 public class UserController {
-    private final UserService userService ;
+    private final UserService userService;
+    private static final int MAX_PAGE_SIZE = 20;
+    
+    
+    @GetMapping("admin/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getAllUsers(
 
-
-    @GetMapping
-    ResponseEntity<ApiResponse<List<UserDto>>> getAllUsers(){
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        
+        // Validate and adjust page size
+        size = Math.min(size, MAX_PAGE_SIZE);
+        
+        // Sorting
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return ResponseEntity.ok().body(
-                ApiResponse.<List<UserDto>>builder()
-                        .result(userService.getAllUsers())
+                ApiResponse.<PageResponse<UserResponse>>builder()
+                        .result(userService.getAllUsers(pageable))
                         .build()
-        ) ;
+        );
     }
 
-    @GetMapping("/{id}")
-    ResponseEntity<ApiResponse<UserDto>> getUserById(@PathVariable Long id ){
+    @GetMapping("admin/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
         return ResponseEntity.ok().body(
-                ApiResponse.<UserDto>builder()
+                ApiResponse.<UserResponse>builder()
                         .result(userService.getUserById(id))
                         .build()
-        ) ;
+        );
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<ApiResponse<UserDto>> updateUser(@PathVariable Long id , @RequestBody UserUpdateRequest request){
+    @GetMapping("users/{username}/spending")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and (authentication.principal.username == #username or hasRole('ADMIN'))")
+    ResponseEntity<ApiResponse<Integer>> getTotalSpending(@PathVariable String username) {
         return ResponseEntity.ok().body(
-                ApiResponse.<UserDto>builder()
-                        .result(userService.updateUser(id , request))
+                ApiResponse.<Integer>builder()
+                        .result(userService.getTotalSpending(username))
                         .build()
-        ) ;
+        );
+    }
+
+    @PutMapping("users/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and (authentication.principal.username == #username or hasRole('ADMIN'))")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        return ResponseEntity.ok().body(
+                ApiResponse.<UserResponse>builder()
+                        .result(userService.updateUser(id, request))
+                        .build()
+        );
+    }
+
+    @DeleteMapping("admin/users/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok().body(
+                ApiResponse.<Void>builder()
+                        .build()
+        );
+    }
+
+    @GetMapping("users/profile")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {
+        return ResponseEntity.ok().body(
+            ApiResponse.<UserResponse>builder()
+                .result(userService.getUserProfile())
+                .build()
+        );
     }
 }

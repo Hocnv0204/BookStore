@@ -1,13 +1,12 @@
 package com.bookstore.backend.service.impl;
 
 import com.bookstore.backend.common.enums.Role;
-import com.bookstore.backend.dto.UserDto;
 import com.bookstore.backend.dto.request.*;
+import com.bookstore.backend.dto.request.userrequest.*;
 import com.bookstore.backend.dto.response.AuthenticationResponse;
 import com.bookstore.backend.dto.response.IntrospectResponse;
 import com.bookstore.backend.exception.AppException;
-import com.bookstore.backend.exception.ErrorCode;
-import com.bookstore.backend.mapper.UserMapper;
+import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.model.InvalidatedToken;
 import com.bookstore.backend.model.User;
 import com.bookstore.backend.repository.InvalidatedTokenRepository;
@@ -29,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
@@ -42,7 +42,6 @@ import java.util.UUID;
 public class AuthenticationServiceImpl implements AuthenticationService {
     final UserRepository userRepository ;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper ;
     private final InvalidatedTokenRepository invalidatedTokenRepository ;
     @NonFinal
     @Value("${spring.jwt.signerKey}")
@@ -90,7 +89,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         Instant.now().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScope(user))  // vẫn có thể thêm scope nếu muốn
+                .claim("scope", buildScope(user))  
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -138,12 +137,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public AuthenticationResponse register(UserCreationRequest request){
-        if (userRepository.existsByUsername(request.getUsername())){
-            throw new AppException(ErrorCode.USER_EXISTS) ;
+    public AuthenticationResponse register(UserCreationRequest request) {
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTS);
         }
-        HashSet<String> roles = new HashSet<>() ;
-        roles.add(Role.USER.name()) ;
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXISTS);
+        }
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+        
+        // Generate verification token
+        String verificationToken = UUID.randomUUID().toString();
+        
         User user = User.builder()
                 .username(request.getUsername())
                 .fullName(request.getFullName())
@@ -157,12 +163,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String accessToken = generateAccessToken(user) ;
         String refreshToken = generateRefreshToken(user) ;
 
-        return AuthenticationResponse.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .authenticated(true)
-                .build() ;
+            return AuthenticationResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .authenticated(true)
+                    .build();
+    
     }
+
+   
+
     @Override
     public AuthenticationResponse login(LoginRequest request){
 
@@ -232,9 +242,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED)) ;
         var newToken = generateAccessToken(user) ;
-
+        var newRefreshToken = generateRefreshToken(user) ;
         return AuthenticationResponse.builder()
                 .accessToken(newToken)
+                .refreshToken(newRefreshToken)
                 .authenticated(true)
                 .build() ;
 

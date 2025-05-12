@@ -1,4 +1,4 @@
-package com.bookstore.backend.exception;
+package com.bookstore.backend.common.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,14 @@ public enum ErrorCode {
     EMAIL_SENDING_FAILED(1020, "Failed to send email", HttpStatus.INTERNAL_SERVER_ERROR),
     REVIEW_NOT_FOUND(1021, "Review not found", HttpStatus.NOT_FOUND),
     REVIEW_ALREADY_EXISTS(1022, "User has already reviewed this book", HttpStatus.BAD_REQUEST),
-    CART_IS_EMPTY(1023, "Cart is empty", HttpStatus.BAD_REQUEST);
+    CART_IS_EMPTY(1023, "Cart is empty", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_BE_UPDATED(1025, "Order cannot be updated in its current state", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_BE_CANCELLED(1026, "Order cannot be cancelled in its current state", HttpStatus.BAD_REQUEST),
+    FILE_EMPTY(1027, "File is empty", HttpStatus.BAD_REQUEST),
+    FILE_TOO_LARGE(1028, "File size exceeds maximum limit", HttpStatus.BAD_REQUEST),
+    INVALID_FILE_TYPE(1029, "Invalid file type", HttpStatus.BAD_REQUEST),
+    FILE_STORAGE_ERROR(1030, "Failed to store file", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_DELETION_ERROR(1031, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final int code;
     private final String message;

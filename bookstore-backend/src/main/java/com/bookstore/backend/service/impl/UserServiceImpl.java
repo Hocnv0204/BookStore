@@ -1,55 +1,111 @@
 package com.bookstore.backend.service.impl;
 
-import com.bookstore.backend.common.enums.Role;
-import com.bookstore.backend.dto.UserDto;
-import com.bookstore.backend.dto.request.UserCreationRequest;
-import com.bookstore.backend.dto.request.UserUpdateRequest;
+import com.bookstore.backend.dto.UserResponse;
+import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
+import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.exception.AppException;
-import com.bookstore.backend.exception.ErrorCode;
+import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.mapper.UserMapper;
 import com.bookstore.backend.model.User;
 import com.bookstore.backend.repository.UserRepository;
 import com.bookstore.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository ;
-    private final UserMapper userMapper ;
-    private final PasswordEncoder passwordEncoder ;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
-    public UserDto updateUser(Long id , UserUpdateRequest request){
+    public UserResponse updateUser(Long id, UserUpdateRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")) ;
-        userMapper.updateUser(user , request);
-        userRepository.save(user) ;
-        return userMapper.toUserDto(user) ;
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        userMapper.updateUser(user, request);
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
     }
 
     @Override
-    public UserDto getUserById(Long id){
+    public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")) ;
-        return userMapper.toUserDto(user) ;
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        return userMapper.toUserResponse(user);
     }
 
     @Override
-    public void deleteUserById(Long id){
-        userRepository.deleteById(id) ;
+    public void deleteUserById(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        userRepository.deleteById(id);
     }
 
     @Override
-    public List<UserDto> getAllUsers(){
-        return userRepository.findAll().stream()
-                .map(userMapper::toUserDto)
-                .collect(Collectors.toList()) ;
+    public PageResponse<UserResponse> getAllUsers(Pageable pageable) {
+        Page<User> userPage = userRepository.findAll(pageable);
+        List<UserResponse> userDtos = userPage.getContent().stream()
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList());
+
+        return PageResponse.<UserResponse>builder()
+                .content(userDtos)
+                .pageNumber(userPage.getNumber())
+                .pageSize(userPage.getSize())
+                .totalElements(userPage.getTotalElements())
+                .totalPages(userPage.getTotalPages())
+                .isLast(userPage.isLast())
+                .build();
+    }
+
+    @Override
+    public int getTotalSpending(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        // TODO: Implement total spending calculation based on order history
+        return 0;
+    }
+
+    @Override
+    public UserDetailsService loadUserDetailService() {
+        return this::loadUserByUsername;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                authorities
+        );
+    }
+
+    @Override
+    public UserResponse getUserProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+        String username = authentication.getName();
+        return userMapper.toUserResponse(userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
     }
 }

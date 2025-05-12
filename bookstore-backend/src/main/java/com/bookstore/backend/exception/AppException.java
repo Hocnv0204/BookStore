@@ -1,5 +1,6 @@
 package com.bookstore.backend.exception;
 
+import com.bookstore.backend.common.enums.ErrorCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,14 +1,16 @@
 package com.bookstore.backend.service;
 
-import com.bookstore.backend.dto.BookDto;
 import com.bookstore.backend.dto.CategoryDto;
-
-import java.util.List;
+import com.bookstore.backend.dto.request.adminrequest.CategoryRequest;
+import com.bookstore.backend.dto.response.PageResponse;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface CategoryService {
-    CategoryDto updateCategory(CategoryDto dto , Long id) ;
-    void deleteCategory(Long id) ;
-    List<BookDto> getBooksByCategory(Long id) ;
-    CategoryDto createCategory(CategoryDto dto) ;
-    List<CategoryDto> getAllCategories() ;
+    PageResponse<CategoryDto> getAllCategories(Pageable pageable);
+    CategoryDto getCategoryById(Long id);
+    CategoryDto createCategory(CategoryRequest request, MultipartFile image);
+    CategoryDto updateCategory(Long id, CategoryRequest request, MultipartFile image);
+    void deleteCategoryById(Long id);
+    PageResponse<CategoryDto> searchCategories(String keyword, Pageable pageable);
 }

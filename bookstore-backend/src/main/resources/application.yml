@@ -28,11 +28,20 @@ spring:
       enabled: true
   jwt:
     signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-    valid-duration: 30
-    refreshable-duration: 120
+    valid-duration: 1800
+    refreshable-duration: 604800
 
 logging:
   level:
     org.springframework: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  payment:
+    vnPay:
+      url: ${PAY_URL}
+      tmnCode: ${TMN_CODE}
+      secretKey: ${SECRET_KEY}
+      returnUrl: ${RETURN_URL}
+      version: ${VERSION}
+      command: ${COMMAND}
+      orderType: ${ORDER_TYPE}

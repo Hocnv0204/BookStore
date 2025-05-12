@@ -1,7 +1,7 @@
 package com.bookstore.backend.controller;
 
-import com.bookstore.backend.dto.UserDto;
 import com.bookstore.backend.dto.request.*;
+import com.bookstore.backend.dto.request.userrequest.*;
 import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.AuthenticationResponse;
 import com.bookstore.backend.dto.response.IntrospectResponse;
@@ -12,12 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
 
-@RequestMapping("auth")
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -52,7 +50,7 @@ public class AuthController {
                 .build() ;
     }
 
-    @PostMapping("/logout")
+    @PostMapping("users/logout")
     ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder()
@@ -66,4 +64,5 @@ public class AuthController {
                 .result(result)
                 .build() ;
     }
+
 }

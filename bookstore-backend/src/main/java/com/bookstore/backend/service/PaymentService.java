@@ -1,4 +1,8 @@
-package com.bookstore.backend.service;
+// package com.bookstore.backend.service;
 
-public interface PaymentService {
-}
+// import com.bookstore.backend.dto.PaymentDTO;
+// import jakarta.servlet.http.HttpServletRequest;
+
+// public interface PaymentService {
+//     PaymentDTO.VNPayResponse createVNPayPayment(HttpServletRequest request) ;
+// }

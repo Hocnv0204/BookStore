@@ -2,7 +2,6 @@ package com.bookstore.backend.dto;
 
 import lombok.*;
 
-import java.util.List;
 
 @Getter
 @Setter
@@ -12,6 +11,5 @@ import java.util.List;
 public class CategoryDto {
     private String name ;
     private Long id ;
-    private String imageUrl ;
-    private List<BookDto> books ;
+    private String imageUrl ; 
 }

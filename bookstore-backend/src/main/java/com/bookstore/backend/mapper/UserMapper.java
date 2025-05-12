@@ -1,17 +1,13 @@
 package com.bookstore.backend.mapper;
 
-import com.bookstore.backend.common.enums.Role;
-import com.bookstore.backend.dto.UserDto;
-import com.bookstore.backend.dto.request.UserCreationRequest;
-import com.bookstore.backend.dto.request.UserUpdateRequest;
+import com.bookstore.backend.dto.UserResponse;
+import com.bookstore.backend.dto.request.userrequest.UserCreationRequest;
+import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
 import com.bookstore.backend.model.User;
 import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = false))
@@ -19,8 +15,10 @@ public interface UserMapper {
 
     User toUser(UserCreationRequest request);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
-
     @Mapping(source = "id", target = "id")
     @Mapping(source = "username", target = "username")
     @Mapping(source = "fullName", target = "fullName")
@@ -28,7 +26,7 @@ public interface UserMapper {
     @Mapping(source = "dob", target = "dob")
     @Mapping(source = "gender", target = "gender")
     @Mapping(source = "roles", target = "roles")
-    UserDto toUserDto(User user);
+    UserResponse toUserResponse(User user);
 
 }
 
