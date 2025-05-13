@@ -35,7 +35,7 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection) {
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
@@ -51,7 +51,7 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection) {
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(bookService.searchBooks(keyword, pageable));
     }
@@ -73,7 +73,7 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection) {
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(bookService.getBooksByAuthor(authorId, pageable));
     }

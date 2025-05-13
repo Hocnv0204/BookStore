@@ -23,7 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
@@ -101,22 +101,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public PageResponse<ReviewDto> getBookReviews(Long bookId, int page, int size) {
+    public PageResponse<ReviewDto> getBookReviews(Long bookId, Pageable pageable) {
         if (!bookRepository.existsById(bookId)) {
             throw new AppException(ErrorCode.BOOK_NOT_FOUND);
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Review> reviews = reviewRepository.findByBookId(bookId, pageable);
-
-        return PageResponse.<ReviewDto>builder()
-                .content(reviews.getContent().stream().map(reviewMapper::toDto).toList())
-                .pageNumber(page)
-                .pageSize(size)
-                .totalElements(reviews.getTotalElements())
-                .totalPages(reviews.getTotalPages())
-                .isLast(reviews.isLast())
-                .build();
+        return createPageResponse(reviewRepository.findByBookId(bookId, pageable));
     }
 
     @Override
@@ -136,21 +126,22 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public PageResponse<ReviewDto> getUserReviews(Long userId, int page, int size) {
+    public PageResponse<ReviewDto> getUserReviews(Long userId, Pageable pageable) {
         if (!userRepository.existsById(userId)) {
             throw new AppException(ErrorCode.USER_NOT_FOUND);
         }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<Review> reviews = reviewRepository.findByUserId(userId, pageable);
-
+       return createPageResponse(reviewRepository.findByUserId(userId, pageable));
+    }
+    private PageResponse<ReviewDto> createPageResponse(Page<Review> reviewPage) {
         return PageResponse.<ReviewDto>builder()
-                .content(reviews.getContent().stream().map(reviewMapper::toDto).toList())
-                .pageNumber(page)
-                .pageSize(size)
-                .totalElements(reviews.getTotalElements())
-                .totalPages(reviews.getTotalPages())
-                .isLast(reviews.isLast())
+                .content(reviewPage.getContent().stream()
+                        .map(reviewMapper::toDto)
+                        .collect(Collectors.toList()))
+                .totalElements(reviewPage.getTotalElements())
+                .totalPages(reviewPage.getTotalPages())
+                .pageNumber(reviewPage.getNumber())
+                .pageSize(reviewPage.getSize())
+                .isLast(reviewPage.isLast())
                 .build();
     }
 } 

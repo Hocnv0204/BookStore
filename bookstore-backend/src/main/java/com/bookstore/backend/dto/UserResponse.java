@@ -20,5 +20,4 @@ public class UserResponse {
     private LocalDate dob;
     private String gender;
     private Set<String> roles;
-    private boolean emailVerified;
 }

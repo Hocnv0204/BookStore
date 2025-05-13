@@ -12,13 +12,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.bookstore.backend.common.enums.ErrorCode;
+import com.bookstore.backend.exception.AppException;
+import com.bookstore.backend.model.User;
+import com.bookstore.backend.repository.UserRepository;
 @RestController
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
     private static final int MAX_PAGE_SIZE = 20;
-    
+    private final UserRepository userRepository;
     
     @GetMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
@@ -63,8 +68,14 @@ public class UserController {
     }
 
     @PutMapping("users/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and (authentication.principal.username == #username or hasRole('ADMIN'))")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        if (!username.equals(user.getUsername())) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
         return ResponseEntity.ok().body(
                 ApiResponse.<UserResponse>builder()
                         .result(userService.updateUser(id, request))
