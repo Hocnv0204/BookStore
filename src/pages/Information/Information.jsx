@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Information.css";
 import OrderTable from "./OrderTable/OrderTable";
 import Sidebar from "./Sidebar/Sidebar";
@@ -6,13 +6,18 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import InfoModal from "./InfoModal/InfoModal"; // Modal cập nhật thông tin
 import ChangePasswordModal from "./InfoModal/ChangePasswordModal"; // Modal đổi mật khẩu
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 function Information() {
   const [activeItem, setActiveItem] = useState("all");
+  const [user, setUser] = useState(null);
   const [modal, setModal] = useState(null); // Quản lý modal nào đang mở
   const navigate = useNavigate();
-
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
   const handleItemClick = (itemId) => {
     setActiveItem(itemId);
   };
@@ -49,12 +54,7 @@ function Information() {
         <InfoModal
           isOpen={modal === "info"}
           onClose={() => setModal(null)}
-          user={{
-            fullName: "Nguyễn Văn A",
-            birthDate: "2000-01-01",
-            phoneNumber: "0123456789",
-            email: "test@example.com",
-          }} // Dữ liệu mẫu
+          user={user}
           onSave={(data) => console.log("Dữ liệu mới:", data)}
         />
       )}

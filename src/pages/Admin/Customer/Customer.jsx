@@ -92,12 +92,6 @@ function Customer() {
           <div className="content-header">
             <h2>Danh Sách Khách Hàng</h2>
             <div className="content-actions">
-              {/* <div className="sort-container">
-                <button className="sort-btn">
-                  <i className="fas fa-sort-amount-down"></i>
-                  Sắp xếp theo
-                </button>
-              </div> */}
               <div class="customer-search-container">
                 <input
                   type="text"

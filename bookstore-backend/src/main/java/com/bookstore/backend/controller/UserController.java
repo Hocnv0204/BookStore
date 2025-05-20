@@ -67,18 +67,12 @@ public class UserController {
         );
     }
 
-    @PutMapping("users/{id}")
+    @PutMapping("users")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-        if (!username.equals(user.getUsername())) {
-            throw new AppException(ErrorCode.UNAUTHORIZED);
-        }
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserUpdateRequest request) {
         return ResponseEntity.ok().body(
                 ApiResponse.<UserResponse>builder()
-                        .result(userService.updateUser(id, request))
+                        .result(userService.updateUser(request))
                         .build()
         );
     }

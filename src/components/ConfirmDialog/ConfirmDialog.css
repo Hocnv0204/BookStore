@@ -1,0 +1,96 @@
+/* Nền mờ cho Confirm Dialog */
+.confirm-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Nền mờ đậm hơn */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1001;
+    /* Đảm bảo nó nằm trên các modal khác nếu có */
+}
+
+/* Hộp thoại xác nhận */
+.confirm-dialog-content {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 380px;
+    max-width: 90%;
+    outline: none;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.3s ease-in-out;
+    /* Tái sử dụng animation đã có */
+}
+
+.confirm-dialog-inner {
+    text-align: center;
+}
+
+.confirm-dialog-inner h3 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.confirm-dialog-inner p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.confirm-dialog-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    /* Khoảng cách giữa các nút */
+}
+
+.confirm-dialog-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.confirm-dialog-cancel-btn {
+    background-color: #e0e0e0;
+    color: #555;
+}
+
+.confirm-dialog-cancel-btn:hover {
+    background-color: #d0d0d0;
+    transform: translateY(-1px);
+}
+
+.confirm-dialog-confirm-btn {
+    background-color: #00C853;
+    /* Màu đỏ cho nút xác nhận xóa */
+    color: white;
+}
+
+.confirm-dialog-confirm-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-1px);
+}
+
+/* Keyframes cho animation fadeIn (nếu chưa có trong CSS chính của bạn) */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}

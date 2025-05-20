@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface UserService {
-    UserResponse updateUser(Long id, UserUpdateRequest request);
+    UserResponse updateUser( UserUpdateRequest request);
     void deleteUserById(Long id);
     PageResponse<UserResponse> getAllUsers(Pageable pageable);
     UserResponse getUserById(Long id);

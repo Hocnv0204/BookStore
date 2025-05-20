@@ -22,6 +22,7 @@ public class ApplicationinitConfig {
                 roles.add(Role.ADMIN.name()) ;
                 User user = User.builder()
                         .username("admin")
+                        .fullName("Admin")
                         .password(passwordEncoder.encode("admin"))
                         .roles(roles)
                         .build() ;

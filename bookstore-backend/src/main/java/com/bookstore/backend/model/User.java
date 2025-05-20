@@ -8,7 +8,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
-
+import jakarta.persistence.ElementCollection;
 @Entity
 @Getter
 @Setter

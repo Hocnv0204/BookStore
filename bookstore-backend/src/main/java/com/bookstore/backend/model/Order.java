@@ -57,6 +57,9 @@ public class Order {
     @Column(nullable = false)
     LocalDateTime updatedAt;
 
+    //paymentMethod
+    //promotion
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

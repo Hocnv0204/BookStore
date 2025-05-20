@@ -16,13 +16,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
            "OR LOWER(b.description) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Book> searchBooks(@Param("keyword") String keyword, Pageable pageable);
     
-    @Query("SELECT b FROM Book b WHERE LOWER(b.author.name) LIKE LOWER(CONCAT('%', :authorName, '%'))")
+    @Query("SELECT b FROM Book b WHERE LOWER(b.authorName) LIKE LOWER(CONCAT('%', :authorName, '%'))")
     Page<Book> findByAuthorNameContainingIgnoreCase(@Param("authorName") String authorName, Pageable pageable);
-    
+    @Query("SELECT b FROM Book b WHERE LOWER(b.publisher) LIKE LOWER(CONCAT('%', :publisher, '%'))")
+    Page<Book> findByPublisher(@Param("publisher")String publisher , Pageable pageable) ;
     @Query("SELECT b FROM Book b WHERE LOWER(b.category.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))")
     Page<Book> findByCategoryNameContainingIgnoreCase(@Param("categoryName") String categoryName, Pageable pageable);
-    
     Page<Book> findByPriceBetween(Double minPrice, Double maxPrice, Pageable pageable);
-    Page<Book> findByAuthorId(Long authorId, Pageable pageable);
     Page<Book> findByCategoryId(Long categoryId, Pageable pageable);
 }

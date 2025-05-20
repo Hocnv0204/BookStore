@@ -31,9 +31,11 @@ public class Book {
 
     String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false)
-    Author author;
+    @Column(nullable = false)
+    String authorName ;
+
+    @Column(nullable = false)
+    String publisher ;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)

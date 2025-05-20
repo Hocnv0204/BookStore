@@ -1,0 +1,80 @@
+.admin-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 2fr 1fr;
+    }
+}
+
+.orders-container {
+    grid-column: 1;
+}
+
+@media (min-width: 1024px) {
+    .orders-container {
+        grid-column: span 1;
+    }
+}
+
+.footer {
+    background-color: #e5e7eb;
+    margin: 3rem -1.5rem -1.5rem -1.5rem;
+    padding: 2rem 1.5rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .footer-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.footer-heading {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-link {
+    color: #4b5563;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    color: #111827;
+}
+
+.footer-copyright {
+    margin-top: 2rem;
+    text-align: center;
+    color: #4b5563;
+}

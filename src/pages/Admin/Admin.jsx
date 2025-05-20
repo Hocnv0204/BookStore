@@ -1,9 +1,10 @@
 import "./Admin.css";
 import React from "react";
 import Sidebar from "./Sidebar/Sidebar";
-import BookManagement from "./BookManagement/BookManagement";
+import AdminDashBoard from "./AdminDashBoard/AdminDashBoard";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import BookManagement from "./BookManagement/BookManagement";
 
 function Admin() {
   return (
@@ -12,7 +13,7 @@ function Admin() {
       <div className="admin-container">
         <Sidebar />
         <div className="admin-main">
-          <BookManagement />
+          <AdminDashBoard />
         </div>
       </div>
       <Footer />

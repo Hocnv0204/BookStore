@@ -11,7 +11,7 @@
 }
 
 .sidebar-header {
-    background-color: #00C853;
+    /* background-color: #00C853; */
     color: white;
     padding: 10px 15px;
     font-weight: bold;
@@ -32,11 +32,15 @@
 
 .sidebar-item:hover {
     background-color: #e8e8e8;
+    color: black;
+
 }
 
 .sidebar-item.active {
     background-color: #e3f2fd;
     border-left: 4px solid #00C853;
+    color: black;
+
 }
 
 .text-red-500 {

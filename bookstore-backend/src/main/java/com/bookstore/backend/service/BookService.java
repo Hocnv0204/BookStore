@@ -15,6 +15,8 @@ public interface BookService {
     void deleteBook(Long id);
     PageResponse<BookDto> searchBooks(String keyword, Pageable pageable);
     PageResponse<BookDto> getBooksByCategory(Long categoryId, Pageable pageable);
-    PageResponse<BookDto> getBooksByAuthor(Long authorId, Pageable pageable);
+    PageResponse<BookDto> getBooksByAuthor(String authorName, Pageable pageable);
     PageResponse<BookDto> getBooksByPriceRange(Double minPrice, Double maxPrice, Pageable pageable);
+    PageResponse<BookDto> getBooksByPublisher(String publisher, Pageable pageable);
+
 }

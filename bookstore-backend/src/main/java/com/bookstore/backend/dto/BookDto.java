@@ -14,6 +14,7 @@ public class BookDto {
     private Integer quantityStock ;
     private Double price ;
     private String imageUrl ;
-    private Long authorId ;
+    private String authorName ;
     private Long categoryId ;
+    private String publisher ;
 }

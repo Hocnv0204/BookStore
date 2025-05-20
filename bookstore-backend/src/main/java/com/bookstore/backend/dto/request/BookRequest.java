@@ -23,8 +23,11 @@ public class BookRequest {
     @Min(value = 0, message = "Quantity in stock must be greater than or equal to 0")
     private Integer quantityStock;
 
-    @NotNull(message = "Author ID is required")
-    private Long authorId;
+    @NotNull(message = "Author name is required")
+    private String authorName;
+
+    @NotNull
+    private String publisher ;
 
     @NotNull(message = "Category ID is required")
     private Long categoryId;

@@ -7,7 +7,6 @@ import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.mapper.BookMapper;
 import com.bookstore.backend.model.Book;
-import com.bookstore.backend.repository.AuthorRepository;
 import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.CategoryRepository;
 import com.bookstore.backend.service.BookService;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
-    private final AuthorRepository authorRepository;
     private final CategoryRepository categoryRepository;
     private final BookMapper bookMapper;
     private final FileStorageService fileStorageService;
@@ -47,9 +45,7 @@ public class BookServiceImpl implements BookService {
     @Transactional
     @Override
     public BookDto createBook(BookRequest request , MultipartFile image) {
-        // Validate author and category
-        var author = authorRepository.findById(request.getAuthorId())
-                .orElseThrow(() -> new AppException(ErrorCode.AUTHOR_NOT_FOUND));
+
         var category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -64,9 +60,10 @@ public class BookServiceImpl implements BookService {
         Book book = Book.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
+                .publisher(request.getPublisher())
                 .price(request.getPrice())
                 .quantityStock(request.getQuantityStock())
-                .author(author)
+                .authorName(request.getAuthorName())
                 .category(category)
                 .imageUrl(imageUrl)
                 .build();
@@ -85,13 +82,10 @@ public class BookServiceImpl implements BookService {
         book.setDescription(request.getDescription());
         book.setPrice(request.getPrice());
         book.setQuantityStock(request.getQuantityStock());
+        book.setAuthorName(request.getAuthorName());
+        book.setPublisher(request.getPublisher());
 
-        // Update author if changed
-        if (!book.getAuthor().getId().equals(request.getAuthorId())) {
-            var author = authorRepository.findById(request.getAuthorId())
-                    .orElseThrow(() -> new AppException(ErrorCode.AUTHOR_NOT_FOUND));
-            book.setAuthor(author);
-        }
+
 
         // Update category if changed
         if (!book.getCategory().getId().equals(request.getCategoryId())) {
@@ -123,9 +117,16 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND));
 
-        // Delete book image
-        String imageFileName = book.getImageUrl().substring(book.getImageUrl().lastIndexOf("/") + 1);
-        fileStorageService.deleteFile(imageFileName, "books");
+        // ✅ Đảm bảo book.getImageUrl() trả về URL ảnh đầy đủ, không phải ID
+        String imageUrl = book.getImageUrl() ;  // <-- Dòng này. Kiểm tra xem nó có null/empty không.
+        System.out.println("DEBUG: imageUrl from book entity for deletion: " + imageUrl); // <-- THÊM DÒNG NÀY
+
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            System.out.println("Attempting to delete Cloudinary file with URL: " + imageUrl); // <-- THÊM DÒNG NÀY ĐỂ DEBUG
+            fileStorageService.deleteFile(imageUrl, "books"); // <-- Truyền imageUrl ở đây
+        } else {
+            System.out.println("Book with ID " + id + " has no image URL to delete."); // <-- Log thông báo này
+        }
 
         bookRepository.delete(book);
     }
@@ -137,8 +138,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<BookDto> getBooksByAuthor(Long authorId, Pageable pageable) {
-        Page<Book> bookPage = bookRepository.findByAuthorId(authorId, pageable);
+    public PageResponse<BookDto> getBooksByAuthor(String authorName, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByCategoryNameContainingIgnoreCase(authorName, pageable);
+        return createPageResponse(bookPage);
+    }
+
+    @Override
+    public PageResponse<BookDto> getBooksByPublisher(String publisher, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByPublisher( publisher, pageable);
         return createPageResponse(bookPage);
     }
 

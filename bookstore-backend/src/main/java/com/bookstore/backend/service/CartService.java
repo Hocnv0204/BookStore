@@ -18,7 +18,7 @@ public interface CartService {
     CartDto getCart();
     
     void clearCart();
-    
+
     // Admin methods
     PageResponse<CartDto> getAllCarts(Pageable pageable);
     

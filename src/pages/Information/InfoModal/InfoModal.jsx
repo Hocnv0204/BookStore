@@ -1,26 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
+import axios from "axios";
 import "./InfoModal.css";
-Modal.setAppElement("#root"); // Tránh lỗi accessibility
+
+Modal.setAppElement("#root");
 
 const InfoModal = ({ isOpen, onClose, user = {}, onSave }) => {
-  // Tạo state để lưu thông tin nhập vào
   const [formData, setFormData] = useState({
-    fullName: user.fullName || "",
-    birthDate: user.birthDate || "",
-    phoneNumber: user.phoneNumber || "",
-    email: user.email || "",
+    fullName: "",
+    dob: "",
+    gender: "",
   });
 
-  // Xử lý khi người dùng nhập thông tin
+  // Cập nhật lại form mỗi khi mở modal hoặc user thay đổi
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        fullName: user.fullName || "",
+        dob: user.dob || "",
+        gender: user.gender || "",
+      });
+    }
+  }, [user]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Xử lý khi nhấn "Lưu"
-  const handleSave = () => {
-    onSave(formData); // Trả dữ liệu về component cha
-    onClose(); // Đóng modal
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      await axios.put("http://localhost:8080/users", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const existingUser = JSON.parse(localStorage.getItem("user")) || {};
+      const updatedUser = {
+        ...existingUser,
+        fullName: formData.fullName,
+        dob: formData.dob,
+        gender: formData.gender,
+      };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      onSave && onSave(formData);
+
+      onClose();
+      window.location.reload();
+    } catch (error) {
+      console.error("Lỗi khi cập nhật thông tin:", error);
+      alert("Cập nhật thất bại. Vui lòng thử lại.");
+    }
   };
 
   return (
@@ -40,29 +72,21 @@ const InfoModal = ({ isOpen, onClose, user = {}, onSave }) => {
         onChange={handleChange}
       />
 
-      <label>Ngày tháng năm sinh</label>
+      <label>Ngày sinh</label>
       <input
         type="date"
-        name="birthDate"
-        value={formData.birthDate}
+        name="dob"
+        value={formData.dob}
         onChange={handleChange}
       />
 
-      <label>Số điện thoại</label>
-      <input
-        type="text"
-        name="phoneNumber"
-        value={formData.phoneNumber}
-        onChange={handleChange}
-      />
-
-      <label>Địa chỉ Email</label>
-      <input
-        type="email"
-        name="email"
-        value={formData.email}
-        onChange={handleChange}
-      />
+      <label>Giới tính</label>
+      <select name="gender" value={formData.gender} onChange={handleChange}>
+        <option value="">-- Chọn giới tính --</option>
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+        <option value="Khác">Khác</option>
+      </select>
 
       <div className="modal-buttons">
         <button onClick={onClose}>Hủy</button>

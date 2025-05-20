@@ -4,12 +4,62 @@ import { useState, useEffect } from "react";
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   const userData = localStorage.getItem("user");
+
+  //   if (!token || !userData) {
+  //     localStorage.removeItem("user");
+  //     setUser(null);
+  //     return;
+  //   }
+
+  //   try {
+  //     const parsedUser = JSON.parse(userData);
+  //     setUser(parsedUser);
+  //   } catch (error) {
+  //     console.error("Lỗi khi đọc user từ localStorage:", error);
+  //     setUser(null);
+  //     localStorage.removeItem("user");
+  //   }
+  // }, []);
+  const loadUser = () => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (err) {
+        console.error("Lỗi khi parse user:", err);
+        setUser(null);
+      }
+    } else {
+      setUser(null);
+    }
+  };
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    setUser(user);
+    const token = localStorage.getItem("accessToken");
+    const userData = localStorage.getItem("user");
+
+    if (!token || !userData) {
+      localStorage.removeItem("user");
+      setUser(null);
+      return;
+    }
+    loadUser();
+
+    // Tự cập nhật khi tab khác login/logout
+    const onStorageChange = (e) => {
+      if (e.key === "user") {
+        loadUser();
+      }
+    };
+    window.addEventListener("storage", onStorageChange);
+    return () => window.removeEventListener("storage", onStorageChange);
   }, []);
   const handleLogout = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
     setUser(null);
   };
   return (
@@ -53,35 +103,50 @@ function Header() {
               onMouseLeave={() => setIsOpen(false)}
             >
               <span className="account-text">
-                {user ? `Xin chào, ${user.name}` : "Tài khoản của bạn"}
+                {user?.username
+                  ? `Xin chào, ${user.fullName}`
+                  : "Tài khoản của bạn"}
               </span>
               {user && isOpen && (
                 <div className="dropdown-menu">
-                  <Link to="/information">Quản lý tài khoản</Link>
-                  <Link to="/auth/signin" onClick={() => handleLogout}>
+                  {!user.roles.includes("ADMIN") && (
+                    <Link to="/information">Quản lý tài khoản</Link>
+                  )}
+                  {user.roles.includes("ADMIN") && (
+                    <Link to="/admin">Quản lý </Link>
+                  )}
+                  <Link to="/ " onClick={() => handleLogout()}>
                     Đăng xuất
                   </Link>
                 </div>
               )}
+              {!user && isOpen && (
+                <div className="dropdown-menu">
+                  <Link to="/auth/signin">Đăng nhập</Link>
+                  <Link to="/auth/signup">Đăng ký</Link>
+                </div>
+              )}
             </div>
           </Link>
-          <Link to="/cart" className="header-link cart-link">
-            <span>Giỏ hàng</span>
-            <svg
-              className="icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="9" cy="21" r="1" />
-              <circle cx="20" cy="21" r="1" />
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-            </svg>
-            <span className="cart-count">4</span>
-          </Link>
+          {user && !user.roles.includes("ADMIN") && (
+            <Link to="/cart" className="header-link cart-link">
+              <span>Giỏ hàng</span>
+              <svg
+                className="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="9" cy="21" r="1" />
+                <circle cx="20" cy="21" r="1" />
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+              </svg>
+              <span className="cart-count">4</span>
+            </Link>
+          )}
         </div>
       </div>
     </header>

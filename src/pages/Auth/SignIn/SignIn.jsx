@@ -1,19 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SignIn.css";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 function SignIn() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log("Login attempt with:", { email, password });
-  };
+    setError(null);
+    setIsLoading(true);
 
+    try {
+      const response = await axios.post("http://localhost:8080/login", {
+        username,
+        password,
+      });
+      setIsLoading(false);
+      if (
+        response.data &&
+        response.data.result &&
+        response.data.result.accessToken &&
+        response.data.result.refreshToken
+      ) {
+        localStorage.setItem("accessToken", response.data.result.accessToken);
+        localStorage.setItem("refreshToken", response.data.result.refreshToken);
+        const userRes = await axios.get("http://localhost:8080/users/profile", {
+          headers: {
+            Authorization: `Bearer ${response.data.result.accessToken}`,
+          },
+        });
+        localStorage.setItem("user", JSON.stringify(userRes.data.result));
+      }
+
+      if (JSON.parse(localStorage.getItem("user")).username === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
+    } catch (err) {
+      setIsLoading(false);
+      if (err.response && err.response.data) {
+        console.error("Lỗi từ server:", err.response.data);
+        console.log(err.response.data.message);
+        console.log(err.response.data);
+        if (err.response.data.message === "User not found") {
+          setError("Đăng nhập thất bại: Tài khoản hoặc mật khẩu bị sai");
+        } else if (err.response.data.message === "Unauthorized") {
+          setError("Đăng nhập thất bại: Tài khoản hoặc mật khẩu bị sai");
+        }
+      } else if (err.request) {
+        console.error("Không nhận được phản hồi từ server:", err.request);
+        setError("Không thể kết nối đến máy chủ. Vui lòng thử lại sau.");
+      } else {
+        console.error("Lỗi khi thiết lập request:", err.message);
+        setError("Đã có lỗi xảy ra trong quá trình đăng nhập.");
+      }
+    }
+  };
+  useEffect(() => {
+    // Nếu đã đăng nhập thì chuyển hướng
+    const user = localStorage.getItem("user");
+    if (user) {
+      navigate("/"); // hoặc /admin nếu cần
+      return;
+    }
+
+    // Xóa localStorage cũ nếu cần
+    localStorage.removeItem("user");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+  }, []);
   return (
     <div className="SignIn">
       <Header />
@@ -22,14 +85,16 @@ function SignIn() {
 
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              Email <span className="required">*</span>
+            {error && <div className="error-message">{error}</div>}
+
+            <label htmlFor="username" className="form-label">
+              Tài khoản <span className="required">*</span>
             </label>
             <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="username"
+              type="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="form-input"
               required
             />
@@ -89,9 +154,6 @@ function SignIn() {
           <div className="form-actions">
             <a href="/forgot-password" className="forgot-password-link">
               Quên mật khẩu?
-            </a>
-            <a href="/admin" className="sign-admin">
-              Đăng nhập với Admin
             </a>
           </div>
 

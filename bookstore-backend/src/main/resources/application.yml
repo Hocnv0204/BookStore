@@ -30,6 +30,10 @@ spring:
     signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
     valid-duration: 1800
     refreshable-duration: 604800
+  cloudinary:
+    cloudinary.cloud_name: "dzvxgyg88"
+    cloudinary.api_key: "281855212738654"
+    cloudinary.api_secret: "CBx98FIol43xihZJt0fX1AKgt9E"
 
 logging:
   level:

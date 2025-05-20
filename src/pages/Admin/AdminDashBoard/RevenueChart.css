@@ -1,0 +1,108 @@
+.chart-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.chart-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 24px;
+}
+
+.chart-container {
+    height: 320px;
+    display: flex;
+    align-items: stretch;
+}
+
+.chart-y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding-right: 12px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.chart-y-label {
+    height: 1px;
+    text-align: right;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-grow: 1;
+    height: 100%;
+    border-left: 1px dashed #e5e7eb;
+    border-bottom: 1px dashed #e5e7eb;
+    padding: 0 8px;
+    position: relative;
+}
+
+.chart-bar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+    flex: 1;
+}
+
+.chart-bar-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+}
+
+.chart-bar {
+    width: 40px;
+    background-color: #8884d8;
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+}
+
+.chart-tooltip {
+    position: absolute;
+    bottom: 100%;
+    margin-bottom: 8px;
+    background-color: #374151;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.chart-bar-wrapper:hover .chart-tooltip {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.chart-x-axis {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-left: 2.5rem;
+    padding-right: 0.5rem;
+}
+
+.chart-x-label {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+    color: #6b7280;
+}

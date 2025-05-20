@@ -67,15 +67,26 @@ public class BookController {
         return ResponseEntity.ok(bookService.getBooksByCategory(categoryId, pageable));
     }
 
-    @GetMapping("api/v1/books/author/{authorId}")
+    @GetMapping("api/v1/books/author/{authorname}")
     public ResponseEntity<PageResponse<BookDto>> getBooksByAuthor(
-            @PathVariable Long authorId,
+            @PathVariable String authorName,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(bookService.getBooksByAuthor(authorId, pageable));
+        return ResponseEntity.ok(bookService.getBooksByAuthor(authorName, pageable));
+    }
+
+    @GetMapping("api/v1/books/publisher/{publisher}")
+    public ResponseEntity<PageResponse<BookDto>> getBooksByPublisher(
+            @PathVariable String publisher,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
+        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+        return ResponseEntity.ok(bookService.getBooksByPublisher(publisher, pageable));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "admin/books")
@@ -96,18 +107,21 @@ public class BookController {
     public ResponseEntity<BookDto> updateBook(
             @PathVariable Long id,
             @RequestPart("book") String request,
-            @RequestPart("image") MultipartFile image) {
+            @RequestPart(value = "image" , required = false ) MultipartFile image ) {
             ObjectMapper objectMapper = new ObjectMapper() ;
             BookRequest bookRequest = null;
+                System.out.println("Received book JSON string: " + request); // <--- THÊM DÒNG NÀY
+
         try{
             bookRequest = objectMapper.readValue(request, BookRequest.class);
         }catch(Exception e){
+            e.printStackTrace();
             throw new RuntimeException("Invalid request body");
         }
         return ResponseEntity.ok(bookService.updateBook(id, bookRequest, image));
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("admin/books/delete/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
         return ResponseEntity.noContent().build();

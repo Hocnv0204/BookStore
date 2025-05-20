@@ -1,1 +1,1 @@
-SELECT * FROM bookstore_db.authors;
+SELECT * FROM bookstore_db.books;

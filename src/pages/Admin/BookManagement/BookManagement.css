@@ -49,3 +49,38 @@
 #searchInput:focus {
     border-color: #00C853;
 }
+
+.book-management-container {
+    flex: 1;
+    display: flex;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    overflow: hidden;
+}
+
+.content-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.add-container {
+    flex-shrink: 0;
+}
+
+.book-management-sort-container select {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.book-management-sort-container select:focus {
+    border-color: #00C853;
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.2);
+}
