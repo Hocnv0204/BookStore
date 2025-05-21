@@ -22,6 +22,7 @@ public class Category {
     @Column(name = "img_url")
     private String imageUrl ;
 
+
     @OneToMany(mappedBy = "category" , cascade = CascadeType.ALL)
     private List<Book> books ;
 }

@@ -15,29 +15,27 @@ import Invoice from "./pages/Admin/Invoice/Invoice";
 import ForgotPassword from "./pages/Auth/ForgotPassword/ForgotPassword";
 import BookManagement from "./pages/Admin/BookManagement/BookManagement";
 import Category from "./pages/Admin/Category/Category";
-import { AuthProvider } from "./contexts/AuthProvider";
 function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/auth/signin" element={<SignIn />} />
-          <Route path="/auth/signup" element={<SignUp />} />
-          <Route path="/product/:id" element={<ProductPage />} />
-          <Route path="/category/:title" element={<CategoryDetail />} />
-          <Route path="/cart" element={<ShoppingCart />} />
-          <Route path="/order" element={<Order />} />
-          <Route path="/information" element={<Information />} />
-          <Route path="/customer" element={<Customer />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/invoice" element={<Invoice />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/admin/book-management" element={<BookManagement />} />
-          <Route path="/category" element={<Category />} />
-        </Routes>
-      </AuthProvider>
+
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/auth/signin" element={<SignIn />} />
+        <Route path="/auth/signup" element={<SignUp />} />
+        <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="/category/:id" element={<CategoryDetail />} />
+        <Route path="/cart" element={<ShoppingCart />} />
+        <Route path="/order" element={<Order />} />
+        <Route path="/information" element={<Information />} />
+        <Route path="/customer" element={<Customer />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/invoice" element={<Invoice />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/admin/book-management" element={<BookManagement />} />
+        <Route path="/category" element={<Category />} />
+      </Routes>
     </BrowserRouter>
   );
 }

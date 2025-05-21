@@ -2,81 +2,80 @@ import "./HomePage.css";
 import Header from "../../components/Header/Header";
 import SideNavigation from "./SideNavigation/SideNavigation";
 import BookCategoryGrid from "./BookCategoryGrid/BookCategoryGrid";
-import BookSection from "../../components/BookSection/BookSection";
+import HomePageBookSection from "./HomePageBookSection/HomePageBookSection";
 import PopularSearches from "./PopularSearches/PopularSearches";
 import Banner from "./Banner/Banner";
 import Footer from "../../components/Footer/Footer";
 import { Link } from "react-router-dom";
-import { newBooks, bestSellerBooks, upcomingBooks } from "../../data/booksData";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode";
-// Sample data
+import { useState, useEffect, useCallback } from "react";
 
 function HomePage() {
-  const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [user, setUser] = useState(null);
-  const accessToken = localStorage.getItem("accessToken");
-  const fetchBooks = async () => {
-    const res = await axios.get("http://localhost:8080/api/v1/books");
-    setBooks(res.data);
-  };
+  const [categorizedBooks, setCategorizedBooks] = useState({});
+  const fetchBookByCategory = useCallback(async (categoryId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/api/v1/books/category/${categoryId}`
+      );
+
+      const booksArray = res.data.content || [];
+
+      setCategorizedBooks((prevBooks) => ({
+        ...prevBooks,
+        [categoryId]: booksArray,
+      }));
+      console.log(`Books for category ${categoryId}:`, res.data); // Giữ log gốc để xem toàn bộ response
+      console.log(`Actual books array for category ${categoryId}:`, booksArray); // Thêm log để xem mảng sách thực tế
+    } catch (error) {
+      console.error(`Lỗi khi lấy sách danh mục ${categoryId}:`, error);
+    }
+  }, []);
 
   const fetchCategories = async () => {
     const res = await axios.get("http://localhost:8080/api/v1/categories");
-    setCategories(res.data);
-    console.log(res);
-  };
-
-  const fetchUser = async () => {
-    try {
-      const decodedToken = jwtDecode(accessToken);
-      const newUser = {
-        username: decodedToken.sub,
-        role: decodedToken.scope,
-      };
-      setUser(newUser);
-    } catch (err) {
-      console.error("Error fetching user:", err);
-    }
+    setCategories(res.data.result.content);
+    console.log(res.data.result.content);
   };
 
   useEffect(() => {
-    fetchBooks();
     fetchCategories();
-    fetchUser();
   }, []);
+  useEffect(() => {
+    categories.forEach((cat) => {
+      fetchBookByCategory(cat.id);
+    });
+  }, [categories, fetchBookByCategory]);
 
   return (
     <div className="home-page">
       <Header />
 
       <div className="home-main-container">
-        <SideNavigation />
+        <SideNavigation categories={categories} />
 
         <div className="home-main-content">
           <Banner />
 
           <div className="section">
-            <Link to="/category/new-books" className="section-header">
-              Sách Mới
+            <Link to="/category/22" className="section-header">
+              Sách Văn Học Nước Ngoài
             </Link>
-            <BookSection books={newBooks} />
+            <HomePageBookSection books={categorizedBooks[22]} />
           </div>
 
           <div className="section">
-            <Link to="/category/best-seller-books" className="section-header">
-              Sách Bán Chạy
+            <Link to="/category/17" className="section-header">
+              Sách Kinh doanh
             </Link>
-            <BookSection books={bestSellerBooks} />
+            <HomePageBookSection books={categorizedBooks[17]} />
           </div>
 
           <div className="section">
-            <Link to="/category/coming-soon-books" className="section-header">
-              Sắp Phát Hành
+            <Link to="/category/19" className="section-header">
+              Sách Kỹ Năng
             </Link>
-            <BookSection books={upcomingBooks} />
+            <HomePageBookSection books={categorizedBooks[19]} />
           </div>
 
           <div className="section">
@@ -87,7 +86,7 @@ function HomePage() {
             >
               <span>Danh Mục</span>
             </Link>
-            <BookCategoryGrid />
+            <BookCategoryGrid categories={categories} />
           </div>
 
           <div className="section">

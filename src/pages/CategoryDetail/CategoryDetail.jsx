@@ -4,17 +4,75 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import BookSection from "../../components/BookSection/BookSection";
-import { booksData } from "../../data/booksData";
 import ProductsHeader from "./ProductsHeader/ProductsHeader";
-import { categories } from "../../data/category";
 import { useParams } from "react-router-dom";
-function CategoryDetail() {
-  const { title } = useParams(); // Lấy title từ URL
-  const category = categories.find((item) => item.title === title);
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
-  const booksCategory = booksData.filter(
-    (book) => book.category.toLowerCase === category.name.toLowerCase
-  );
+function CategoryDetail() {
+  const { id } = useParams();
+  const [categories, setCategories] = useState([]);
+  const [categorizedBooks, setCategorizedBooks] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchBookByCategory = useCallback(async (categoryId, page = 0) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=5`
+      );
+
+      const booksArray = res.data.content || [];
+      const totalPages = res.data.totalPages || 1;
+
+      setCategorizedBooks((prevBooks) => ({
+        ...prevBooks,
+        [categoryId]: booksArray,
+      }));
+      setTotalPages(totalPages);
+    } catch (error) {
+      console.error(`Lỗi khi lấy sách danh mục ${categoryId}:`, error);
+    }
+  }, []);
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    fetchBookByCategory(id, newPage);
+  };
+
+  const fetchCategories = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios.get("http://localhost:8080/api/v1/categories");
+      setCategories(res.data.result.content);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
+    if (categories.length > 0) {
+      fetchBookByCategory(id, currentPage);
+    }
+  }, [categories, id, currentPage, fetchBookByCategory]);
+
+  const category = categories.find((item) => item.id === parseInt(id));
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!category) {
+    return <div>Category not found</div>;
+  }
+
   return (
     <div className="category-detail">
       <Header />
@@ -22,12 +80,18 @@ function CategoryDetail() {
       <main className="main-content">
         <Breadcrumb
           categoryName={category.name}
-          categoryTitle={category.title}
+          categoryId={category.id}
+          category={category}
         />
 
         <ProductsHeader title={category.name} />
 
-        <BookSection books={booksCategory} />
+        <BookSection
+          books={categorizedBooks[id]}
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
 
         <Footer />
       </main>

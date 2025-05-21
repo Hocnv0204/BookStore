@@ -1,10 +1,7 @@
 import React from "react";
 import "./Breadcrumb.css";
 import { Link } from "react-router-dom";
-import { categories } from "../../data/category";
-function Breadcrumb({ categoryName, bookTitle }) {
-  const category = categories.find((item) => item.name === categoryName);
-  const categoryTitle = category.title;
+function Breadcrumb({ bookTitle, category }) {
   return (
     <div className="breadcrumb-container">
       <div className="breadcrumb">
@@ -12,8 +9,8 @@ function Breadcrumb({ categoryName, bookTitle }) {
           Trang chủ
         </Link>
         <span className="breadcrumb-separator">{">"}</span>
-        <Link to={`/category/${categoryTitle}`} className="breadcrumb-link">
-          {categoryName}
+        <Link to={`/category/${category.id}`} className="breadcrumb-link">
+          {category.name}
         </Link>
         {bookTitle && (
           <div className="breadcrumb-product">

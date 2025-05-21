@@ -56,7 +56,10 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryDto updateCategory(Long id, CategoryRequest request, MultipartFile image) {
+    public CategoryDto updateCategory(
+            Long id,
+            CategoryRequest request,
+            MultipartFile image) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
         category.setName(request.getName());

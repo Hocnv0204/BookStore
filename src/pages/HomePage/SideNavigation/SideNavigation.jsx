@@ -1,7 +1,6 @@
 import "./SideNavigation.css";
 import { Link } from "react-router-dom";
-import { categories } from "../../../data/category";
-function SideNavigation() {
+function SideNavigation({ categories }) {
   return (
     <div className="side-navigation">
       <ul className="category-list">
@@ -14,7 +13,7 @@ function SideNavigation() {
           )
           .map((category) => (
             <Link
-              to={`/category/${category.title}`}
+              to={`/category/${category.id}`}
               key={category.title}
               className="category-link"
             >

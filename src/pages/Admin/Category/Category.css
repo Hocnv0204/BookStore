@@ -1,0 +1,161 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+}
+
+.category {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.category-container {
+    flex: 1;
+    display: flex;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    overflow: hidden;
+}
+
+.category-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 70%;
+}
+
+.sort-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 150px;
+}
+
+.sort-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    width: 200px;
+    /* Khớp với chiều rộng của nút */
+}
+
+/* Style cho từng tùy chọn trong dropdown */
+.sort-option {
+    background: none;
+    border: none;
+    padding: 10px 12px;
+    width: 100%;
+    text-align: left;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sort-option:hover {
+    background-color: #f5f5f5;
+}
+
+.add-container .add-category-btn {
+    background-color: #00C853;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Hiệu ứng hover */
+.add-container .add-category-btn:hover {
+    background-color: #00b04f;
+    box-shadow: 0 4px 8px rgba(0, 200, 83, 0.3);
+}
+
+/* Hiệu ứng khi nhấn */
+.add-container .add-category-btn:active {
+    background-color: #009844;
+    box-shadow: none;
+    transform: scale(0.98);
+}
+
+/* Nếu có icon trong nút */
+.add-container .add-category-btn i {
+    font-size: 18px;
+}
+
+
+.category-search-container {
+    text-align: left;
+}
+
+#searchInput {
+    width: 300px;
+    padding: 12px 24px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #00C853;
+}
+
+.category-container {
+    flex: 1;
+    display: flex;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    overflow: hidden;
+}
+
+.content-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.add-container {
+    flex-shrink: 0;
+}
+
+.category-sort-container select {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.category-sort-container select:focus {
+    border-color: #00C853;
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.2);
+}

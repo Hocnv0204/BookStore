@@ -17,4 +17,5 @@ public class BookDto {
     private String authorName ;
     private Long categoryId ;
     private String publisher ;
+    private String introduction ;
 }

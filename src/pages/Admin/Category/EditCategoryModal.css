@@ -1,0 +1,195 @@
+/* Nền mờ khi modal mở - Áp dụng cho cả Add và Edit Modal */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.6);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Hộp modal chung - Áp dụng cho cả Add và Edit Modal */
+.modal-box {
+    background: white;
+    padding: 25px;
+    /* Padding tổng thể, nếu cần padding riêng cho nội dung thì chỉnh bên trong */
+    border-radius: 10px;
+    width: 420px;
+    max-width: 90%;
+    /* Đảm bảo responsive */
+    max-height: 80vh;
+    /* Giới hạn chiều cao để có thể cuộn */
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-in-out;
+    display: flex;
+    /* Dùng flexbox để quản lý layout bên trong */
+    flex-direction: column;
+    /* Xếp các phần tử theo cột */
+    overflow: hidden;
+    /* Ẩn các phần nội dung thừa nếu không cuộn */
+    position: relative;
+    /* Quan trọng cho sticky elements */
+}
+
+/* Hiệu ứng mở modal */
+@keyframes fadeIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Style cho nội dung bên trong modal (áp dụng cho .modal-content-inner và .edit-modal-content-inner) */
+/* Đảm bảo class này được sử dụng trong component React của bạn */
+.modal-content-inner,
+.edit-modal-content-inner {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Chiếm toàn bộ chiều cao có sẵn trong .modal-box */
+    padding: 0;
+    /* Loại bỏ padding ở đây nếu modal-box đã có */
+    overflow: hidden;
+    /* Đảm bảo không có thanh cuộn thừa từ đây */
+}
+
+
+/* Tiêu đề modal */
+.modal-content-inner h2,
+.edit-modal-content-inner h2 {
+    margin: 0;
+    padding: 15px 25px;
+    /* Padding ngang khớp với modal-box */
+    font-size: 20px;
+    text-align: center;
+    color: #333;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    /* Cố định tiêu đề khi cuộn */
+    top: 0;
+    z-index: 1;
+    /* Đảm bảo tiêu đề nằm trên nội dung khi cuộn */
+}
+
+/* Container cho phần nội dung có thể cuộn - Áp dụng cho cả Add và Edit Modal */
+.scrollable-content {
+    flex-grow: 1;
+    /* Cho phép nội dung này mở rộng để lấp đầy không gian */
+    overflow-y: auto;
+    /* Cho phép cuộn dọc */
+    padding: 15px 25px;
+    /* Padding cho nội dung form */
+}
+
+/* Nhãn (label) */
+.scrollable-content label {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Ô nhập liệu và textarea chung */
+.scrollable-content input[type="text"],
+.scrollable-content input[type="number"],
+.scrollable-content input[type="file"],
+.scrollable-content select,
+/* Thêm select */
+.scrollable-content textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    /* Dùng màu nhạt hơn */
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    box-sizing: border-box;
+    /* Quan trọng để padding không làm tăng width */
+    transition: border-color 0.2s ease;
+}
+
+/* Focus style */
+.scrollable-content input:focus,
+.scrollable-content select:focus,
+.scrollable-content textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    /* Màu xanh nổi bật khi focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* Khu vực nút bấm - Áp dụng cho cả Add và Edit Modal */
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    /* Nút nằm về phía bên phải */
+    gap: 10px;
+    /* Khoảng cách giữa các nút */
+    padding: 15px 25px;
+    /* Padding ngang khớp với modal-box */
+    background-color: #fff;
+    border-top: 1px solid #ddd;
+    /* Viền trên để phân biệt */
+    position: sticky;
+    /* Cố định nút ở dưới cùng */
+    bottom: 0;
+    z-index: 1;
+    /* Đảm bảo nút nằm trên nội dung khi cuộn */
+}
+
+/* Nút chung */
+.modal-buttons button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Nút Hủy */
+.modal-buttons .cancel-btn {
+    background: #ccc;
+    color: black;
+}
+
+.modal-buttons .cancel-btn:hover {
+    background: #b3b3b3;
+}
+
+/* Nút Thêm (Add) */
+.modal-buttons .add-btn {
+    background: #007bff;
+    /* Màu xanh mặc định */
+    color: white;
+}
+
+.modal-buttons .add-btn:hover {
+    background: #0056b3;
+    /* Xanh đậm hơn khi hover */
+}
+
+/* Nút Lưu (Save) */
+.modal-buttons .save-button {
+    background: #28a745;
+    /* Màu xanh lá */
+    color: white;
+}
+
+.modal-buttons .save-button:hover {
+    background: #218838;
+    /* Xanh lá đậm hơn khi hover */
+}

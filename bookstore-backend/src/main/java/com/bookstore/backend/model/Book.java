@@ -37,6 +37,9 @@ public class Book {
     @Column(nullable = false)
     String publisher ;
 
+    @Column(nullable = false)
+    String introduction ;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     Category category;

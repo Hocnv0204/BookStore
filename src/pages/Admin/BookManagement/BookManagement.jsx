@@ -17,6 +17,7 @@ const HeaderTable = [
   "Tác Giả",
   "Danh Mục",
   "Nhà Xuất Bản",
+  "Giới Thiệu",
   "",
 ];
 

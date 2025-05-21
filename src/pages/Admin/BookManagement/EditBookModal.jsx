@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
-import axios from "axios"; // Thêm axios để fetch categories và có thể là update sách
-import "./EditBookModal.css"; // Đảm bảo bạn có file CSS này cho modal
+import axios from "axios";
+import "./EditBookModal.css";
 
 Modal.setAppElement("#root"); // Tránh lỗi accessibility
 
@@ -11,11 +11,12 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
     id: book.id || "",
     title: book.title || "",
     publisher: book.publisher || "",
-    authorName: book.author || "", // Đổi 'author' thành 'authorName' để khớp với AddBookModal
+    authorName: book.author || "",
     price: book.price || "",
     quantityStock: book.quantityStock || "",
     description: book.description || "",
     categoryId: book.categoryId || "", // Thêm categoryId
+    introduction: book.introduction || "",
   });
 
   const [image, setImage] = useState(null); // Để xử lý ảnh mới
@@ -27,11 +28,12 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       id: book.id || "",
       title: book.title || "",
       publisher: book.publisher || "",
-      authorName: book.author || "",
+      authorName: book.authorName || "",
       price: book.price || "",
       quantityStock: book.quantityStock || "",
       description: book.description || "",
       categoryId: book.categoryId || "",
+      introduction: book.introduction || "",
     });
     setImage(null); // Reset ảnh khi mở modal mới
   }, [book]);
@@ -72,6 +74,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       categoryId: parseInt(formData.categoryId),
       description: formData.description,
       publisher: formData.publisher,
+      introduction: formData.introduction,
     };
 
     try {
@@ -83,10 +86,6 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       if (image) {
         bookData.append("image", image);
       } else {
-        // Nếu không có ảnh mới, bạn có thể cần gửi một flag hoặc giữ lại ảnh cũ
-        // Tùy thuộc vào API backend của bạn, bạn có thể không cần append "image"
-        // hoặc gửi một giá trị đặc biệt nếu không muốn thay đổi ảnh.
-        // Hiện tại, nếu image là null, nó sẽ không được append.
       }
 
       // Gửi yêu cầu PUT để cập nhật sách
@@ -100,7 +99,6 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
           },
         }
       );
-      console.log("Cập nhật sách thành công:", res);
       onSave(res.data); // Truyền dữ liệu sách đã cập nhật về component cha
       onClose(); // Đóng modal
     } catch (error) {
@@ -189,6 +187,13 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
               value={formData.description}
               onChange={handleChange}
             ></textarea>
+            <label>Giới thiệu</label>
+            <textarea
+              name="introduction"
+              rows="3"
+              value={formData.introduction}
+              onChange={handleChange}
+            ></textarea>
             <label>Ảnh Sách (Để trống nếu không thay đổi)</label>
             <input
               type="file"
@@ -203,8 +208,6 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
             Hủy
           </button>
           <button type="submit" onClick={handleSave} className="save-button">
-            {" "}
-            {/* Đổi onClick để gọi handleSave */}
             Lưu
           </button>
         </div>

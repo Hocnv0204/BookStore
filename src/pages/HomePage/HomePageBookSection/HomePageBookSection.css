@@ -182,100 +182,30 @@
 .pagination {
     display: flex;
     justify-content: center;
-    align-items: center;
-    margin: 2rem 0;
-    gap: 1.5rem;
-    padding: 1rem;
+    margin-top: 20px;
+    gap: 10px;
 }
 
-.pagination-button {
-    padding: 0.8rem 1.5rem;
-    border: 2px solid #00CC66;
-    background-color: white;
-    border-radius: 8px;
+.pagination button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: #f5f5f5;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: #00CC66;
-    min-width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    transition: background-color 0.2s;
 }
 
-.pagination-button:hover:not(:disabled) {
-    background-color: #00CC66;
-    color: black;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+.pagination button:hover {
+    background-color: #ddd;
 }
 
-.pagination-button:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: #ccc;
-    color: #999;
-    box-shadow: none;
-}
-
-.page-info {
-    font-size: 1.1rem;
-    color: #333;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    background-color: #f8f8f8;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.page-numbers {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin: 0 1rem;
-}
-
-.page-number {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #00CC66;
-    background-color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: #00CC66;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-size: 1.1rem;
-}
-
-.page-number:hover:not(.active) {
-    background-color: #00CC66;
-    color: black;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.page-number.active {
+.pagination button.active {
     background-color: #00CC66;
     color: white;
-    cursor: default;
-    transform: scale(1.1);
+    border-color: #00CC66;
 }
 
-.page-ellipsis {
-    color: #666;
-    font-weight: bold;
-    padding: 0 0.5rem;
-    font-size: 1.2rem;
-    margin: 0 0.5rem;
+.pagination button:disabled {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
 }

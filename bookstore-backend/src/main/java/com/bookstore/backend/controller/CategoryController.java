@@ -39,13 +39,13 @@ public class CategoryController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/admin/categories")
     public ResponseEntity<CategoryDto> createCategory(
-        @RequestPart String request , 
+        @RequestPart String  category,
         @RequestPart MultipartFile image 
         ){
             ObjectMapper objectMapper = new ObjectMapper();
             CategoryRequest categoryRequest = null;
             try{
-                categoryRequest = objectMapper.readValue(request, CategoryRequest.class);
+                categoryRequest = objectMapper.readValue(category, CategoryRequest.class);
             }catch(Exception e){
                 throw new RuntimeException("Invalid request body");
             }
@@ -55,13 +55,13 @@ public class CategoryController {
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/admin/categories/{id}")
     public ResponseEntity<CategoryDto> updateCategory(
         @PathVariable Long id, 
-        @RequestPart String request , 
-        @RequestPart MultipartFile image 
+        @RequestPart (value = "category")String category ,
+        @RequestPart (value = "image" , required = false)MultipartFile image
     ){
         ObjectMapper objectMapper = new ObjectMapper();
         CategoryRequest categoryRequest = null;
         try{
-            categoryRequest = objectMapper.readValue(request, CategoryRequest.class);
+            categoryRequest = objectMapper.readValue(category, CategoryRequest.class);
         }catch(Exception e){
             throw new RuntimeException("Invalid request body");
         }

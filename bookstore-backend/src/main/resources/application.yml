@@ -28,7 +28,7 @@ spring:
       enabled: true
   jwt:
     signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-    valid-duration: 1800
+    valid-duration: 1800000
     refreshable-duration: 604800
   cloudinary:
     cloudinary.cloud_name: "dzvxgyg88"

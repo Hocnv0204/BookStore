@@ -58,6 +58,7 @@ public class BookServiceImpl implements BookService {
         // Create book
         
         Book book = Book.builder()
+                .introduction(request.getIntroduction())
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .publisher(request.getPublisher())
@@ -84,6 +85,7 @@ public class BookServiceImpl implements BookService {
         book.setQuantityStock(request.getQuantityStock());
         book.setAuthorName(request.getAuthorName());
         book.setPublisher(request.getPublisher());
+        book.setIntroduction(request.getIntroduction());
 
 
 

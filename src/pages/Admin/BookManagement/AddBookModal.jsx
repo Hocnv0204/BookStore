@@ -15,7 +15,8 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
     price: "",
     quantityStock: "",
     description: "",
-    categoryId: 1, // ví dụ mặc định categoryId = 1, sau này bạn có thể chọn từ dropdown
+    categoryId: 1,
+    introduction: "",
   });
 
   const [image, setImage] = useState(null);
@@ -52,6 +53,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
       categoryId: parseInt(formData.categoryId),
       description: formData.description,
       publisher: formData.publisher,
+      introduction: formData.introduction,
     };
     try {
       const bookData = new FormData();
@@ -76,9 +78,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
           },
         }
       );
-      console.log("Thêm sách thành công:", res);
       onSave(res.data);
-      alert("Thêm sách thành công!");
       onClose(); // đóng modal
     } catch (error) {
       console.error("Lỗi khi thêm sách:", error);
@@ -148,7 +148,12 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
               rows="3"
               onChange={handleChange}
             ></textarea>
-
+            <label>Giới thiệu</label>
+            <textarea
+              name="introduction"
+              rows="3"
+              onChange={handleChange}
+            ></textarea>
             <label>Ảnh Sách</label>
             <input
               type="file"

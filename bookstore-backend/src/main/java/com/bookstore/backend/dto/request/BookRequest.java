@@ -29,6 +29,9 @@ public class BookRequest {
     @NotNull
     private String publisher ;
 
+    @NotNull
+    private String introduction ;
+
     @NotNull(message = "Category ID is required")
     private Long categoryId;
 } 
