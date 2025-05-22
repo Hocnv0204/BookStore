@@ -12,6 +12,9 @@ function Table({
   type,
   currentPage,
   totalPages,
+  totalElements,
+  pageSize,
+  last,
   onPageChange,
   onEdit,
   onDelete,
@@ -208,8 +211,11 @@ function Table({
         </table>
       </div>
       <Pagination
-        currentPage={currentPage}
+        pageNumber={currentPage}
         totalPages={totalPages}
+        totalElements={totalElements}
+        pageSize={pageSize}
+        last={last}
         onPageChange={onPageChange}
       />
       {/* Book modal */}

@@ -16,6 +16,9 @@ function CategoryDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [pageSize, setPageSize] = useState(5);
+  const [last, setLast] = useState(true);
 
   const fetchBookByCategory = useCallback(async (categoryId, page = 0) => {
     try {
@@ -25,12 +28,18 @@ function CategoryDetail() {
 
       const booksArray = res.data.content || [];
       const totalPages = res.data.totalPages || 1;
+      const totalElements = res.data.totalElements || 0;
+      const pageSize = res.data.size || 5;
+      const last = res.data.last ?? true;
 
       setCategorizedBooks((prevBooks) => ({
         ...prevBooks,
         [categoryId]: booksArray,
       }));
       setTotalPages(totalPages);
+      setTotalElements(totalElements);
+      setPageSize(pageSize);
+      setLast(last);
     } catch (error) {
       console.error(`Lỗi khi lấy sách danh mục ${categoryId}:`, error);
     }
@@ -72,7 +81,7 @@ function CategoryDetail() {
   if (!category) {
     return <div>Category not found</div>;
   }
-
+  console.log(categorizedBooks[id]);
   return (
     <div className="category-detail">
       <Header />
@@ -88,9 +97,13 @@ function CategoryDetail() {
 
         <BookSection
           books={categorizedBooks[id]}
+          pageNumber={currentPage}
           totalPages={totalPages}
-          currentPage={currentPage}
+          totalElements={totalElements}
+          pageSize={pageSize}
+          last={last}
           onPageChange={handlePageChange}
+          showPagination={true}
         />
 
         <Footer />

@@ -1,20 +1,20 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./CheckoutForm.css";
+import axios from "axios";
 
 function CheckoutForm() {
   const [formData, setFormData] = useState({
-    fullName: "",
-    phone: "",
+    receiverName: "",
+    phoneNumber: "",
     email: "",
-    address: "",
-    province: "",
-    district: "",
-    ward: "",
-    packaging: "",
-    paymentMethod: "",
-    notes: "",
+    deliveryAddress: "",
+    note: "",
   });
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,10 +24,51 @@ function CheckoutForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log(formData);
+    setSuccessMessage("");
+    setErrorMessage("");
+    setIsSubmitting(true);
+    try {
+      // Gửi dữ liệu đúng structure cho API
+      const res = await axios.post(
+        "http://localhost:8080/users/orders/from-cart",
+        {
+          receiverName: formData.receiverName,
+          deliveryAddress: formData.deliveryAddress,
+          phoneNumber: formData.phoneNumber,
+          email: formData.email,
+          note: formData.note,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (res.data && res.data.id) {
+        setSuccessMessage("Đặt hàng thành công!");
+        setFormData({
+          receiverName: "",
+          phoneNumber: "",
+          email: "",
+          deliveryAddress: "",
+          note: "",
+        });
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
+      } else {
+        setErrorMessage("Đặt hàng thất bại. Vui lòng thử lại.");
+      }
+    } catch (error) {
+      setErrorMessage(
+        error.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -36,32 +77,37 @@ function CheckoutForm() {
       <div className="form-container">
         <h2 className="form-section-title">THÔNG TIN ĐƠN HÀNG</h2>
 
+        {successMessage && (
+          <div className="success-message">{successMessage}</div>
+        )}
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+
         <div className="form-fields">
           <div className="form-group">
-            <label htmlFor="fullName" className="form-label">
+            <label htmlFor="receiverName" className="form-label">
               Họ và tên <span className="required">(*)</span>
             </label>
             <input
               type="text"
-              id="fullName"
-              name="fullName"
+              id="receiverName"
+              name="receiverName"
               className="form-input"
-              value={formData.fullName}
+              value={formData.receiverName}
               onChange={handleChange}
               required
             />
           </div>
 
           <div className="form-group">
-            <label htmlFor="phone" className="form-label">
+            <label htmlFor="phoneNumber" className="form-label">
               Điện thoại <span className="required">(*)</span>
             </label>
             <input
               type="tel"
-              id="phone"
-              name="phone"
+              id="phoneNumber"
+              name="phoneNumber"
               className="form-input"
-              value={formData.phone}
+              value={formData.phoneNumber}
               onChange={handleChange}
               required
             />
@@ -84,131 +130,37 @@ function CheckoutForm() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="address" className="form-label">
+            <label htmlFor="deliveryAddress" className="form-label">
               Địa chỉ nhận <span className="required">(*)</span>
             </label>
             <input
               type="text"
-              id="address"
-              name="address"
+              id="deliveryAddress"
+              name="deliveryAddress"
               className="form-input"
-              value={formData.address}
+              value={formData.deliveryAddress}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="province" className="form-label">
-                Tỉnh/Thành <span className="required">(*)</span>
-              </label>
-              <select
-                id="province"
-                name="province"
-                className="form-select"
-                value={formData.province}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn tỉnh thành</option>
-                <option value="hanoi">Hà Nội</option>
-                <option value="hcm">TP. Hồ Chí Minh</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="district" className="form-label">
-                Quận/Huyện <span className="required">(*)</span>
-              </label>
-              <select
-                id="district"
-                name="district"
-                className="form-select"
-                value={formData.district}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn quận huyện</option>
-                <option value="district1">Quận 1</option>
-                <option value="district2">Quận 2</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="ward" className="form-label">
-                Phường/Xã <span className="required">(*)</span>
-              </label>
-              <select
-                id="ward"
-                name="ward"
-                className="form-select"
-                value={formData.ward}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Chọn phường xã</option>
-                <option value="ward1">Phường 1</option>
-                <option value="ward2">Phường 2</option>
-              </select>
-            </div>
-          </div>
-
           <div className="form-group">
-            <label htmlFor="packaging" className="form-label">
-              Đóng Gói <span className="required">(*)</span>
-            </label>
-            <select
-              id="packaging"
-              name="packaging"
-              className="form-select"
-              value={formData.packaging}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Chọn quy cách đóng gói</option>
-              <option value="standard">Tiêu chuẩn</option>
-              <option value="gift">Gói quà</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="paymentMethod" className="form-label">
-              Hình thức thanh toán <span className="required">(*)</span>
-            </label>
-            <select
-              id="paymentMethod"
-              name="paymentMethod"
-              className="form-select"
-              value={formData.paymentMethod}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Chọn hình thức</option>
-              <option value="cod">Thanh toán khi nhận hàng</option>
-              <option value="bank">Chuyển khoản</option>
-            </select>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="notes" className="form-label">
+            <label htmlFor="note" className="form-label">
               Ghi chú
             </label>
             <textarea
-              id="notes"
-              name="notes"
+              id="note"
+              name="note"
               className="form-textarea"
               placeholder="Ghi chú về đơn hàng"
-              value={formData.notes}
+              value={formData.note}
               onChange={handleChange}
             ></textarea>
           </div>
         </div>
-        <Link to="/">
-          <button type="submit" className="submit-button">
-            ĐẶT HÀNG
-          </button>
-        </Link>
+        <button type="submit" className="submit-button" disabled={isSubmitting}>
+          {isSubmitting ? "Đang đặt hàng..." : "ĐẶT HÀNG"}
+        </button>
       </div>
     </form>
   );

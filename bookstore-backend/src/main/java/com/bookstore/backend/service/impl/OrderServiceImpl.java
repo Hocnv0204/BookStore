@@ -214,4 +214,11 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(status);
         return orderMapper.toDto(orderRepository.save(order));
     }
+    @Override
+    @Transactional(readOnly = true)
+    public OrderDto getOrderById(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        return orderMapper.toDto(order);
+    }
 } 

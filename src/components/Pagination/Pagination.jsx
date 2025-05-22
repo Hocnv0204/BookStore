@@ -1,65 +1,57 @@
 import React from "react";
 import "./Pagination.css";
 
-function Pagination({ totalPages, currentPage, onPageChange }) {
-  const getPageNumbers = () => {
-    const pages = [];
-
-    if (totalPages <= 1) return pages;
-
-    pages.push(1);
-
-    if (currentPage > 3) pages.push("...");
-
-    for (
-      let i = Math.max(2, currentPage - 1);
-      i <= Math.min(totalPages - 1, currentPage + 1);
-      i++
-    ) {
-      pages.push(i);
-    }
-
-    if (currentPage + 2 < totalPages) pages.push("...");
-
-    if (totalPages > 1) pages.push(totalPages);
-
-    return pages;
-  };
-
-  const handleClick = (page) => {
-    if (page !== "...") {
-      onPageChange(page - 1); // chuyển page từ 1-based về 0-based
+const Pagination = ({
+  pageNumber = 0,
+  pageSize = 10,
+  totalElements = 0,
+  totalPages = 1,
+  last = true,
+  onPageChange,
+}) => {
+  const handlePageChange = (newPage) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      onPageChange(newPage);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
   return (
-    <div className="pagination">
-      <button
-        disabled={currentPage === 0}
-        onClick={() => onPageChange(currentPage - 1)}
-      >
-        {"<"}
-      </button>
-
-      {getPageNumbers().map((page, index) => (
+    <div className="pagination-container">
+      <div className="pagination-info">
+        Hiển thị {pageNumber * pageSize + 1} -{" "}
+        {Math.min((pageNumber + 1) * pageSize, totalElements)} của{" "}
+        {totalElements} kết quả
+      </div>
+      <div className="pagination-controls">
         <button
-          key={index}
-          className={page === currentPage + 1 ? "active" : ""}
-          onClick={() => handleClick(page)}
-          disabled={page === "..."}
+          className="pagination-button"
+          onClick={() => handlePageChange(pageNumber - 1)}
+          disabled={pageNumber === 0}
         >
-          {page}
+          <i className="fas fa-chevron-left">{"<"}</i>
         </button>
-      ))}
-
-      <button
-        disabled={currentPage === totalPages - 1}
-        onClick={() => onPageChange(currentPage + 1)}
-      >
-        {">"}
-      </button>
+        <div className="page-numbers">
+          {Array.from({ length: totalPages }, (_, i) => i).map((page) => (
+            <button
+              key={page}
+              className={`page-number ${page === pageNumber ? "active" : ""}`}
+              onClick={() => handlePageChange(page)}
+            >
+              {page + 1}
+            </button>
+          ))}
+        </div>
+        <button
+          className="pagination-button"
+          onClick={() => handlePageChange(pageNumber + 1)}
+          disabled={last}
+        >
+          <i className="fas fa-chevron-right">{">"}</i>
+        </button>
+      </div>
     </div>
   );
-}
+};
 
 export default Pagination;

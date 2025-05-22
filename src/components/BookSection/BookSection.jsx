@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom"; // Import Link từ react-router-dom
 import { useState, useEffect } from "react"; // Import useState và useEffect để quản lý trạng thái phân trang
 import "./BookSection.css";
+import Pagination from "../Pagination/Pagination";
 
-function BookSection({ books, totalPages = 1, currentPage = 0, onPageChange }) {
-  // Thêm useEffect để scroll to top khi books thay đổi
+function BookSection({
+  books,
+  pageNumber = 0,
+  pageSize = 10,
+  totalElements = 0,
+  totalPages = 1,
+  last = true,
+  onPageChange,
+  showPagination = false,
+}) {
   useEffect(() => {
     if (books && Array.isArray(books)) {
       window.scrollTo({
@@ -21,68 +30,11 @@ function BookSection({ books, totalPages = 1, currentPage = 0, onPageChange }) {
     );
   }
 
-  const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      onPageChange(newPage);
-    }
-  };
-
-  // Tạo mảng các số trang để hiển thị
-  const getPageNumbers = () => {
-    const pageNumbers = [];
-    const maxVisiblePages = 5; // Số trang tối đa hiển thị
-
-    if (totalPages <= maxVisiblePages) {
-      // Nếu tổng số trang ít hơn maxVisiblePages, hiển thị tất cả
-      for (let i = 0; i < totalPages; i++) {
-        pageNumbers.push(i);
-      }
-    } else {
-      // Luôn hiển thị trang đầu tiên
-      pageNumbers.push(0);
-
-      // Tính toán các trang ở giữa
-      let startPage = Math.max(1, currentPage - 1);
-      let endPage = Math.min(totalPages - 2, currentPage + 1);
-
-      // Điều chỉnh để luôn hiển thị đủ maxVisiblePages
-      if (startPage === 1) {
-        endPage = Math.min(totalPages - 2, maxVisiblePages - 2);
-      } else if (endPage === totalPages - 2) {
-        startPage = Math.max(1, totalPages - maxVisiblePages + 1);
-      }
-
-      // Thêm dấu ... nếu cần
-      if (startPage > 1) {
-        pageNumbers.push("...");
-      }
-
-      // Thêm các trang ở giữa
-      for (let i = startPage; i <= endPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      // Thêm dấu ... nếu cần
-      if (endPage < totalPages - 2) {
-        pageNumbers.push("...");
-      }
-
-      // Luôn hiển thị trang cuối cùng
-      pageNumbers.push(totalPages - 1);
-    }
-
-    return pageNumbers;
-  };
-
   return (
     <div>
       <div className="book-grid">
         {books.map((book) => (
-          <Link
-            to={`/product/${book.id}`} // Đường dẫn động đến trang chi tiết sản phẩm
-            key={book.id}
-            className="book-card"
-          >
+          <Link to={`/product/${book.id}`} key={book.id} className="book-card">
             <div className="book-image-container">
               <img
                 src={book.imageUrl || "/placeholder.svg"}
@@ -114,43 +66,16 @@ function BookSection({ books, totalPages = 1, currentPage = 0, onPageChange }) {
         ))}
       </div>
 
-      <div className="pagination">
-        <button
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 0}
-          className="pagination-button"
-        >
-          Trước
-        </button>
-
-        <div className="page-numbers">
-          {getPageNumbers().map((pageNum, index) =>
-            pageNum === "..." ? (
-              <span key={`ellipsis-${index}`} className="page-ellipsis">
-                ...
-              </span>
-            ) : (
-              <button
-                key={pageNum}
-                onClick={() => handlePageChange(pageNum)}
-                className={`page-number ${
-                  currentPage === pageNum ? "active" : ""
-                }`}
-              >
-                {pageNum + 1}
-              </button>
-            )
-          )}
-        </div>
-
-        <button
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages - 1}
-          className="pagination-button"
-        >
-          Sau
-        </button>
-      </div>
+      {showPagination && (
+        <Pagination
+          pageNumber={pageNumber}
+          pageSize={pageSize}
+          totalElements={totalElements}
+          totalPages={totalPages}
+          last={last}
+          onPageChange={onPageChange}
+        />
+      )}
     </div>
   );
 }

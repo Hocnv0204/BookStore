@@ -1,28 +1,13 @@
 import "./Header.css";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import axios from "axios";
+
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
-  // useEffect(() => {
-  //   const token = localStorage.getItem("accessToken");
-  //   const userData = localStorage.getItem("user");
+  const [cart, setCart] = useState(null);
 
-  //   if (!token || !userData) {
-  //     localStorage.removeItem("user");
-  //     setUser(null);
-  //     return;
-  //   }
-
-  //   try {
-  //     const parsedUser = JSON.parse(userData);
-  //     setUser(parsedUser);
-  //   } catch (error) {
-  //     console.error("Lỗi khi đọc user từ localStorage:", error);
-  //     setUser(null);
-  //     localStorage.removeItem("user");
-  //   }
-  // }, []);
   const loadUser = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -36,6 +21,32 @@ function Header() {
       setUser(null);
     }
   };
+
+  const fetchCart = async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) return;
+
+      const res = await axios.get("http://localhost:8080/users/cart", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (res.data && res.data.content && res.data.content.length > 0) {
+        setCart(res.data.content[0]); // Lấy cart đầu tiên từ mảng content
+      }
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setCart(null);
+    }
+  };
+
+  // Thêm useEffect để theo dõi thay đổi của cart
+  useEffect(() => {
+    console.log("Cart updated:", cart);
+  }, [cart]);
+
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     const userData = localStorage.getItem("user");
@@ -43,9 +54,12 @@ function Header() {
     if (!token || !userData) {
       localStorage.removeItem("user");
       setUser(null);
+      setCart(null);
       return;
     }
+
     loadUser();
+    fetchCart();
 
     // Tự cập nhật khi tab khác login/logout
     const onStorageChange = (e) => {
@@ -56,12 +70,21 @@ function Header() {
     window.addEventListener("storage", onStorageChange);
     return () => window.removeEventListener("storage", onStorageChange);
   }, []);
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
     setUser(null);
+    setCart(null);
   };
+
+  // Tính tổng số lượng sản phẩm trong giỏ hàng
+  const getTotalItems = () => {
+    if (!cart || !cart.items) return 0;
+    return cart.items.reduce((total, item) => total + item.quantity, 0);
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -144,7 +167,7 @@ function Header() {
                 <circle cx="20" cy="21" r="1" />
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
               </svg>
-              <span className="cart-count">4</span>
+              <span className="cart-count">{getTotalItems()}</span>
             </Link>
           )}
         </div>

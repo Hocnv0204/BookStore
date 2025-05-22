@@ -78,6 +78,13 @@
     text-decoration: line-through;
 }
 
+.no-books-message {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+    font-size: 16px;
+}
+
 @media (max-width: 576px) {
     .book-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -176,106 +183,4 @@
     font-size: 14px;
     color: #999;
     text-decoration: line-through;
-}
-
-/* Style cho phân trang */
-.pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2rem 0;
-    gap: 1.5rem;
-    padding: 1rem;
-}
-
-.pagination-button {
-    padding: 0.8rem 1.5rem;
-    border: 2px solid #00CC66;
-    background-color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: #00CC66;
-    min-width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-button:hover:not(:disabled) {
-    background-color: #00CC66;
-    color: black;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.pagination-button:active:not(:disabled) {
-    transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    border-color: #ccc;
-    color: #999;
-    box-shadow: none;
-}
-
-.page-info {
-    font-size: 1.1rem;
-    color: #333;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    background-color: #f8f8f8;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-.page-numbers {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    margin: 0 1rem;
-}
-
-.page-number {
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid #00CC66;
-    background-color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    color: #00CC66;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    font-size: 1.1rem;
-}
-
-.page-number:hover:not(.active) {
-    background-color: #00CC66;
-    color: black;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.page-number.active {
-    background-color: #00CC66;
-    color: white;
-    cursor: default;
-    transform: scale(1.1);
-}
-
-.page-ellipsis {
-    color: #666;
-    font-weight: bold;
-    padding: 0 0.5rem;
-    font-size: 1.2rem;
-    margin: 0 0.5rem;
 }

@@ -11,6 +11,22 @@
     margin-bottom: 8px;
 }
 
+.product-description {
+    /* Giữ nguyên các style bạn đã có */
+    font-size: 1em;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    color: #666;
+    border-top: 1px dashed #eee;
+    padding-top: 15px;
+
+    /* Thêm thuộc tính này để xử lý ký tự xuống dòng (line breaks) */
+    white-space: pre-wrap;
+    /* Quan trọng: Giữ lại khoảng trắng và ngắt dòng từ nguồn */
+    word-break: break-word;
+    /* Đảm bảo các từ dài cũng sẽ ngắt dòng nếu cần */
+}
+
 .author-label {
     color: #666;
     margin-right: 16px;
@@ -59,20 +75,97 @@
     margin-bottom: 16px;
 }
 
+/* Buy Button Container */
+.buy-button-container {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+    justify-content: flex-start;
+}
+
 .buy-button {
     background-color: #ff3300;
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 8px 32px;
+    padding: 12px 32px;
     font-weight: 500;
+    font-size: 16px;
     cursor: pointer;
-    margin-bottom: 16px;
-    transition: background-color 0.2s;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .buy-button:hover {
     background-color: #e62e00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 51, 0, 0.2);
+}
+
+.add-to-cart-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    min-width: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-to-cart-button:hover:not(:disabled) {
+    background-color: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+}
+
+.add-to-cart-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Message styles */
+.message {
+    padding: 12px;
+    border-radius: 4px;
+    margin: 16px 0;
+    text-align: left;
+    font-weight: 500;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 .benefits {
@@ -94,11 +187,4 @@
 
 .bold {
     font-weight: 700;
-}
-
-/* Buy Button Container */
-.buy-button-container {
-    display: flex;
-    justify-content: center;
-    margin-top: 32px;
 }

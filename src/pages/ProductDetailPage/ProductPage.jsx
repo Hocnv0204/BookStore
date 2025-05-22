@@ -8,107 +8,120 @@ import Pagination from "./Pagination/Pagination";
 import Comments from "./Comments/Comments";
 import Footer from "../../components/Footer/Footer";
 import BookSection from "../../components/BookSection/BookSection";
-import { booksData } from "../../data/booksData";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-function ProductPage() {
-  // Sample book data for related books
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
+function ProductPage() {
+  const [book, setBook] = useState(null);
+  const [relatedBooks, setRelatedBooks] = useState([]);
+  const [recommendedBooks, setRecommendedBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   const { id } = useParams();
-  const book = booksData.find((book) => book.id === Number(id));
-  const Author = book.author;
-  const relatedBooks = booksData
-    .filter((book) => book.author === Author && book.id !== Number(id))
-    .slice(0, 5);
-  const recommendedBooks = booksData
-    .slice(0, 5)
-    .filter((book) => book.id !== Number(id));
-  // Book details data
-  const bookDetails = [
-    { label: "Mã hàng:", value: "8935235789876" },
-    { label: "Nhà xuất bản:", value: "Nhà Xuất Bản Phương Nam" },
-    { label: "Tác giả:", value: "Jordan B. Peterson" },
-    { label: "Người dịch:", value: "Trí Nguyễn" },
-    { label: "NXB:", value: "Lao Động" },
-    { label: "Năm XB:", value: "2023" },
-    { label: "Ngôn ngữ:", value: "Tiếng Việt" },
-    { label: "Trọng lượng (gr):", value: "540" },
-    { label: "Kích thước bao bì:", value: "20.5 x 13 x 2.8 cm" },
-    { label: "Số trang:", value: "450" },
-    { label: "Hình thức:", value: "Bìa Mềm" },
-  ];
+  const [categories, setCategories] = useState([]);
+  const fetchBookById = async () => {
+    try {
+      setIsLoading(true);
+      const res = await axios.get(`http://localhost:8080/api/v1/books/${id}`);
+      if (res.data) {
+        setBook(res.data);
+        // Fetch related books by author
+        const relatedRes = await axios.get(
+          `http://localhost:8080/api/v1/books?authorName=${res.data.authorName}&page=0&size=5`
+        );
+        if (relatedRes.data && Array.isArray(relatedRes.data.content)) {
+          setRelatedBooks(
+            relatedRes.data.content.filter((book) => book.id !== parseInt(id))
+          );
+        }
+        // Fetch recommended books (latest books)
+        const recommendedRes = await axios.get(
+          "http://localhost:8080/api/v1/books?page=0&size=5"
+        );
+        if (recommendedRes.data && Array.isArray(recommendedRes.data.content)) {
+          setRecommendedBooks(
+            recommendedRes.data.content.filter(
+              (book) => book.id !== parseInt(id)
+            )
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching book:", error);
+      navigate("/404");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  const fetchCategory = async () => {
+    const res = await axios.get(`http://localhost:8080/api/v1/categories`);
+    setCategories(res.data.result.content);
+    console.log(res.data);
+  };
+  useEffect(() => {
+    fetchBookById();
+    fetchCategory();
+  }, [id]);
+  console.log(categories);
+  const category = categories.find(
+    (item) => item.id === parseInt(book.categoryId)
+  );
+  console.log(category);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!book) {
+    return <div>Book not found</div>;
+  }
 
   return (
     <div className="app-container">
       <Header />
-      <Breadcrumb categoryName={book.category} bookTitle={book.title} />
+      <Breadcrumb
+        categoryName={category?.name || "Uncategorized"}
+        bookTitle={book?.title}
+      />
 
       <main className="main-content">
-        <ProductContainer
-          title={book.title}
-          image={book.image}
-          price={book.price}
-          author={book.author}
-        />
+        <ProductContainer book={book} />
 
         <Section
           className="introduction-section"
           title="Giới Thiệu Sách"
           content={
             <div className="intro-description">
-              <p>
-                Cuộc sống hiện nay ở thời Collect book trong một thế giới Phong
-                cách 2025 như thế nào? Hãy khám phá ngay!
-              </p>
-              <p>- Chất liệu và nguồn gốc PVC</p>
-              <p>- Bộ khiên bảo trọng 39 Mảnh Khảo 2 mặt, bộ đủ 21 card</p>
-              <p>- Sách Tiếng Việt</p>
-              <p>- Kích thước: cho size card: 6.5cm</p>
-              <p>- Hàng Nhật Bản, Namthan</p>
+              <p>{book.introduction || "Chưa có mô tả cho sách này."}</p>
             </div>
           }
         />
 
         <Section
-          className="details-section"
-          title="Thông Tin Chi Tiết"
-          content={
-            <table className="details-table">
-              <tbody>
-                {bookDetails.map((detail, index) => (
-                  <tr
-                    key={index}
-                    className={index % 2 === 0 ? "even-row" : "odd-row"}
-                  >
-                    <td className="details-label">{detail.label}</td>
-                    <td className="details-value">{detail.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          }
-        />
-        <Link to="/cart">
-          <div className="buy-button-container">
-            <button className="buy-button">Mua ngay</button>
-          </div>
-        </Link>
-        <Section
           className="related-books-section"
           title="Sách Cùng Tác Giả"
           content={
-            <BookSection title="Sách Cùng Tác Giả" books={relatedBooks} />
+            <BookSection
+              title="Sách Cùng Tác Giả"
+              books={relatedBooks}
+              showPagination={false}
+            />
           }
         />
 
         <Section
           title="Có Thể Bạn Quan Tâm"
           content={
-            <BookSection title="Có Thể Bạn Quan Tâm" books={recommendedBooks} />
+            <BookSection
+              title="Có Thể Bạn Quan Tâm"
+              books={recommendedBooks}
+              showPagination={false}
+            />
           }
         />
 
-        {/* <Pagination /> */}
         <Comments />
       </main>
 

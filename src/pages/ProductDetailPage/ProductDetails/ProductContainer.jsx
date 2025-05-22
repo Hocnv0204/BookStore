@@ -2,20 +2,20 @@ import React from "react";
 import "./ProductContainer.css";
 import ProductDetails from "./ProductDetails";
 
-function ProductContainer({ title, author, price, image }) {
+function ProductContainer({ book }) {
   return (
     <div className="product-container">
       {/* Product Image */}
       <div className="product-image-container">
         <img
-          src={image || "/placeholder.svg"}
-          alt={title}
+          src={book.imageUrl || "/placeholder.svg"}
+          alt={book.title}
           className="product-image"
         />
       </div>
 
       {/* Product Details */}
-      <ProductDetails title={title} author={author} price={price} />
+      <ProductDetails book={book} />
     </div>
   );
 }

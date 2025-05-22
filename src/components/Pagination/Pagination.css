@@ -1,29 +1,210 @@
-.pagination {
+/* Container chính của toàn bộ phân trang */
+.pagination-container {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin-top: 40px;
+    flex-direction: column;
+    /* Sắp xếp thông tin và điều khiển theo cột */
+    align-items: center;
+    /* Canh giữa theo chiều ngang */
+    margin: 3rem 0;
+    /* Tăng khoảng cách trên dưới để phân trang nổi bật hơn */
+    padding: 1rem;
+    background-color: #fcfcfc;
+    /* Nền nhẹ nhàng */
+    border-radius: 12px;
+    /* Bo góc mềm mại hơn */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    /* Đổ bóng tinh tế, sâu hơn */
 }
 
-.pagination button {
-    padding: 6px 12px;
-    border: 1px solid #ddd;
-    background: white;
+/* Thông tin phân trang (ví dụ: "Trang X trên Y") */
+.pagination-info {
+    color: #555;
+    /* Màu chữ tối hơn, dễ đọc */
+    font-size: 1rem;
+    /* Kích thước chữ chuẩn */
+    font-weight: 500;
+    /* Đậm vừa phải */
+    background-color: transparent;
+    /* Loại bỏ nền, để nền container chính xuyên qua */
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: none;
+    /* Loại bỏ đổ bóng riêng, dùng đổ bóng của container cha */
+    margin-bottom: 1.5rem;
+    /* Tăng khoảng cách với các nút điều khiển */
+    text-align: center;
+}
+
+/* Các nút điều khiển và số trang */
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    /* Tăng khoảng cách giữa các nút một chút */
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Định dạng chung cho nút bấm và số trang */
+.pagination-button,
+.page-number,
+.page-ellipsis {
+    /* Thêm .page-ellipsis vào đây để thống nhất style */
+    min-width: 44px;
+    /* Hơi nhỏ hơn để trông gọn hơn */
+    height: 44px;
+    /* Kích thước vuông vắn hơn */
+    padding: 0;
+    /* Bỏ padding ngang để min-width kiểm soát */
+    background: #e0e0e0;
+    /* Màu nền xám nhạt hơn, hiện đại hơn */
+    color: #444;
+    /* Màu chữ xám đậm */
+    border: none;
+    border-radius: 8px;
+    /* Bo góc mềm mại hơn */
+    font-size: 1rem;
+    /* Kích thước chữ vừa phải */
+    font-weight: 600;
+    /* Đậm vừa */
     cursor: pointer;
-    border-radius: 4px;
+    transition: all 0.25s ease-in-out;
+    /* Chuyển động mượt mà hơn */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    /* Đổ bóng nhẹ cho nút */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    user-select: none;
+    /* Ngăn chặn chọn văn bản */
 }
 
-.pagination button.active {
-    background-color: #00b468;
-    color: white;
-    border-color: #00b468;
+/* Nút bị vô hiệu hóa */
+.pagination-button:disabled {
+    background: #f0f0f0;
+    /* Màu nền nhạt hơn khi disabled */
+    color: #b0b0b0;
+    /* Màu chữ xám nhạt */
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+    /* Đảm bảo không có hiệu ứng transform */
+    opacity: 0.7;
+    /* Giảm độ mờ để rõ ràng hơn */
 }
 
-.pagination button:hover:not(.active):not(:disabled) {
-    background-color: #f5f5f5;
+/* Hiệu ứng hover cho nút và số trang không active */
+.pagination-button:hover:not(:disabled),
+.page-number:hover:not(.active) {
+    background: #00c853;
+    /* Màu xanh dương hiện đại */
+    color: #fff;
+    transform: translateY(-3px);
+    /* Hiệu ứng nhấc lên rõ hơn */
+    box-shadow: 0 6px 16px rgba(0, 204, 102, 0.2);
+    /* Đổ bóng khi hover */
 }
 
-.pagination button:disabled {
+/* Nhóm các số trang */
+.page-numbers {
+    display: flex;
+    gap: 0.8rem;
+    /* Khoảng cách thống nhất */
+    align-items: center;
+}
+
+/* Số trang hiện tại (active) */
+.page-number.active {
+    background: #00c853;
+    /* Màu xanh dương mạnh hơn */
+    color: #fff;
     cursor: default;
-    color: #999;
+    transform: scale(1.05);
+    /* Phóng to nhẹ để nổi bật */
+    box-shadow: 0 5px 15px rgba(0, 204, 102, 0.3);
+    /* Đổ bóng sâu hơn cho active */
+    font-weight: 700;
+    /* Đậm hơn */
+    pointer-events: none;
+    /* Ngăn chặn sự kiện click trên nút active */
+}
+
+/* Dấu ba chấm */
+.page-ellipsis {
+    color: #666;
+    /* Màu xám cho dấu ba chấm */
+    background: transparent;
+    /* Nền trong suốt */
+    box-shadow: none;
+    cursor: default;
+    font-weight: 500;
+}
+
+.page-ellipsis:hover {
+    /* Loại bỏ hiệu ứng hover cho dấu ba chấm */
+    transform: none;
+    background: transparent;
+    color: #666;
+    box-shadow: none;
+}
+
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .pagination-container {
+        margin: 2rem 0.5rem;
+        padding: 1rem;
+    }
+
+    .pagination-controls {
+        flex-wrap: wrap;
+        /* Cho phép các nút xuống dòng */
+        justify-content: center;
+        /* Canh giữa khi xuống dòng */
+        gap: 0.5rem;
+        /* Khoảng cách nhỏ hơn */
+    }
+
+    .pagination-info {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+    }
+
+    .page-number,
+    .pagination-button,
+    .page-ellipsis {
+        min-width: 38px;
+        /* Kích thước nhỏ hơn trên mobile */
+        height: 38px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .pagination-container {
+        margin: 1.5rem 0.25rem;
+        padding: 0.8rem;
+    }
+
+    .pagination-controls {
+        gap: 0.4rem;
+    }
+
+    .pagination-info {
+        font-size: 0.8rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .page-number,
+    .pagination-button,
+    .page-ellipsis {
+        min-width: 32px;
+        height: 32px;
+        font-size: 0.85rem;
+        border-radius: 5px;
+    }
 }

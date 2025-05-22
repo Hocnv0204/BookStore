@@ -7,17 +7,67 @@ import Footer from "../../components/Footer/Footer";
 import InfoModal from "./InfoModal/InfoModal"; // Modal cập nhật thông tin
 import ChangePasswordModal from "./InfoModal/ChangePasswordModal"; // Modal đổi mật khẩu
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 function Information() {
   const [activeItem, setActiveItem] = useState("all");
   const [user, setUser] = useState(null);
   const [modal, setModal] = useState(null); // Quản lý modal nào đang mở
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [pagination, setPagination] = useState({
+    pageNumber: 0,
+    pageSize: 10,
+    totalElements: 0,
+    totalPages: 1,
+    last: true,
+  });
   const navigate = useNavigate();
+
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
   }, []);
+
+  const fetchOrders = async (page = 0) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/users/orders?page=${page}&size=10&sortBy=totalAmount&sortOrder=asc`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      if (res.data) {
+        setOrders(res.data.content);
+        setPagination({
+          pageNumber: res.data.pageNumber,
+          pageSize: res.data.pageSize,
+          totalElements: res.data.totalElements,
+          totalPages: res.data.totalPages,
+          last: res.data.last,
+        });
+      }
+    } catch (error) {
+      setOrders([]);
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const handlePageChange = (newPage) => {
+    fetchOrders(newPage);
+  };
+
   const handleItemClick = (itemId) => {
     setActiveItem(itemId);
   };
@@ -44,7 +94,19 @@ function Information() {
           onClickAccount={handleAccountClick} // Truyền hàm này xuống Sidebar
         />
         <main className="main-content">
-          <OrderTable orders={[]} />
+          {loading ? (
+            <div>Đang tải đơn hàng...</div>
+          ) : (
+            <OrderTable
+              orders={orders}
+              pageNumber={pagination.pageNumber}
+              pageSize={pagination.pageSize}
+              totalElements={pagination.totalElements}
+              totalPages={pagination.totalPages}
+              last={pagination.last}
+              onPageChange={handlePageChange}
+            />
+          )}
         </main>
       </div>
       <Footer />

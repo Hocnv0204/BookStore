@@ -17,12 +17,25 @@ body {
     min-height: 100vh;
 }
 
-.introduction-section .description {
+.intro-description {
     font-size: 14px;
     color: #555;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    /* Giữ nguyên các style bạn đã có */
+    font-size: 1em;
+    line-height: 1;
+    margin-bottom: 20px;
+    color: #666;
+    border-top: 1px dashed #eee;
+    padding-top: 15px;
+
+    /* Thêm thuộc tính này để xử lý ký tự xuống dòng (line breaks) */
+    white-space: pre-wrap;
+    /* Quan trọng: Giữ lại khoảng trắng và ngắt dòng từ nguồn */
+    word-break: break-word;
+    /* Đảm bảo các từ dài cũng sẽ ngắt dòng nếu cần */
 }
 
 .main-content {

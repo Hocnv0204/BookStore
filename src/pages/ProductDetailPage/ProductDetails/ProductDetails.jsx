@@ -1,16 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ProductDetails.css";
 import { Link } from "react-router-dom";
-function ProductDetails({ title, author, price }) {
+import axios from "axios";
+function ProductDetails({ book }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "" });
+
+  const handleAddToCart = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        "http://localhost:8080/users/cart/items",
+        {
+          bookId: book.id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+
+      if (response.data.code === 200) {
+        setMessage({
+          text: "Đã thêm sản phẩm vào giỏ hàng!",
+          type: "success",
+        });
+      } else {
+        setMessage({
+          text: "Không thể thêm sản phẩm vào giỏ hàng",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      setMessage({
+        text:
+          error.response?.data?.message ||
+          "Có lỗi xảy ra khi thêm vào giỏ hàng",
+        type: "error",
+      });
+    } finally {
+      setIsLoading(false);
+      // Clear message after 3 seconds
+      setTimeout(() => {
+        setMessage({ text: "", type: "" });
+      }, 3000);
+    }
+  };
+
   return (
     <div className="product-details">
-      <h1 className="product-title">{title}</h1>
+      <h1 className="product-title">{book.title}</h1>
 
       <div className="product-author">
         <span className="author-label">Tác giả:</span>
-        <span className="author-name">{author}</span>
+        <span className="author-name">{book.authorName}</span>
       </div>
-
+      <div className="product-description">{book.description}</div>
       <div className="product-status">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +73,9 @@ function ProductDetails({ title, author, price }) {
         >
           <path d="M20 6 9 17l-5-5" />
         </svg>
-        <span className="status-text">Tình trạng: còn hàng</span>
+        <span className="status-text">
+          Tình trạng: {book.quantityStock > 0 ? "còn hàng" : "hết hàng"}
+        </span>
       </div>
 
       <div className="promo-box">
@@ -51,13 +100,35 @@ function ProductDetails({ title, author, price }) {
       </div>
 
       <div className="product-price">
-        {price}
+        {book.price.toLocaleString()}
         <sup>đ</sup>
       </div>
 
-      <Link to="/cart">
-        <button className="buy-button">Mua ngay</button>
-      </Link>
+      <div className="buy-button-container">
+        <Link to="/cart">
+          <button
+            className="buy-button"
+            onClick={handleAddToCart}
+            disabled={isLoading || book.quantityStock === 0}
+          >
+            Mua ngay
+          </button>
+        </Link>
+        <div className="add-to-cart">
+          <button
+            className="add-to-cart-button"
+            onClick={handleAddToCart}
+            disabled={isLoading || book.quantityStock === 0}
+          >
+            {isLoading ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+          </button>
+        </div>
+      </div>
+
+      {message.text && (
+        <div className={`message ${message.type}`}>{message.text}</div>
+      )}
+
       <div className="benefits">
         <div className="benefit-item">
           <svg

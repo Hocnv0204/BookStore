@@ -26,6 +26,11 @@ public class OrderController {
         return ResponseEntity.ok(orderService.createOrderFromCart(request));
     }
 
+    @GetMapping("/users/orders/{orderId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    }
     @PutMapping("/users/orders/{orderId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<OrderDto> updateOrder(

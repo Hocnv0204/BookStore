@@ -4,27 +4,82 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import CartItem from "./CartItem/CartItem";
 import CartSummary from "./CartSummary/CartSummary";
-import { booksData } from "../../data/booksData";
+import axios from "axios";
+import { useState, useEffect } from "react";
+
 const ShoppingCart = () => {
-  const cartItems = booksData.slice(0, 4).map((item) => ({
-    ...item,
-    quantity: 3,
-    originalPrice: item.price + 10000,
-  }));
+  const [total, setTotal] = useState(0);
+  const [cartItems, setCartItems] = useState([]);
 
-  const handleQuantityChange = (id, value) => {
-    console.log("Quantity changed:", id, value);
+  const handleQuantityChange = async (itemId, newQuantity) => {
+    try {
+      await axios.put(
+        `http://localhost:8080/users/cart/items/${itemId}?quantity=${newQuantity}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
   };
 
-  const handleDelete = (id) => {
-    console.log("Delete item:", id);
+  const handleDelete = async (itemId) => {
+    try {
+      await axios.delete(`http://localhost:8080/users/cart/items/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      fetchCartItems();
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
   };
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const calculateTotal = (items) => {
+    if (!items || items.length === 0) return 0;
+    return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  };
 
+  const fetchCartItems = async () => {
+    try {
+      const res = await axios.get("http://localhost:8080/users/cart", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+
+      if (res.data && res.data.content && res.data.content.length > 0) {
+        const items = res.data.content[0].items;
+        setCartItems(items);
+        setTotal(calculateTotal(items));
+      }
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+      setCartItems([]);
+      setTotal(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+  if (cartItems.length === 0) {
+    return (
+      <div className="shopping-cart">
+        <Header />
+        <div className="cart-container">
+          <h1>Giỏ hàng trống</h1>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   return (
     <div className="shopping-cart">
       <Header />
