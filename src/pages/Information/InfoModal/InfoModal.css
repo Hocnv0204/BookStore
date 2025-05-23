@@ -21,6 +21,7 @@
     outline: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.3s ease-in-out;
+    position: relative;
 }
 
 /* Tiêu đề modal */
@@ -102,4 +103,114 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* Label nổi */
+.modal-box .floating-label-group {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.modal-box .floating-label-group input,
+.modal-box .floating-label-group select {
+    width: 100%;
+    padding: 12px 40px 12px 12px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #f8fafc;
+    color: #222;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.modal-box .floating-label-group input:focus,
+.modal-box .floating-label-group select:focus {
+    border-color: #00CC64;
+    box-shadow: 0 0 0 2px #e6fff3;
+    background: #fff;
+}
+
+.modal-box .floating-label {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 15px;
+    pointer-events: none;
+    background: transparent;
+    transition: 0.2s;
+    padding: 0 4px;
+}
+
+.modal-box .floating-label-group input:focus+.floating-label,
+.modal-box .floating-label-group input:not(:placeholder-shown)+.floating-label,
+.modal-box .floating-label-group select:focus+.floating-label,
+.modal-box .floating-label-group select:not([value=""])+.floating-label {
+    top: -10px;
+    left: 8px;
+    font-size: 12px;
+    color: #00CC64;
+    background: #fff;
+}
+
+/* Icon lịch cho ngày sinh */
+.modal-box .date-select-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.modal-box .date-select-group .calendar-icon {
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #00CC64;
+    pointer-events: none;
+}
+
+.modal-box .date-select-group select {
+    width: 33%;
+    min-width: 0;
+    padding: 10px 8px 10px 32px;
+    font-size: 15px;
+    border-radius: 6px;
+    border: 1.5px solid #ccc;
+    background: #f8fafc;
+    color: #222;
+    transition: border-color 0.2s;
+}
+
+.modal-box .date-select-group select:focus {
+    border-color: #00CC64;
+    background: #fff;
+}
+
+/* Input lỗi */
+.modal-box input.input-error,
+.modal-box select.input-error {
+    border-color: #d32f2f;
+    background: #ffeaea;
+    color: #d32f2f;
+}
+
+.modal-box .floating-label-group input.input-error+.floating-label,
+.modal-box .floating-label-group select.input-error+.floating-label {
+    color: #d32f2f;
+}
+
+/* Icon trong input (ví dụ: user, email) */
+.modal-box .input-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #00CC64;
+    pointer-events: none;
 }

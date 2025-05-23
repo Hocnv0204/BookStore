@@ -12,12 +12,33 @@ function OrderTable({
   totalPages = 1,
   last = true,
   onPageChange,
+  filterStatus = "all",
 }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [message, setMessage] = useState("");
   const [confirmCancelOrder, setConfirmCancelOrder] = useState(null);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortOrder, setSortOrder] = useState("desc");
+  // Lọc theo trạng thái
+  let filteredOrders = orders;
+  if (filterStatus && filterStatus !== "all") {
+    filteredOrders = orders.filter((order) => order.status === filterStatus);
+  }
 
+  // FE sort
+  let sortedOrders = [...filteredOrders];
+  sortedOrders = sortedOrders.sort((a, b) => {
+    let v1 = a[sortBy];
+    let v2 = b[sortBy];
+    if (sortBy === "status") {
+      v1 = v1?.toLowerCase() || "";
+      v2 = v2?.toLowerCase() || "";
+    }
+    if (v1 < v2) return sortOrder === "asc" ? -1 : 1;
+    if (v1 > v2) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
   const fetchOrderById = async (id) => {
     setLoadingDetail(true);
     try {
@@ -27,6 +48,7 @@ function OrderTable({
         },
       });
       setSelectedOrder(res.data);
+      console.log(res.data);
     } catch (error) {
       setSelectedOrder(null);
       alert("Không thể lấy chi tiết đơn hàng!");
@@ -66,12 +88,27 @@ function OrderTable({
     <div className="order-table">
       <div className="table-header">
         <h2>DANH SÁCH ĐƠN HÀNG</h2>
-        <div className="search-container">
-          <input
-            type="text"
-            placeholder="Tìm kiếm theo mã đơn hàng"
-            className="search-input"
-          />
+        <div className="order-sort-bar">
+          <label>
+            Sắp xếp:
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="order-sort-select"
+            >
+              <option value="id">Mã đơn</option>
+              <option value="totalAmount">Tổng cộng</option>
+              <option value="status">Trạng thái</option>
+            </select>
+          </label>
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+            className="order-sort-select"
+          >
+            <option value="asc">Tăng dần</option>
+            <option value="desc">Giảm dần</option>
+          </select>
         </div>
       </div>
 
@@ -92,14 +129,14 @@ function OrderTable({
             </tr>
           </thead>
           <tbody>
-            {orders.length === 0 ? (
+            {sortedOrders.length === 0 ? (
               <tr>
                 <td colSpan="8" className="no-records">
                   Không có đơn hàng
                 </td>
               </tr>
             ) : (
-              orders.map((order, index) => (
+              sortedOrders.map((order, index) => (
                 <tr key={order.id}>
                   <td>{pageNumber * pageSize + index + 1}</td>
                   <td>{order.id}</td>

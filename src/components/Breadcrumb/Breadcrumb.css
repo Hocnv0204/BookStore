@@ -1,28 +1,49 @@
 .breadcrumb-container {
+
+    padding: 0 0 8px 0;
+    margin-bottom: 12px;
     width: 1200px;
     margin: 0 auto;
-    padding: 8px 16px;
     align-items: center;
 }
 
 .breadcrumb {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    gap: 0;
+    flex-wrap: wrap;
     text-align: left;
     width: 100%;
     justify-content: flex-start;
 }
 
 .breadcrumb-link {
-    color: #00b468;
+    color: #00CC64;
+    text-decoration: none;
+    font-weight: 500;
+    transition: text-decoration 0.2s;
+}
+
+.breadcrumb-link:hover {
+    text-decoration: underline;
 }
 
 .breadcrumb-separator {
-    margin: 0 4px;
-    color: #00b468;
+    margin: 0 8px;
+    color: #888;
+    font-weight: 400;
+    font-size: 16px;
 }
 
 .breadcrumb-current {
-    color: #00b468;
+    color: #00CC64;
+    text-decoration: none;
+    font-weight: 500;
+    transition: text-decoration 0.2s;
+}
+
+.breadcrumb-current:hover {
+    text-decoration: underline;
 }

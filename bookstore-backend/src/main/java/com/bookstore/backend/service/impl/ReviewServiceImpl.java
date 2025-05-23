@@ -11,8 +11,10 @@ import com.bookstore.backend.model.Book;
 import com.bookstore.backend.model.Review;
 import com.bookstore.backend.model.User;
 import com.bookstore.backend.repository.BookRepository;
+import com.bookstore.backend.repository.OrderRepository;
 import com.bookstore.backend.repository.ReviewRepository;
 import com.bookstore.backend.repository.UserRepository;
+import com.bookstore.backend.service.FileStorageService;
 import com.bookstore.backend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,14 +25,18 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final OrderRepository orderRepository;
     private final ReviewMapper reviewMapper;
+    private final FileStorageService fileStorageService;
 
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -47,21 +53,47 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewDto createReview(Long bookId, ReviewRequest request) {
+    public ReviewDto createReview(Long bookId, ReviewRequest request, MultipartFile image) {
         User user = getCurrentUser();
         
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND));
 
-        if (reviewRepository.existsByUserIdAndBookId(user.getId(), bookId)) {
-            throw new AppException(ErrorCode.REVIEW_ALREADY_EXISTS);
+        // Check if user has purchased the book
+        if (!orderRepository.hasUserPurchasedBook(user.getId(), bookId)) {
+            throw new AppException(ErrorCode.REVIEW_NOT_ALLOWED);
         }
 
+        // Check if user has already reviewed this book
+        Review existingReview = reviewRepository.findByUserIdAndBookId(user.getId(), bookId)
+                .orElse(null);
+
+        String imageUrl = null;
+        if (image != null && !image.isEmpty()) {
+            imageUrl = fileStorageService.storeFile(image, "reviews");
+        }
+
+        if (existingReview != null) {
+            // Delete old image if exists and new image is provided
+            if (image != null && !image.isEmpty() && existingReview.getImageUrl() != null) {
+                fileStorageService.deleteFile(existingReview.getImageUrl(), "reviews");
+            }
+            
+            existingReview.setRating(request.getRating());
+            existingReview.setComment(request.getComment());
+            if (imageUrl != null) {
+                existingReview.setImageUrl(imageUrl);
+            }
+            return reviewMapper.toDto(reviewRepository.save(existingReview));
+        }
+
+        // Create new review
         Review review = Review.builder()
                 .user(user)
                 .book(book)
                 .rating(request.getRating())
                 .comment(request.getComment())
+                .imageUrl(imageUrl)
                 .build();
 
         return reviewMapper.toDto(reviewRepository.save(review));
@@ -69,7 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewDto updateReview(Long reviewId, ReviewRequest request) {
+    public ReviewDto updateReview(Long reviewId, ReviewRequest request, MultipartFile image) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new AppException(ErrorCode.REVIEW_NOT_FOUND));
 
@@ -78,7 +110,19 @@ public class ReviewServiceImpl implements ReviewService {
             throw new AppException(ErrorCode.REVIEW_NOT_FOUND);
         }
 
-        reviewMapper.updateReview(review, request);
+        // Handle image upload
+        if (image != null && !image.isEmpty()) {
+            // Delete old image if exists
+            if (review.getImageUrl() != null) {
+                fileStorageService.deleteFile(review.getImageUrl(), "reviews");
+            }
+            // Store new image
+            String imageUrl = fileStorageService.storeFile(image, "reviews");
+            review.setImageUrl(imageUrl);
+        }
+
+        review.setRating(request.getRating());
+        review.setComment(request.getComment());
         return reviewMapper.toDto(reviewRepository.save(review));
     }
 
@@ -95,6 +139,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         if (!review.getUser().getId().equals(currentUser.getId()) && !isAdmin) {
             throw new AppException(ErrorCode.REVIEW_NOT_FOUND);
+        }
+
+        // Delete review image if exists
+        if (review.getImageUrl() != null) {
+            fileStorageService.deleteFile(review.getImageUrl(), "reviews");
         }
 
         reviewRepository.delete(review);

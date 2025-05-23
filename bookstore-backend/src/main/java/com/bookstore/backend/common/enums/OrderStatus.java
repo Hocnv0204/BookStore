@@ -2,8 +2,7 @@ package com.bookstore.backend.common.enums;
 
 public enum OrderStatus {
     PENDING,
-    PROCESSING,
-    SHIPPED,
+    CONFIRM,
     DELIVERED,
     CANCELLED
 } 

@@ -14,12 +14,24 @@
 
 .product-image-container {
     border: 1px solid #e5e5e5;
-    border-radius: 4px;
+    border-radius: 8px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    max-width: 100%;
+    max-height: 400px;
+    min-height: 200px;
+    box-sizing: border-box;
 }
 
 .product-image {
-    width: 100%;
+    max-width: 100%;
+    max-height: 400px;
+    width: auto;
     height: auto;
     display: block;
+    object-fit: contain;
+    margin: 0 auto;
 }

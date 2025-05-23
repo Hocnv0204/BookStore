@@ -16,7 +16,10 @@ function Category() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
-
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const [size, setSize] = useState(10);
+  const [page, setPage] = useState(0);
   const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
@@ -29,6 +32,8 @@ function Category() {
         "http://localhost:8080/api/v1/categories"
       );
       setCategories(response.data.result.content);
+      setTotalPages(response.data.result.totalPages);
+      setTotalElements(response.data.result.totalElements);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -137,6 +142,11 @@ function Category() {
               type="category"
               onEdit={handleEdit}
               onDelete={handleDeleteCategory}
+              totalPages={totalPages}
+              totalElements={totalElements}
+              pageSize={size}
+              currentPage={page}
+              onPageChange={(newPage) => setPage(newPage)}
             />
           </div>
         </div>

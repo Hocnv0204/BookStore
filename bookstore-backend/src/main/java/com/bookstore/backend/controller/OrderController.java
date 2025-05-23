@@ -2,6 +2,8 @@ package com.bookstore.backend.controller;
 
 import com.bookstore.backend.common.enums.OrderStatus;
 import com.bookstore.backend.dto.OrderDto;
+import com.bookstore.backend.dto.response.MonthlyRevenueDto;
+import com.bookstore.backend.dto.response.DailyRevenueDto;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.OrderService;
 import jakarta.validation.Valid;
@@ -13,6 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.bookstore.backend.dto.request.OrderRequest;
+
+import java.time.Year;
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 public class OrderController {
@@ -31,6 +37,7 @@ public class OrderController {
     public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId) {
         return ResponseEntity.ok(orderService.getOrderById(orderId));
     }
+
     @PutMapping("/users/orders/{orderId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<OrderDto> updateOrder(
@@ -47,7 +54,7 @@ public class OrderController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size, 
+        Pageable pageable = PageRequest.of(page, size,
                 Sort.Direction.fromString(sortOrder), sortBy);
         return ResponseEntity.ok(orderService.getUserOrders(pageable));
     }
@@ -67,7 +74,7 @@ public class OrderController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size, 
+        Pageable pageable = PageRequest.of(page, size,
                 Sort.Direction.fromString(sortOrder), sortBy);
         return ResponseEntity.ok(orderService.getAllOrders(pageable));
     }
@@ -81,7 +88,7 @@ public class OrderController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size, 
+        Pageable pageable = PageRequest.of(page, size,
                 Sort.Direction.fromString(sortOrder), sortBy);
         return ResponseEntity.ok(orderService.getUserOrders(userId, pageable));
     }
@@ -93,4 +100,19 @@ public class OrderController {
             @RequestParam OrderStatus status) {
         return ResponseEntity.ok(orderService.updateOrderStatus(orderId, status));
     }
-} 
+
+    @GetMapping("/admin/revenue/monthly")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<MonthlyRevenueDto>> getMonthlyRevenue(
+            @RequestParam(required = false) Integer year) {
+        return ResponseEntity.ok(orderService.getMonthlyRevenue(year));
+    }
+
+    @GetMapping("/admin/revenue/daily")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<DailyRevenueDto>> getDailyRevenue(
+            @RequestParam(required = false) Integer year,
+            @RequestParam(required = false) Integer month) {
+        return ResponseEntity.ok(orderService.getDailyRevenue(year, month));
+    }
+}

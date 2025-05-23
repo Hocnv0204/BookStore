@@ -6,15 +6,18 @@ import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.dto.response.ReviewStatsResponse;
 import com.bookstore.backend.service.ReviewService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping
@@ -22,30 +25,45 @@ import org.springframework.http.ResponseEntity;
 public class ReviewController {
     private static final int MAX_PAGE_SIZE = 10;
     private final ReviewService reviewService;
+    private final ObjectMapper objectMapper;
 
-    @PostMapping("users/reviews/{bookId}")
+    @PostMapping(value = "users/reviews/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ApiResponse<ReviewDto> createReview(
             @PathVariable Long bookId,
-            @RequestBody @Valid ReviewRequest request,
+            @RequestPart("request") String request,
+            @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication authentication) {
+        ReviewRequest reviewRequest = null;
+        try {
+            reviewRequest = objectMapper.readValue(request, ReviewRequest.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid request body");
+        }
         return ApiResponse.<ReviewDto>builder()
                 .code(200)
                 .message("Review created successfully")
-                .result(reviewService.createReview(bookId, request))
+                .result(reviewService.createReview(bookId, reviewRequest, image))
                 .build();
     }
 
-    @PutMapping("users/reviews/{reviewId}")
+    @PutMapping(value = "users/reviews/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ApiResponse<ReviewDto> updateReview(
             @PathVariable Long reviewId,
-            @RequestBody @Valid ReviewRequest request,
+            @RequestPart("request") String request,
+            @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication authentication) {
+        ReviewRequest reviewRequest = null;
+        try {
+            reviewRequest = objectMapper.readValue(request, ReviewRequest.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Invalid request body");
+        }
         return ApiResponse.<ReviewDto>builder()
                 .code(200)
                 .message("Review updated successfully")
-                .result(reviewService.updateReview(reviewId, request))
+                .result(reviewService.updateReview(reviewId, reviewRequest, image))
                 .build();
     }
 

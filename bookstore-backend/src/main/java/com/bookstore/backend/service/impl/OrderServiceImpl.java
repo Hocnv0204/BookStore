@@ -15,6 +15,7 @@ import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.OrderItemRepository;
 import com.bookstore.backend.repository.OrderRepository;
 import com.bookstore.backend.repository.UserRepository;
+import com.bookstore.backend.service.BookService;
 import com.bookstore.backend.service.CartService;
 import com.bookstore.backend.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bookstore.backend.dto.request.OrderRequest;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import com.bookstore.backend.dto.response.MonthlyRevenueDto;
+import java.time.Year;
+import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import com.bookstore.backend.dto.response.DailyRevenueDto;
 
 @Service
 @RequiredArgsConstructor
@@ -36,7 +44,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderMapper orderMapper;
     private final CartService cartService;
     private final BookRepository bookRepository;
-
+    private final BookService bookService ; 
+    
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -66,18 +75,19 @@ public class OrderServiceImpl implements OrderService {
                 .totalAmount(cart.getTotalPrice())
                 .status(OrderStatus.PENDING)
                 .build();
-
+        
         // Convert cart items to order items
         List<OrderItem> orderItems = cart.getItems().stream()
                 .map(cartItem -> OrderItem.builder()
                         .order(order)
                         .book(bookRepository.findById(cartItem.getBookId())
-                                .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND)))
+                                .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND))
+                                )
                         .quantity(cartItem.getQuantity())
                         .price(cartItem.getPrice())
                         .build())
                 .collect(Collectors.toList());
-
+        
         order.setItems(orderItems);
         order.setTotalAmount(cart.getTotalPrice());
         order.setDeliveryAddress(request.getDeliveryAddress());
@@ -86,10 +96,11 @@ public class OrderServiceImpl implements OrderService {
         order.setNote(request.getNote());
         order.setReceiverName(request.getReceiverName());
         orderRepository.save(order);
-
+        
         // Clear the cart after successful order creation
         cartService.clearCart();
-
+        // Update book stock
+        bookService.updateBookStock(cart.getItems());
         return orderMapper.toDto(order);
     }
 
@@ -221,4 +232,85 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         return orderMapper.toDto(order);
     }
-} 
+    @Override
+    @Transactional(readOnly = true)
+    public List<MonthlyRevenueDto> getMonthlyRevenue(Integer year) {
+        final int targetYear = year != null ? year : Year.now().getValue();
+        
+        // Validate year
+        if (targetYear < 2000 || targetYear > Year.now().getValue()) {
+            throw new AppException(ErrorCode.INVALID_YEAR);
+        }
+        
+        // Get orders for the specified year that are not cancelled
+        List<Order> orders = orderRepository.findByCreatedAtYearAndStatusNot(targetYear, OrderStatus.CANCELLED);
+        
+        // Initialize map with all months
+        Map<Integer, Double> monthlyRevenue = new HashMap<>();
+        for (int month = 1; month <= 12; month++) {
+            monthlyRevenue.put(month, 0.0);
+        }
+        
+        // Calculate revenue for each month
+        orders.forEach(order -> {
+            int month = order.getCreatedAt().getMonthValue();
+            monthlyRevenue.put(month, monthlyRevenue.get(month) + order.getTotalAmount());
+        });
+        
+        // Convert to DTO list
+        return monthlyRevenue.entrySet().stream()
+            .map(entry -> MonthlyRevenueDto.builder()
+                .year(targetYear)
+                .month(entry.getKey())
+                .revenue(entry.getValue())
+                .build())
+            .sorted((a, b) -> a.getMonth().compareTo(b.getMonth()))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DailyRevenueDto> getDailyRevenue(Integer year, Integer month) {
+        final int targetYear = year != null ? year : Year.now().getValue();
+        final int targetMonth = month != null ? month : LocalDateTime.now().getMonthValue();
+        
+        // Validate year and month
+        if (targetYear < 2000 || targetYear > Year.now().getValue()) {
+            throw new AppException(ErrorCode.INVALID_YEAR);
+        }
+        if (targetMonth < 1 || targetMonth > 12) {
+            throw new AppException(ErrorCode.INVALID_MONTH);
+        }
+        
+        // Get orders for the specified year and month that are not cancelled
+        List<Order> orders = orderRepository.findByCreatedAtYearAndMonthAndStatusNot(
+            targetYear, targetMonth, OrderStatus.CANCELLED);
+        
+        // Get number of days in the month
+        YearMonth yearMonth = YearMonth.of(targetYear, targetMonth);
+        int daysInMonth = yearMonth.lengthOfMonth();
+        
+        // Initialize map with all days
+        Map<Integer, Double> dailyRevenue = new HashMap<>();
+        for (int day = 1; day <= daysInMonth; day++) {
+            dailyRevenue.put(day, 0.0);
+        }
+        
+        // Calculate revenue for each day
+        orders.forEach(order -> {
+            int day = order.getCreatedAt().getDayOfMonth();
+            dailyRevenue.put(day, dailyRevenue.get(day) + order.getTotalAmount());
+        });
+        
+        // Convert to DTO list
+        return dailyRevenue.entrySet().stream()
+            .map(entry -> DailyRevenueDto.builder()
+                .year(targetYear)
+                .month(targetMonth)
+                .day(entry.getKey())
+                .revenue(entry.getValue())
+                .build())
+            .sorted((a, b) -> a.getDay().compareTo(b.getDay()))
+            .collect(Collectors.toList());
+    }
+}

@@ -1,43 +1,85 @@
-.sidebar {
-    width: 16rem;
-    background-color: #1f2937;
-    color: white;
-    min-height: 100vh;
-}
-
-.sidebar-admin-header {
-    padding: 1.5rem;
+.sidebar-container {
+    width: 240px;
+    min-width: 180px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(30, 41, 59, 0.10);
+    padding: 32px 0 32px 0;
+    margin: 24px 24px 24px 0;
+    border: 1.5px solid #e5e7eb;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
 }
 
 .sidebar-title {
-    font-size: 1.5rem;
+    font-size: 22px;
     font-weight: 700;
+    color: #00CC64;
+    margin: 0 0 16px 0;
+    letter-spacing: 1px;
 }
 
-.sidebar-nav {
-    margin-top: 1.5rem;
-}
-
-.nav-link {
+.sidebar-link {
+    color: #334155;
+    font-size: 17px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.125rem;
-    color: #d1d5db;
+    gap: 16px;
+    transition: background 0.2s, color 0.2s;
     text-decoration: none;
+    margin-bottom: 0;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
 }
 
-.nav-link:hover {
-    background-color: #374151;
+.sidebar-link .sidebar-icon {
+    font-size: 22px;
+    color: #00CC64;
 }
 
-.nav-link.active {
-    background-color: #2563eb;
-    color: white;
+.sidebar-link.active {
+    background: #00CC64;
+    color: #fff;
+    font-weight: 600;
+    border-radius: 12px;
 }
 
-.nav-icon {
-    margin-right: 0.75rem;
-    height: 1.5rem;
-    width: 1.5rem;
+.sidebar-link.active .sidebar-icon {
+    color: #fff;
+}
+
+.sidebar-link:hover:not(.active) {
+    background: #f1f5f9;
+    color: #00CC64;
+}
+
+.sidebar-link:hover:not(.active) .sidebar-icon {
+    color: #00CC64;
+}
+
+@media (max-width: 900px) {
+    .sidebar-container {
+        width: 100%;
+        min-width: unset;
+        margin: 0 0 18px 0;
+        padding: 18px 0 18px 0;
+        border-radius: 12px;
+    }
+
+    .sidebar-link {
+        font-size: 15px;
+        padding: 10px 16px;
+    }
+
+    .sidebar-title {
+        font-size: 18px;
+    }
 }

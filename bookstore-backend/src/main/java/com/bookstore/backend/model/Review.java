@@ -33,6 +33,9 @@ public class Review {
     @Column(length = 1000)
     String comment;
 
+    @Column
+    String imageUrl;
+
     @Column(nullable = false)
     LocalDateTime createdAt;
 

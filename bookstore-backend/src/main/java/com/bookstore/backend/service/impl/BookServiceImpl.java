@@ -7,6 +7,7 @@ import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.mapper.BookMapper;
 import com.bookstore.backend.model.Book;
+import com.bookstore.backend.model.CartItem;
 import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.CategoryRepository;
 import com.bookstore.backend.service.BookService;
@@ -17,8 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.bookstore.backend.dto.CartItemDto;
+import java.util.List;
 import java.util.stream.Collectors;
+import com.bookstore.backend.dto.BookSalesDto;
 
 @Service
 @RequiredArgsConstructor
@@ -183,5 +186,37 @@ public class BookServiceImpl implements BookService {
             throw new AppException(ErrorCode.BOOK_NOT_FOUND);
         }
         return bookMapper.toDto(book);
+    }
+    @Override 
+    public void updateBookStock(List<CartItemDto> cartItems) {
+
+        for (CartItemDto cartItem : cartItems) {
+            Book book = bookRepository.findById(cartItem.getBookId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND));
+            int newQuantityStock = book.getQuantityStock() - cartItem.getQuantity();
+            if (newQuantityStock < 0) {
+                throw new AppException(ErrorCode.OUT_OF_STOCK);
+            }
+            book.setQuantityStock(newQuantityStock);
+            bookRepository.save(book);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer getBookSoldQuantity(Long bookId) {
+        // Verify book exists
+        if (!bookRepository.existsById(bookId)) {
+            throw new AppException(ErrorCode.BOOK_NOT_FOUND);
+        }
+        
+        Integer soldQuantity = bookRepository.getTotalSoldQuantity(bookId);
+        return soldQuantity != null ? soldQuantity : 0;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookSalesDto> getAllBooksSales() {
+        return bookRepository.getAllBooksSales();
     }
 }

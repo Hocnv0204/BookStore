@@ -1,53 +1,55 @@
 import "./Sidebar.css";
-
-const orderMenuItems = [
-  { id: "all", label: "Tất Cả", count: 0 },
-  { id: "confirmed", label: "Đã Xác Nhận", count: 0 },
-  { id: "shipping", label: "Đang Giao Hàng", count: 0 },
-  { id: "delivered", label: "Đã Giao Hàng", count: 0 },
-  { id: "cancelled", label: "Đã Hủy Đơn", count: 0, className: "text-red-500" },
-];
-
-const accountMenuItems = [
-  { id: "update-info", label: "Cập Nhật Thông Tin Tài Khoản" },
-  { id: "change-password", label: "Đổi Password" },
-];
+import { Link } from "react-router-dom";
 
 function Sidebar({ activeItem, onItemClick, onClickAccount }) {
   return (
-    <div className="sidebar">
-      <div className="sidebar-section">
-        <div className="sidebar-header">QL Đơn Hàng</div>
-        <ul className="sidebar-menu">
-          {orderMenuItems.map((item) => (
-            <li
-              key={item.id}
-              className={`sidebar-item ${
-                activeItem === item.id ? "active" : ""
-              }`}
-              onClick={() => onItemClick(item.id)}
-            >
-              {item.label}({item.count})
-            </li>
-          ))}
-        </ul>
+    <div className="sidebar-container">
+      <div className="sidebar-header">
+        <h2 className="sidebar-title-user">Tài khoản</h2>
       </div>
-
-      <div className="sidebar-section">
-        <div className="sidebar-header">QL Tài Khoản</div>
-        <ul className="sidebar-menu">
-          {accountMenuItems.map((item) => (
-            <li
-              key={item.id}
-              className={`sidebar-item ${
-                activeItem === item.id ? "active" : ""
-              }`}
-              onClick={() => onClickAccount(item.id)} // Gọi hàm từ cha
-            >
-              {item.label}
-            </li>
-          ))}
-        </ul>
+      <nav className="sidebar-nav">
+        <div
+          className={`sidebar-link${activeItem === "all" ? " active" : ""}`}
+          onClick={() => onItemClick("all")}
+        >
+          Tất cả đơn hàng
+        </div>
+        <div
+          className={`sidebar-link${activeItem === "CONFIRM" ? " active" : ""}`}
+          onClick={() => onItemClick("CONFIRM")}
+        >
+          Đã xác nhận
+        </div>
+        <div
+          className={`sidebar-link${
+            activeItem === "DELIVERED" ? " active" : ""
+          }`}
+          onClick={() => onItemClick("DELIVERED")}
+        >
+          Đã giao hàng
+        </div>
+        <div
+          className={`sidebar-link${
+            activeItem === "CANCELLED" ? " active" : ""
+          }`}
+          onClick={() => onItemClick("CANCELLED")}
+        >
+          Đã hủy đơn
+        </div>
+      </nav>
+      <div className="sidebar-account-actions">
+        <div
+          className="sidebar-link"
+          onClick={() => onClickAccount("update-info")}
+        >
+          Cập nhật thông tin
+        </div>
+        <div
+          className="sidebar-link"
+          onClick={() => onClickAccount("change-password")}
+        >
+          Đổi mật khẩu
+        </div>
       </div>
     </div>
   );

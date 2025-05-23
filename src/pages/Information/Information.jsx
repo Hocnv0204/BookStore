@@ -44,6 +44,7 @@ function Information() {
       );
       if (res.data) {
         setOrders(res.data.content);
+        console.log(res.data);
         setPagination({
           pageNumber: res.data.pageNumber,
           pageSize: res.data.pageSize,
@@ -105,6 +106,7 @@ function Information() {
               totalPages={pagination.totalPages}
               last={pagination.last}
               onPageChange={handlePageChange}
+              filterStatus={activeItem}
             />
           )}
         </main>

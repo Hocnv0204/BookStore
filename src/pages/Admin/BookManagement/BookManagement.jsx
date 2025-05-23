@@ -29,14 +29,16 @@ function BookManagement() {
   const [sortBy, setSortBy] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const [totalPages, setTotalPages] = useState(1);
-
+  const [totalElements, setTotalElements] = useState(0);
   const fetchBooks = async () => {
     try {
       const res = await axios.get("http://localhost:8080/api/v1/books", {
         params: { page, size, sortBy, sortOrder },
       });
       setBooks(res.data.content);
+      console.log(res.data.content);
       setTotalPages(res.data.totalPages);
+      setTotalElements(res.data.totalElements);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách sách:", error);
     }
@@ -71,12 +73,12 @@ function BookManagement() {
                   Thêm sách
                 </button>
               </div>
-              <div class="book-management-search-container">
+              <div className="book-management-search-container">
                 <input
                   type="text"
                   id="searchInput"
                   placeholder="Tìm kiếm theo mã sách..."
-                  onkeyup="searchBook()"
+                  // onKeyUp={searchBook} // Nếu có hàm searchBook
                 />
               </div>
               {/* Dropdown sort */}
@@ -90,7 +92,6 @@ function BookManagement() {
                   <option value="quantityStock">Sắp xếp theo tồn kho</option>
                   <option value="id">Sắp xếp theo mã sách</option>
                 </select>
-
                 <select
                   onChange={(e) => setSortOrder(e.target.value)}
                   value={sortOrder}
@@ -109,6 +110,7 @@ function BookManagement() {
             currentPage={page}
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
+            totalElements={totalElements}
           />
 
           {showModal && (

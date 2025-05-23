@@ -8,11 +8,11 @@
     margin: 3rem 0;
     /* Tăng khoảng cách trên dưới để phân trang nổi bật hơn */
     padding: 1rem;
-    background-color: #fcfcfc;
+    /* background-color: #fcfcfc;
     /* Nền nhẹ nhàng */
-    border-radius: 12px;
+    /* border-radius: 12px; */
     /* Bo góc mềm mại hơn */
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    /* box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); */
     /* Đổ bóng tinh tế, sâu hơn */
 }
 

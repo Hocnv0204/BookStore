@@ -6,6 +6,8 @@ import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.common.enums.OrderStatus;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface OrderService {
     // User methods
     OrderDto createOrderFromCart(OrderRequest request);
@@ -18,4 +20,8 @@ public interface OrderService {
     PageResponse<OrderDto> getUserOrders(Long userId, Pageable pageable);
     OrderDto updateOrderStatus(Long orderId, OrderStatus status);
     OrderDto getOrderById(Long orderId);
-} 
+
+    List<com.bookstore.backend.dto.response.MonthlyRevenueDto> getMonthlyRevenue(Integer year);
+    
+    List<com.bookstore.backend.dto.response.DailyRevenueDto> getDailyRevenue(Integer year, Integer month);
+}

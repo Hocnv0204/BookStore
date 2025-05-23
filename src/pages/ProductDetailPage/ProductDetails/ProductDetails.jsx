@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import "./ProductDetails.css";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+
 function ProductDetails({ book }) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ text: "", type: "" });
+  const navigate = useNavigate();
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = async (redirectToCart = false) => {
     try {
       setIsLoading(true);
       const response = await axios.post(
@@ -27,6 +29,11 @@ function ProductDetails({ book }) {
           text: "Đã thêm sản phẩm vào giỏ hàng!",
           type: "success",
         });
+        if (redirectToCart) {
+          setTimeout(() => {
+            navigate("/cart");
+          }, 500);
+        }
       } else {
         setMessage({
           text: "Không thể thêm sản phẩm vào giỏ hàng",
@@ -42,7 +49,6 @@ function ProductDetails({ book }) {
       });
     } finally {
       setIsLoading(false);
-      // Clear message after 3 seconds
       setTimeout(() => {
         setMessage({ text: "", type: "" });
       }, 3000);
@@ -74,7 +80,7 @@ function ProductDetails({ book }) {
           <path d="M20 6 9 17l-5-5" />
         </svg>
         <span className="status-text">
-          Tình trạng: {book.quantityStock > 0 ? "còn hàng" : "hết hàng"}
+          Tình trạng: {book.quantityStock > 0 ? "Còn hàng" : "Hết hàng"}
         </span>
       </div>
 
@@ -105,19 +111,17 @@ function ProductDetails({ book }) {
       </div>
 
       <div className="buy-button-container">
-        <Link to="/cart">
-          <button
-            className="buy-button"
-            onClick={handleAddToCart}
-            disabled={isLoading || book.quantityStock === 0}
-          >
-            Mua ngay
-          </button>
-        </Link>
+        <button
+          className="buy-button"
+          onClick={() => handleAddToCart(true)}
+          disabled={isLoading || book.quantityStock === 0}
+        >
+          Mua ngay
+        </button>
         <div className="add-to-cart">
           <button
             className="add-to-cart-button"
-            onClick={handleAddToCart}
+            onClick={() => handleAddToCart(false)}
             disabled={isLoading || book.quantityStock === 0}
           >
             {isLoading ? "Đang thêm..." : "Thêm vào giỏ hàng"}

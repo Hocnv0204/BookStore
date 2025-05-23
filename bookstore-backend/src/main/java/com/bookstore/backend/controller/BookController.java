@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.bookstore.backend.dto.BookSalesDto;
+import java.util.List;
 
 
 @RestController
@@ -47,13 +49,16 @@ public class BookController {
 
     @GetMapping("api/v1/books/search")
     public ResponseEntity<PageResponse<BookDto>> searchBooks(
-            @RequestParam String keyword,
+            @RequestParam(required = false) String keyword,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(bookService.searchBooks(keyword, pageable));
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return ResponseEntity.ok(bookService.getAllBooks(pageable));
+        }
+        return ResponseEntity.ok(bookService.searchBooks(keyword.trim(), pageable));
     }
 
     @GetMapping("api/v1/books/category/{categoryId}")
@@ -137,5 +142,15 @@ public class BookController {
             @RequestParam(value = "sortDirection", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(bookService.getBooksByPriceRange(minPrice, maxPrice, pageable));
+    }
+
+    @GetMapping("/api/v1/books/{id}/sales")
+    public ResponseEntity<Integer> getBookSales(@PathVariable Long id) {
+        return ResponseEntity.ok(bookService.getBookSoldQuantity(id));
+    }
+
+    @GetMapping("/api/v1/books/sales")
+    public ResponseEntity<List<BookSalesDto>> getAllBooksSales() {
+        return ResponseEntity.ok(bookService.getAllBooksSales());
     }
 }

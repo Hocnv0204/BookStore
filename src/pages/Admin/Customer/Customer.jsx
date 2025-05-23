@@ -5,84 +5,43 @@ import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
 import Sidebar from "../Sidebar/Sidebar";
 // import HeaderAdmin from "../HeaderAdmin/HeaderAdmin";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const customers = [
-  {
-    customerId: "CUST001",
-    fullName: "Nguyễn Văn Hùng",
-    username: "hungnv",
-    password: "hung@2023",
-    address: "45 Nguyễn Huệ, Quận 1, TP.HCM",
-    phone: "0912345678",
-  },
-  {
-    customerId: "CUST002",
-    fullName: "Trần Thị Mai",
-    username: "maitt",
-    password: "mai12345",
-    address: "12 Lê Lợi, Quận 3, TP.HCM",
-    phone: "0987654321",
-  },
-  {
-    customerId: "CUST003",
-    fullName: "Phạm Quốc Anh",
-    username: "anhpq",
-    password: "quocanh99",
-    address: "78 Trần Phú, Nha Trang",
-    phone: "0935123456",
-  },
-  {
-    customerId: "CUST004",
-    fullName: "Lê Thị Hồng Nhung",
-    username: "nhunglth",
-    password: "nhung#2023",
-    address: "23 Pasteur, Đà Nẵng",
-    phone: "0909123456",
-  },
-  {
-    customerId: "CUST005",
-    fullName: "Hoàng Minh Tuấn",
-    username: "tuanhm",
-    password: "tuan45678",
-    address: "56 Hùng Vương, Hà Nội",
-    phone: "0978123456",
-  },
-  {
-    customerId: "CUST006",
-    fullName: "Đỗ Thị Lan",
-    username: "landt",
-    password: "lanpass123",
-    address: "89 Lý Thường Kiệt, Huế",
-    phone: "0945123456",
-  },
-  {
-    customerId: "CUST007",
-    fullName: "Vũ Đình Khôi",
-    username: "khoivd",
-    password: "khoi@abc",
-    address: "34 Nguyễn Trãi, Thanh Hóa",
-    phone: "0923123456",
-  },
-  {
-    customerId: "CUST008",
-    fullName: "Bùi Thị Thanh Thủy",
-    username: "thuybtt",
-    password: "thuy789",
-    address: "67 Phạm Ngũ Lão, Cần Thơ",
-    phone: "0967123456",
-  },
-];
-
-const tableHeaders = [
-  "Mã Khách Hàng",
-  "Họ Tên",
-  "Username",
-  "Password",
-  "Địa Chỉ",
-  "SDT",
-];
 function Customer() {
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortDirection, setSortDirection] = useState("asc");
+  const [search, setSearch] = useState("");
+  const [customers, setCustomers] = useState([]);
+  const fetchUsers = async () => {
+    const response = await axios.get("http://localhost:8080/admin/users", {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+      },
+      params: {
+        page,
+        size,
+        sortBy,
+        sortDirection,
+        search,
+      },
+    });
+    setCustomers(
+      Array.isArray(response.data.result.content)
+        ? response.data.result.content
+        : []
+    );
+    console.log(response.data.result.content);
+    setTotalPages(response.data.result.totalPages);
+    setTotalElements(response.data.result.totalElements);
+  };
+  useEffect(() => {
+    fetchUsers();
+  }, [page, size, sortBy, sortDirection, search]);
   return (
     <div className="customer">
       <Header />
@@ -92,20 +51,57 @@ function Customer() {
           <div className="content-header">
             <h2>Danh Sách Khách Hàng</h2>
             <div className="content-actions">
-              <div class="customer-search-container">
+              <div className="customer-search-container">
                 <input
                   type="text"
                   id="searchInput"
-                  placeholder="Tìm kiếm theo mã khách hàng..."
-                  onkeyup="searchCustomer()"
+                  placeholder="Tìm kiếm theo tên, username hoặc email..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
+              </div>
+              <div className="customer-sort-container">
+                <select
+                  onChange={(e) => setSortBy(e.target.value)}
+                  value={sortBy}
+                >
+                  <option value="id">Sắp xếp theo mã khách hàng</option>
+                  <option value="fullName">Sắp xếp theo tên</option>
+                  <option value="username">Sắp xếp theo username</option>
+                  <option value="email">Sắp xếp theo email</option>
+                </select>
+                <select
+                  onChange={(e) => setSortDirection(e.target.value)}
+                  value={sortDirection}
+                >
+                  <option value="asc">Tăng dần</option>
+                  <option value="desc">Giảm dần</option>
+                </select>
               </div>
             </div>
           </div>
           <Table
-            ContentTable={customers}
-            HeaderTable={tableHeaders}
+            ContentTable={customers
+              .filter((c) => c.username !== "admin")
+              .map((c) => ({
+                maKhachHang: c.id,
+                hoTen: c.fullName,
+                username: c.username,
+                email: c.email,
+                gioiTinh: c.gender || "",
+              }))}
+            HeaderTable={[
+              "Mã Khách Hàng",
+              "Họ Tên",
+              "Username",
+              "Email",
+              "Giới Tính",
+            ]}
             type="customer"
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+            totalElements={totalElements}
           />
         </div>
       </div>

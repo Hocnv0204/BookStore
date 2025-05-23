@@ -1,44 +1,7 @@
 import "./RecentOrdersTable.css";
 
-export default function RecentOrdersTable() {
-  const orders = [
-    {
-      id: "ORD001",
-      customer: "Nguyễn Văn A",
-      date: "2025-05-18",
-      total: "550,000đ",
-      status: "Đã giao",
-    },
-    {
-      id: "ORD002",
-      customer: "Trần Thị B",
-      date: "2025-05-18",
-      total: "1,200,000đ",
-      status: "Đang giao",
-    },
-    {
-      id: "ORD003",
-      customer: "Lê Văn C",
-      date: "2025-05-17",
-      total: "320,000đ",
-      status: "Chờ xác nhận",
-    },
-    {
-      id: "ORD004",
-      customer: "Phạm Thị D",
-      date: "2025-05-17",
-      total: "780,000đ",
-      status: "Đã xác nhận",
-    },
-    {
-      id: "ORD005",
-      customer: "Hoàng Văn E",
-      date: "2025-05-16",
-      total: "950,000đ",
-      status: "Đã hủy",
-    },
-  ];
-
+export default function RecentOrdersTable({ orders }) {
+  const recentOrders = orders.slice(0, 5);
   return (
     <div className="orders-card">
       <div className="orders-content">
@@ -55,12 +18,12 @@ export default function RecentOrdersTable() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {recentOrders.map((order) => (
                 <tr key={order.id}>
                   <td>{order.id}</td>
-                  <td>{order.customer}</td>
-                  <td>{order.date}</td>
-                  <td>{order.total}</td>
+                  <td>{order.receiverName}</td>
+                  <td>{order.createdAt.split("T")[0]}</td>
+                  <td>{order.totalAmount}</td>
                   <td>
                     <OrderStatusBadge status={order.status} />
                   </td>
@@ -78,19 +41,19 @@ function OrderStatusBadge({ status }) {
   let badgeClass = "status-badge";
 
   switch (status) {
-    case "Đã giao":
+    case "DELIVERED":
       badgeClass += " status-delivered";
       break;
-    case "Đang giao":
+    case "SHIPPING":
       badgeClass += " status-shipping";
       break;
-    case "Chờ xác nhận":
+    case "PENDING":
       badgeClass += " status-pending";
       break;
-    case "Đã xác nhận":
+    case "CONFIRMED":
       badgeClass += " status-confirmed";
       break;
-    case "Đã hủy":
+    case "CANCELLED":
       badgeClass += " status-canceled";
       break;
   }

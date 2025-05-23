@@ -24,14 +24,19 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-
-
+import com.bookstore.backend.service.EmailService;
+import com.bookstore.backend.repository.VerificationCodeRepository;
+import com.bookstore.backend.model.VerificationCode;
+import com.bookstore.backend.common.enums.VerificationType;
+import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.StringJoiner;
 import java.util.UUID;
 
@@ -43,6 +48,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     final UserRepository userRepository ;
     private final PasswordEncoder passwordEncoder;
     private final InvalidatedTokenRepository invalidatedTokenRepository ;
+    private final EmailService emailService;
+    private final VerificationCodeRepository verificationCodeRepository;
     @NonFinal
     @Value("${spring.jwt.signerKey}")
     protected String SIGNER_KEY ;
@@ -136,40 +143,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return signedJWT ;
     }
 
-    @Override
-    public AuthenticationResponse register(UserCreationRequest request) {
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTS);
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXISTS);
-        }
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-        
-        // Generate verification token
-        String verificationToken = UUID.randomUUID().toString();
-        
-        User user = User.builder()
-                .username(request.getUsername())
-                .fullName(request.getFullName())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .dob(request.getDob())
-                .gender(request.getGender())
-                .roles(roles)
-                .build();
-        userRepository.save(user) ;
-        String accessToken = generateAccessToken(user) ;
-        String refreshToken = generateRefreshToken(user) ;
-
-            return AuthenticationResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .authenticated(true)
-                    .build();
     
-    }
 
    
 
@@ -249,6 +223,101 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .authenticated(true)
                 .build() ;
 
+    }
+
+    private String generateVerificationCode() {
+        return String.format("%06d", new Random().nextInt(1000000));
+    }
+    @Transactional
+    @Override
+    public void sendVerificationCode(String email, VerificationType type) {
+        if (type == VerificationType.REGISTRATION && userRepository.existsByEmail(email)) {
+            throw new AppException(ErrorCode.EMAIL_EXISTS);
+        }
+        if (type == VerificationType.PASSWORD_RESET && !userRepository.existsByEmail(email)) {
+            throw new AppException(ErrorCode.USER_NOT_FOUND);
+        }
+        verificationCodeRepository.deleteByEmailAndType(email, type);
+        String code = generateVerificationCode();
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(15);
+        VerificationCode verificationCode = VerificationCode.builder()
+                .email(email)
+                .code(code)
+                .expiryTime(expiryTime)
+                .used(false)
+                .type(type)
+                .build();
+        verificationCodeRepository.save(verificationCode);
+        if (type == VerificationType.REGISTRATION) {
+            emailService.sendVerificationEmail(email, code);
+        } else if (type == VerificationType.PASSWORD_RESET) {
+            emailService.sendPasswordResetEmail(email, code);
+        }
+    }
+
+    @Override
+    public AuthenticationResponse verifyAndRegister(VerifyAndRegisterRequest request) {
+        // Verify code
+        VerificationCode verificationCode = verificationCodeRepository
+                .findByEmailAndCodeAndTypeAndUsedFalse(request.getEmail(), request.getVerificationCode(), VerificationType.REGISTRATION)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
+
+        if (verificationCode.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+
+        // Check if username exists
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USER_EXISTS);
+        }
+
+        // Create user
+        HashSet<String> roles = new HashSet<>();
+        roles.add(Role.USER.name());
+
+        User user = User.builder()
+                .username(request.getUsername())
+                .fullName(request.getFullName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .gender(request.getGender())
+                .roles(roles)
+                .build();
+        userRepository.save(user);
+
+        // Mark verification code as used
+        verificationCode.setUsed(true);
+        verificationCodeRepository.save(verificationCode);
+
+        // Generate tokens
+        String accessToken = generateAccessToken(user);
+        String refreshToken = generateRefreshToken(user);
+
+        return AuthenticationResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .authenticated(true)
+                .build();
+    }
+
+    @Override
+    public void resetPassword(ResetPasswordRequest request) {
+        VerificationCode verificationCode = verificationCodeRepository
+                .findByEmailAndCodeAndTypeAndUsedFalse(request.getEmail(), request.getVerificationCode(), VerificationType.PASSWORD_RESET)
+                .orElseThrow(() -> new AppException(ErrorCode.INVALID_TOKEN));
+
+        if (verificationCode.getExpiryTime().isBefore(LocalDateTime.now())) {
+            throw new AppException(ErrorCode.TOKEN_EXPIRED);
+        }
+        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_MISMATCH);
+        }
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        verificationCode.setUsed(true);
+        verificationCodeRepository.save(verificationCode);
     }
 
 }

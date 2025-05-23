@@ -1,5 +1,5 @@
 import "./Header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
@@ -7,6 +7,8 @@ function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [cart, setCart] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const navigate = useNavigate();
 
   const loadUser = () => {
     const storedUser = localStorage.getItem("user");
@@ -85,6 +87,13 @@ function Header() {
     return cart.items.reduce((total, item) => total + item.quantity, 0);
   };
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchKeyword.trim()) {
+      navigate(`/search?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+    }
+  };
+
   return (
     <header className="header">
       <div className="header-container">
@@ -97,25 +106,29 @@ function Header() {
         </Link>
 
         <div className="search-container">
-          <input
-            type="text"
-            placeholder="Tìm kiếm sách..."
-            className="search-input"
-          />
-          <button className="search-button">
-            <svg
-              className="icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </button>
+          <form onSubmit={handleSearch}>
+            <input
+              type="text"
+              placeholder="Tìm kiếm sách..."
+              className="search-input"
+              value={searchKeyword}
+              onChange={(e) => setSearchKeyword(e.target.value)}
+            />
+            <button type="submit" className="search-button">
+              <svg
+                className="icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+          </form>
         </div>
 
         <div className="header-actions">

@@ -5,6 +5,7 @@ import "./Table.css";
 import Pagination from "../../../components/Pagination/Pagination";
 import axios from "axios";
 import ConfirmDialog from "../../../components/ConfirmDialog/ConfirmDialog"; // ✅ Import ConfirmDialog
+import React from "react";
 
 function Table({
   ContentTable,
@@ -22,7 +23,9 @@ function Table({
   const [objects, setObjects] = useState([]);
   const MAX_LENGTH = 50;
   const truncateText = (text) => {
-    if (!text) return "";
+    if (text === null || text === undefined) return "";
+    if (typeof text === "number") return text.toString();
+    if (typeof text !== "string") return String(text);
     if (text.length <= MAX_LENGTH) return text;
     return text.slice(0, MAX_LENGTH) + "...";
   };
@@ -155,11 +158,28 @@ function Table({
               objects.map((object) => (
                 <tr key={object?.id || `row-${Math.random()}`}>
                   {object &&
-                    Object.values(object).map((value, i) => (
+                    Object.entries(object).map(([key, value], i) => (
                       <td key={i}>
-                        {typeof value === "number"
-                          ? value.toLocaleString()
-                          : truncateText(value)}
+                        {React.isValidElement(value) ? (
+                          value
+                        ) : typeof value === "string" &&
+                          (key.toLowerCase().includes("image") ||
+                            key.toLowerCase().includes("img")) ? (
+                          <img
+                            src={value}
+                            alt="img"
+                            style={{
+                              maxWidth: 60,
+                              maxHeight: 60,
+                              objectFit: "cover",
+                              borderRadius: 4,
+                            }}
+                          />
+                        ) : typeof value === "number" ? (
+                          value.toLocaleString()
+                        ) : (
+                          truncateText(value)
+                        )}
                       </td>
                     ))}
                   {(type === "book" || type === "category") && (

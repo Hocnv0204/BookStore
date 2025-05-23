@@ -31,7 +31,15 @@ public class SecurityConfig {
             "/api/v1/categories/**",
             "/refresh",
             "/users/logout",
-            
+            "/auth/send-verification-code",
+            "/auth/send-reset-password-code",
+            "/auth/verify-and-register",
+            "/auth/reset-password",
+            "/auth/change-password",
+            "/auth/forgot-password",
+            "/auth/reset-password",
+            "/auth/change-password",
+            "/auth/forgot-password",
     };
 
     @Bean

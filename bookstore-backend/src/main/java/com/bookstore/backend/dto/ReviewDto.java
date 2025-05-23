@@ -19,6 +19,7 @@ public class ReviewDto {
     String bookTitle;
     Integer rating;
     String comment;
+    String imageUrl;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 } 

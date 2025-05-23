@@ -1,6 +1,11 @@
 import "./OverviewWidget.css";
 
-export default function OverviewWidget() {
+export default function OverviewWidget({
+  totalOrders,
+  totalUsers,
+  totalRevenueToday,
+  totalProducts,
+}) {
   return (
     <div className="stats-grid">
       <div className="stat-card">
@@ -24,8 +29,7 @@ export default function OverviewWidget() {
           </div>
         </div>
         <div className="stat-content">
-          <p className="stat-value">1,250</p>
-          <p className="stat-change">+20.1% so với tháng trước</p>
+          <p className="stat-value">{totalOrders}</p>
         </div>
       </div>
 
@@ -49,8 +53,9 @@ export default function OverviewWidget() {
           </div>
         </div>
         <div className="stat-content">
-          <p className="stat-value">15,800,000đ</p>
-          <p className="stat-change">+5.5% so với hôm qua</p>
+          <p className="stat-value">
+            {totalRevenueToday.toLocaleString("vi-VN")} VNĐ
+          </p>
         </div>
       </div>
 
@@ -73,8 +78,7 @@ export default function OverviewWidget() {
           </div>
         </div>
         <div className="stat-content">
-          <p className="stat-value">865</p>
-          <p className="stat-subtitle">Active</p>
+          <p className="stat-value">{totalProducts}</p>
         </div>
       </div>
 
@@ -100,8 +104,7 @@ export default function OverviewWidget() {
           </div>
         </div>
         <div className="stat-content">
-          <p className="stat-value">5,230</p>
-          <p className="stat-change">+180 trong tháng này</p>
+          <p className="stat-value">{totalUsers}</p>
         </div>
       </div>
     </div>

@@ -1,66 +1,95 @@
-.products-card {
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.products-content {
-    padding: 1.5rem;
-}
-
 .products-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin-bottom: 2rem;
     margin-top: 0;
+    color: #1e293b;
+    position: relative;
+    padding-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
-.products-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+.products-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #00C853, #60a5fa);
+    border-radius: 2px;
 }
 
 .product-item {
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background-color: #f8fafc;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 200, 83, 0.15);
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+}
+
+.product-item:hover {
+    background-color: #e8f9f0;
+    box-shadow: 0 4px 12px -2px #00C85322;
 }
 
 .product-rank {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    background-color: #f3f4f6;
+    width: 3rem;
+    height: 3rem;
+    background: linear-gradient(135deg, #00C853, #60a5fa);
     border-radius: 9999px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 6px rgba(0, 200, 83, 0.2);
+    margin-top: 0.25rem;
 }
 
-.product-rank span {
-    font-weight: 500;
-}
-
-.product-info {
-    flex: 1;
+.product-item:hover .product-rank {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 6px 16px #00C85333;
 }
 
 .product-name {
-    font-weight: 500;
+    font-weight: 900;
     margin: 0;
+    color: #1e293b;
+    font-size: 1.3rem;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+    transition: color 0.3s;
+    word-break: break-word;
 }
 
-.product-author {
-    font-size: 0.875rem;
-    color: #6b7280;
-    margin: 0.25rem 0 0 0;
+.product-item:hover .product-name {
+    color: #00C853;
+    text-shadow: 0 2px 8px #00C85322;
 }
 
 .product-sales {
-    text-align: right;
-    font-weight: 500;
+    font-weight: 700;
+    color: #00C853;
+    font-size: 1.1rem;
+    margin-top: 0.15rem;
+    margin-left: 0;
+    background: none;
+    padding: 0;
+    text-align: left;
 }
 
 .product-sales p {
     margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }

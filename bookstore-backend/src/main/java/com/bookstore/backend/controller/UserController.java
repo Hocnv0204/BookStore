@@ -1,6 +1,7 @@
 package com.bookstore.backend.controller;
 
 import com.bookstore.backend.dto.UserResponse;
+import com.bookstore.backend.dto.request.userrequest.ChangePasswordRequest;
 import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
 import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.PageResponse;
@@ -93,6 +94,17 @@ public class UserController {
         return ResponseEntity.ok().body(
             ApiResponse.<UserResponse>builder()
                 .result(userService.getUserProfile())
+                .build()
+        );
+    }
+
+    @PutMapping("users/change-password")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordRequest request) {
+        userService.changePassword(request);
+        return ResponseEntity.ok().body(
+            ApiResponse.<Void>builder()
+                .message("Password changed successfully")
                 .build()
         );
     }

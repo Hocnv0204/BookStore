@@ -7,11 +7,11 @@ import com.bookstore.backend.model.Book;
 
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = false))
 public interface BookMapper {
-    Book toEntity(BookRequest request);
-
-
-    @Mapping(source = "category.id" , target = "categoryId")
+    @Mapping(target = "categoryId", source = "category.id")
     BookDto toDto(Book book);
+
+    @Mapping(target = "category.id", source = "categoryId")
+    Book toEntity(BookDto bookDto);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "categoryId" , target = "category.id")

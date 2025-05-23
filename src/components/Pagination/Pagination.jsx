@@ -6,11 +6,10 @@ const Pagination = ({
   pageSize = 10,
   totalElements = 0,
   totalPages = 1,
-  last = true,
   onPageChange,
 }) => {
   const handlePageChange = (newPage) => {
-    if (newPage >= 0 && newPage < totalPages) {
+    if (newPage >= 0 && newPage <= totalPages) {
       onPageChange(newPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -45,7 +44,7 @@ const Pagination = ({
         <button
           className="pagination-button"
           onClick={() => handlePageChange(pageNumber + 1)}
-          disabled={last}
+          disabled={pageNumber === totalPages - 1}
         >
           <i className="fas fa-chevron-right">{">"}</i>
         </button>

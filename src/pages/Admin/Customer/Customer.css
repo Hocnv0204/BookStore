@@ -55,3 +55,50 @@ body {
     border-radius: 5px;
     cursor: pointer;
 }
+
+.customer-search-container input {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 15px;
+    min-width: 220px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.customer-search-container input:focus {
+    border-color: #1976d2;
+}
+
+.customer-sort-container select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    min-width: 160px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.customer-sort-container select:hover {
+    border-color: #1976d2;
+}
+
+.customer-sort-container select:focus {
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.15);
+}
+
+.customer-sort-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.content-actions {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}

@@ -29,7 +29,8 @@ public enum ErrorCode {
     PAYMENT_FAILED(1013, "Payment failed", HttpStatus.PAYMENT_REQUIRED),
     PAYMENT_GATEWAY_ERROR(1014, "Payment gateway error", HttpStatus.SERVICE_UNAVAILABLE),
     EMAIL_EXISTS(1015, "Email already exists", HttpStatus.BAD_REQUEST),
-    PASSWORD_MISMATCH(1016, "Passwords do not match", HttpStatus.BAD_REQUEST),
+    INVALID_PASSWORD(1006, "Invalid current password", HttpStatus.BAD_REQUEST),
+    PASSWORD_MISMATCH(1007, "New password and confirm password do not match", HttpStatus.BAD_REQUEST),
     INVALID_TOKEN(1017, "Invalid token", HttpStatus.BAD_REQUEST),
     TOKEN_EXPIRED(1018, "Token has expired", HttpStatus.BAD_REQUEST),
     EMAIL_ALREADY_VERIFIED(1019, "Email is already verified", HttpStatus.BAD_REQUEST),
@@ -43,7 +44,10 @@ public enum ErrorCode {
     FILE_TOO_LARGE(1028, "File size exceeds maximum limit", HttpStatus.BAD_REQUEST),
     INVALID_FILE_TYPE(1029, "Invalid file type", HttpStatus.BAD_REQUEST),
     FILE_STORAGE_ERROR(1030, "Failed to store file", HttpStatus.INTERNAL_SERVER_ERROR),
-    FILE_DELETION_ERROR(1031, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_DELETION_ERROR(1031, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_YEAR(1032, "Invalid year. Year must be between 2000 and current year", HttpStatus.BAD_REQUEST),
+    INVALID_MONTH(1033, "Invalid month. Month must be between 1 and 12", HttpStatus.BAD_REQUEST),
+    REVIEW_NOT_ALLOWED(1034, "You can only review books that you have purchased", HttpStatus.FORBIDDEN);
 
     private final int code;
     private final String message;

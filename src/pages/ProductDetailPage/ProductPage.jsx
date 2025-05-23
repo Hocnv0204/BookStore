@@ -61,15 +61,13 @@ function ProductPage() {
     setCategories(res.data.result.content);
     console.log(res.data);
   };
+
   useEffect(() => {
     fetchBookById();
     fetchCategory();
   }, [id]);
   console.log(categories);
-  const category = categories.find(
-    (item) => item.id === parseInt(book.categoryId)
-  );
-  console.log(category);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -81,12 +79,8 @@ function ProductPage() {
   return (
     <div className="app-container">
       <Header />
-      <Breadcrumb
-        categoryName={category?.name || "Uncategorized"}
-        bookTitle={book?.title}
-      />
-
       <main className="main-content">
+        <Breadcrumb bookTitle={book?.title} />
         <ProductContainer book={book} />
 
         <Section

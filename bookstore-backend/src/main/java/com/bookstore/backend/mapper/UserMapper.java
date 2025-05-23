@@ -1,7 +1,6 @@
 package com.bookstore.backend.mapper;
 
 import com.bookstore.backend.dto.UserResponse;
-import com.bookstore.backend.dto.request.userrequest.UserCreationRequest;
 import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
 import com.bookstore.backend.model.User;
 import org.mapstruct.Builder;
@@ -13,7 +12,6 @@ import org.mapstruct.MappingTarget;
 @Mapper(componentModel = "spring", builder = @Builder(disableBuilder = false))
 public interface UserMapper {
 
-    User toUser(UserCreationRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
