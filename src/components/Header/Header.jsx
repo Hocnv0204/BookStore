@@ -89,8 +89,10 @@ function Header() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchKeyword.trim()) {
-      navigate(`/search?keyword=${encodeURIComponent(searchKeyword.trim())}`);
+    const trimmedKeyword = searchKeyword.trim();
+    if (trimmedKeyword) {
+      navigate(`/search?keyword=${encodeURIComponent(trimmedKeyword)}`);
+      setSearchKeyword(""); // Clear search input after navigation
     }
   };
 

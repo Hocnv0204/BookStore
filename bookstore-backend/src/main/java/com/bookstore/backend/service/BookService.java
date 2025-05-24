@@ -16,11 +16,12 @@ public interface BookService {
     BookDto createBook(BookRequest request, MultipartFile image);
     BookDto updateBook(Long id, BookRequest request, MultipartFile image);
     void deleteBook(Long id);
-    PageResponse<BookDto> searchBooks(String keyword, Pageable pageable);
+    PageResponse<BookDto> searchBooks(String keyword, Long categoryId,Long publisherId,Long distributorId, Double minPrice, Double maxPrice, Pageable pageable);
     PageResponse<BookDto> getBooksByCategory(Long categoryId, Pageable pageable);
     PageResponse<BookDto> getBooksByAuthor(String authorName, Pageable pageable);
     PageResponse<BookDto> getBooksByPriceRange(Double minPrice, Double maxPrice, Pageable pageable);
-    PageResponse<BookDto> getBooksByPublisher(String publisher, Pageable pageable);
+    PageResponse<BookDto> getBooksByPublisher(Long publisherId, Pageable pageable);
+    PageResponse<BookDto> getBooksByDistributor(Long distributorId, Pageable pageable);
     void updateBookStock(List<CartItemDto> cartItems);
     
     /**

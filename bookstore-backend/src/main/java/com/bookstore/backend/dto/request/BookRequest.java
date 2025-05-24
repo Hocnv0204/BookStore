@@ -26,12 +26,15 @@ public class BookRequest {
     @NotNull(message = "Author name is required")
     private String authorName;
 
-    @NotNull
-    private String publisher ;
-
-    @NotNull
-    private String introduction ;
+    @NotNull(message = "Introduction is required")
+    private String introduction;
 
     @NotNull(message = "Category ID is required")
     private Long categoryId;
+
+    @NotNull(message = "Publisher ID is required")
+    private Long publisherId;
+
+    @NotNull(message = "Distributor ID is required")
+    private Long distributorId;
 } 

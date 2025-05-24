@@ -17,8 +17,16 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     
     @Query("SELECT b FROM Book b WHERE " +
            "(:keyword IS NULL OR :keyword = '' OR " +
-           "LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%')))")
-    Page<Book> searchBooks(@Param("keyword") String keyword, Pageable pageable);
+           "LOWER(b.title) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+           "AND (:categoryId IS NULL OR b.category.id = :categoryId) " +
+           "AND (:minPrice IS NULL OR b.price >= :minPrice) " +
+           "AND (:maxPrice IS NULL OR b.price <= :maxPrice)")
+    Page<Book> searchBooks(
+        @Param("keyword") String keyword,
+        @Param("categoryId") Long categoryId,
+        @Param("minPrice") Double minPrice,
+        @Param("maxPrice") Double maxPrice,
+        Pageable pageable);
     
     @Query("SELECT b FROM Book b WHERE LOWER(b.authorName) LIKE LOWER(CONCAT('%', :authorName, '%'))")
     Page<Book> findByAuthorNameContainingIgnoreCase(@Param("authorName") String authorName, Pageable pageable);
@@ -47,4 +55,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
            "LEFT JOIN Order o ON o.id = oi.order.id AND o.status != 'CANCELLED' " +
            "GROUP BY b.id, b.title")
     List<BookSalesDto> getAllBooksSales();
+
+    Page<Book> findByPublisherId(Long publisherId, Pageable pageable);
+    Page<Book> findByDistributorId(Long distributorId, Pageable pageable);
 }

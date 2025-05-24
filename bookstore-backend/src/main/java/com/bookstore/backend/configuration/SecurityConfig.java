@@ -29,6 +29,8 @@ public class SecurityConfig {
             "/api/v1/books/**",
             "/api/v1/reviews/**",
             "/api/v1/categories/**",
+            "/api/v1/publishers/**",
+            "/api/v1/distributors/**",
             "/refresh",
             "/users/logout",
             "/auth/send-verification-code",

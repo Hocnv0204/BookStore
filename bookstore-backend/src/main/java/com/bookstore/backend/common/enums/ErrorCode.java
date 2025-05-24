@@ -47,7 +47,13 @@ public enum ErrorCode {
     FILE_DELETION_ERROR(1031, "Failed to delete file", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_YEAR(1032, "Invalid year. Year must be between 2000 and current year", HttpStatus.BAD_REQUEST),
     INVALID_MONTH(1033, "Invalid month. Month must be between 1 and 12", HttpStatus.BAD_REQUEST),
-    REVIEW_NOT_ALLOWED(1034, "You can only review books that you have purchased", HttpStatus.FORBIDDEN);
+    REVIEW_NOT_ALLOWED(1034, "You can only review books that you have purchased", HttpStatus.FORBIDDEN),
+    PUBLISHER_NOT_FOUND(404, "Publisher not found"),
+    DISTRIBUTOR_NOT_FOUND(404, "Distributor not found"),
+    DISTRIBUTOR_NAME_EXISTED(404, "Distributor name already exists"),
+    DISTRIBUTOR_EMAIL_EXISTED(404, "Distributor email already exists"),
+    PUBLISHER_NAME_EXISTED(404, "Publisher name already exists"),
+    PUBLISHER_EMAIL_EXISTED(404, "Publisher email already exists");
 
     private final int code;
     private final String message;
@@ -57,5 +63,11 @@ public enum ErrorCode {
         this.code = code;
         this.message = message;
         this.status = status;
+    }
+
+    ErrorCode(int code, String message) {
+        this.code = code;
+        this.message = message;
+        this.status = HttpStatus.NOT_FOUND;
     }
 }

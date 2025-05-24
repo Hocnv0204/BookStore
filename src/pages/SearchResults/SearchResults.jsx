@@ -29,6 +29,7 @@ function SearchResults() {
   const [isLoading, setIsLoading] = useState(true);
   const [sortBy, setSortBy] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -44,9 +45,38 @@ function SearchResults() {
   const fetchSearchResults = async () => {
     try {
       setIsLoading(true);
-      let url = `http://localhost:8080/api/v1/books/search?page=0&size=100&sortBy=id&sortOrder=asc&keyword=${keyword}`;
+
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: currentPage,
+        size: pageSize,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
+        keyword: keyword,
+      });
+
+      // Add category filter if selected
+      if (selectedCategories.length > 0) {
+        params.append("categoryId", selectedCategories[0]); // Currently supporting single category
+      }
+
+      // Add price range filter
+      if (checkedPriceRanges.length > 0) {
+        const range = PRICE_RANGES[checkedPriceRanges[0]]; // Currently supporting single range
+        params.append("minPrice", range.min);
+        params.append("maxPrice", range.max);
+      } else if (customPrice.min || customPrice.max) {
+        if (customPrice.min) params.append("minPrice", customPrice.min);
+        if (customPrice.max) params.append("maxPrice", customPrice.max);
+      }
+
+      const url = `http://localhost:8080/api/v1/books/search?${params.toString()}`;
       const res = await axios.get(url);
+
       setBooks(res.data.content);
+      // Update pagination info from API response
+      setCurrentPage(res.data.pageNumber);
+      setTotalPages(res.data.totalPages);
     } catch (error) {
       console.error("Error fetching search results:", error);
     } finally {
@@ -60,43 +90,21 @@ function SearchResults() {
 
   useEffect(() => {
     fetchSearchResults();
-  }, [keyword]);
+  }, [
+    keyword,
+    selectedCategories,
+    checkedPriceRanges,
+    customPrice,
+    currentPage,
+    sortBy,
+    sortOrder,
+  ]);
 
   // Filter books by selected categories and price ranges
-  let filteredBooks = books.filter((book) => {
-    // Category filter
-    if (
-      selectedCategories.length > 0 &&
-      !selectedCategories.includes(book.categoryId)
-    ) {
-      return false;
-    }
-    // Price range filter
-    let priceMatch = false;
-    if (
-      checkedPriceRanges.length === 0 &&
-      !customPrice.min &&
-      !customPrice.max
-    ) {
-      priceMatch = true;
-    } else {
-      // Check if in any checked range
-      priceMatch = checkedPriceRanges.some((idx) => {
-        const range = PRICE_RANGES[idx];
-        return book.price >= range.min && book.price < range.max;
-      });
-      // Check custom price
-      if (customPrice.min || customPrice.max) {
-        const min = customPrice.min ? Number(customPrice.min) : 0;
-        const max = customPrice.max ? Number(customPrice.max) : Infinity;
-        if (book.price >= min && book.price <= max) priceMatch = true;
-      }
-    }
-    return priceMatch;
-  });
+  const filteredBooks = books;
 
   // Sort books ở FE
-  filteredBooks = filteredBooks.sort((a, b) => {
+  const sortedBooks = filteredBooks.sort((a, b) => {
     let v1 = a[sortBy];
     let v2 = b[sortBy];
     if (sortBy === "title") {
@@ -109,11 +117,10 @@ function SearchResults() {
   });
 
   // Pagination trên filteredBooks
-  const pagedBooks = filteredBooks.slice(
+  const pagedBooks = sortedBooks.slice(
     currentPage * pageSize,
     (currentPage + 1) * pageSize
   );
-  const totalPages = Math.ceil(filteredBooks.length / pageSize) || 1;
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);

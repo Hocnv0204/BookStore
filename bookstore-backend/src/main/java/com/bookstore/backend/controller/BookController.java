@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.bookstore.backend.dto.BookSalesDto;
 import java.util.List;
 
-
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -50,15 +49,20 @@ public class BookController {
     @GetMapping("api/v1/books/search")
     public ResponseEntity<PageResponse<BookDto>> searchBooks(
             @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long publisherId,
+            @RequestParam(required = false) Long distributorId,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
-        if (keyword == null || keyword.trim().isEmpty()) {
-            return ResponseEntity.ok(bookService.getAllBooks(pageable));
+        if (keyword == null) {
+            keyword = "";
         }
-        return ResponseEntity.ok(bookService.searchBooks(keyword.trim(), pageable));
+        return ResponseEntity.ok(bookService.searchBooks(keyword.trim(), categoryId, publisherId, distributorId, minPrice, maxPrice, pageable));
     }
 
     @GetMapping("api/v1/books/category/{categoryId}")
@@ -67,31 +71,32 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection) {
+            @RequestParam(value = "sortDirection",
+             required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
         return ResponseEntity.ok(bookService.getBooksByCategory(categoryId, pageable));
     }
 
-    @GetMapping("api/v1/books/author/{authorname}")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByAuthor(
-            @PathVariable String authorName,
+    @GetMapping("api/v1/books/publisher/{publisherId}")
+    public ResponseEntity<PageResponse<BookDto>> getBooksByPublisher(
+            @PathVariable Long publisherId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(bookService.getBooksByAuthor(authorName, pageable));
+        return ResponseEntity.ok(bookService.getBooksByPublisher(publisherId, pageable));
     }
 
-    @GetMapping("api/v1/books/publisher/{publisher}")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByPublisher(
-            @PathVariable String publisher,
+    @GetMapping("api/v1/books/distributor/{distributorId}")
+    public ResponseEntity<PageResponse<BookDto>> getBooksByDistributor(
+            @PathVariable Long distributorId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortDirection) {
         Pageable pageable = getPageable(page, size, sortBy, sortDirection);
-        return ResponseEntity.ok(bookService.getBooksByPublisher(publisher, pageable));
+        return ResponseEntity.ok(bookService.getBooksByDistributor(distributorId, pageable));
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "admin/books")

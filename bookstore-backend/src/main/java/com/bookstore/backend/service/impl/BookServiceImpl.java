@@ -8,8 +8,12 @@ import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.mapper.BookMapper;
 import com.bookstore.backend.model.Book;
 import com.bookstore.backend.model.CartItem;
+import com.bookstore.backend.model.Publisher;
+import com.bookstore.backend.model.Distributor;
 import com.bookstore.backend.repository.BookRepository;
 import com.bookstore.backend.repository.CategoryRepository;
+import com.bookstore.backend.repository.PublisherRepository;
+import com.bookstore.backend.repository.DistributorRepository;
 import com.bookstore.backend.service.BookService;
 import com.bookstore.backend.service.FileStorageService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +33,8 @@ import com.bookstore.backend.dto.BookSalesDto;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
+    private final PublisherRepository publisherRepository;
+    private final DistributorRepository distributorRepository;
     private final BookMapper bookMapper;
     private final FileStorageService fileStorageService;
 
@@ -47,28 +53,34 @@ public class BookServiceImpl implements BookService {
 
     @Transactional
     @Override
-    public BookDto createBook(BookRequest request , MultipartFile image) {
-
+    public BookDto createBook(BookRequest request, MultipartFile image) {
+        // Validate and get category
         var category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
+        // Validate and get publisher
+        var publisher = publisherRepository.findById(request.getPublisherId())
+                .orElseThrow(() -> new AppException(ErrorCode.PUBLISHER_NOT_FOUND));
+
+        // Validate and get distributor
+        var distributor = distributorRepository.findById(request.getDistributorId())
+                .orElseThrow(() -> new AppException(ErrorCode.DISTRIBUTOR_NOT_FOUND));
+
         // Store image file
-        System.out.println("BookRequest: " + request);
-        System.out.println("Image: " + (image != null ? image.getOriginalFilename() : "null"));
         String imageFileName = fileStorageService.storeFile(image, "books");
         String imageUrl = fileStorageService.getFileUrl(imageFileName, "books");
 
         // Create book
-        
         Book book = Book.builder()
                 .introduction(request.getIntroduction())
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .publisher(request.getPublisher())
                 .price(request.getPrice())
                 .quantityStock(request.getQuantityStock())
                 .authorName(request.getAuthorName())
                 .category(category)
+                .publisher(publisher)
+                .distributor(distributor)
                 .imageUrl(imageUrl)
                 .build();
 
@@ -87,10 +99,7 @@ public class BookServiceImpl implements BookService {
         book.setPrice(request.getPrice());
         book.setQuantityStock(request.getQuantityStock());
         book.setAuthorName(request.getAuthorName());
-        book.setPublisher(request.getPublisher());
         book.setIntroduction(request.getIntroduction());
-
-
 
         // Update category if changed
         if (!book.getCategory().getId().equals(request.getCategoryId())) {
@@ -99,13 +108,27 @@ public class BookServiceImpl implements BookService {
             book.setCategory(category);
         }
 
+        // Update publisher if changed
+        if (!book.getPublisher().getId().equals(request.getPublisherId())) {
+            var publisher = publisherRepository.findById(request.getPublisherId())
+                    .orElseThrow(() -> new AppException(ErrorCode.PUBLISHER_NOT_FOUND));
+            book.setPublisher(publisher);
+        }
+
+        // Update distributor if changed
+        if (!book.getDistributor().getId().equals(request.getDistributorId())) {
+            var distributor = distributorRepository.findById(request.getDistributorId())
+                    .orElseThrow(() -> new AppException(ErrorCode.DISTRIBUTOR_NOT_FOUND));
+            book.setDistributor(distributor);
+        }
+
         // Update image if provided
         if (image != null && !image.isEmpty()) {
             // Delete old image
             String oldImageUrl = book.getImageUrl();
-        if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
-            fileStorageService.deleteFile(oldImageUrl, "books");
-        }
+            if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
+                fileStorageService.deleteFile(oldImageUrl, "books");
+            }
 
             // Store new image
             String newImageFileName = fileStorageService.storeFile(image, "books");
@@ -137,8 +160,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<BookDto> searchBooks(String keyword, Pageable pageable) {
-        Page<Book> bookPage = bookRepository.searchBooks(keyword, pageable);
+    public PageResponse<BookDto> searchBooks(String keyword, Long categoryId,Long publisherId,Long distributorId, Double minPrice, Double maxPrice, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.searchBooks(keyword, categoryId, minPrice, maxPrice, pageable);
         return createPageResponse(bookPage);
     }
 
@@ -149,8 +172,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public PageResponse<BookDto> getBooksByPublisher(String publisher, Pageable pageable) {
-        Page<Book> bookPage = bookRepository.findByPublisher( publisher, pageable);
+    public PageResponse<BookDto> getBooksByPublisher(Long publisherId, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByPublisherId(publisherId, pageable);
+        return createPageResponse(bookPage);
+    }
+
+    @Override
+    public PageResponse<BookDto> getBooksByDistributor(Long distributorId, Pageable pageable) {
+        Page<Book> bookPage = bookRepository.findByDistributorId(distributorId, pageable);
         return createPageResponse(bookPage);
     }
 
