@@ -11,6 +11,7 @@ import java.util.List;
 public interface OrderService {
     // User methods
     OrderDto createOrderFromCart(OrderRequest request);
+    OrderDto createOrderFromSelectedCartItems(OrderRequest request, List<Long> cartItemIds);
     OrderDto updateOrder(Long orderId, OrderRequest request);
     PageResponse<OrderDto> getUserOrders(Pageable pageable);
     OrderDto cancelOrder(Long orderId);
@@ -24,4 +25,6 @@ public interface OrderService {
     List<com.bookstore.backend.dto.response.MonthlyRevenueDto> getMonthlyRevenue(Integer year);
     
     List<com.bookstore.backend.dto.response.DailyRevenueDto> getDailyRevenue(Integer year, Integer month);
+
+    PageResponse<OrderDto> searchOrdersByCustomerName(String keyword, Pageable pageable);
 }

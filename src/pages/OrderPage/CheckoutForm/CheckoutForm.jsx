@@ -3,69 +3,51 @@ import { useState } from "react";
 import "./CheckoutForm.css";
 import axios from "axios";
 
-function CheckoutForm() {
-  const [formData, setFormData] = useState({
+function CheckoutForm({ selectedItems, total }) {
+  const [form, setForm] = useState({
     receiverName: "",
+    deliveryAddress: "",
     phoneNumber: "",
     email: "",
-    deliveryAddress: "",
     note: "",
   });
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSuccessMessage("");
-    setErrorMessage("");
+    const cartItemIds = selectedItems.map((item) => item.id);
+    if (!cartItemIds.length) {
+      setMessage("Không có sản phẩm nào được chọn!");
+      return;
+    }
     setIsSubmitting(true);
     try {
-      // Gửi dữ liệu đúng structure cho API
-      const res = await axios.post(
-        "http://localhost:8080/users/orders/from-cart",
-        {
-          receiverName: formData.receiverName,
-          deliveryAddress: formData.deliveryAddress,
-          phoneNumber: formData.phoneNumber,
-          email: formData.email,
-          note: formData.note,
-        },
+      const body = {
+        cartItemIds,
+        ...form,
+      };
+      await axios.post(
+        "http://localhost:8080/users/orders/from-selected-items",
+        body,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            "Content-Type": "application/json",
           },
         }
       );
-      if (res.data && res.data.id) {
-        setSuccessMessage("Đặt hàng thành công!");
-        setFormData({
-          receiverName: "",
-          phoneNumber: "",
-          email: "",
-          deliveryAddress: "",
-          note: "",
-        });
-        setTimeout(() => {
-          navigate("/");
-        }, 1500);
-      } else {
-        setErrorMessage("Đặt hàng thất bại. Vui lòng thử lại.");
-      }
+      setMessage("Đặt hàng thành công!");
+      localStorage.removeItem("selectedCartItemIds");
+      setTimeout(() => {
+        navigate("/");
+      }, 1500);
     } catch (error) {
-      setErrorMessage(
-        error.response?.data?.message || "Đặt hàng thất bại. Vui lòng thử lại."
-      );
+      setMessage("Đặt hàng thất bại. Vui lòng thử lại!");
     } finally {
       setIsSubmitting(false);
     }
@@ -77,10 +59,7 @@ function CheckoutForm() {
       <div className="form-container">
         <h2 className="form-section-title">THÔNG TIN ĐƠN HÀNG</h2>
 
-        {successMessage && (
-          <div className="success-message">{successMessage}</div>
-        )}
-        {errorMessage && <div className="error-message">{errorMessage}</div>}
+        {message && <div className="order-message">{message}</div>}
 
         <div className="form-fields">
           <div className="form-group">
@@ -92,7 +71,7 @@ function CheckoutForm() {
               id="receiverName"
               name="receiverName"
               className="form-input"
-              value={formData.receiverName}
+              value={form.receiverName}
               onChange={handleChange}
               required
             />
@@ -107,7 +86,7 @@ function CheckoutForm() {
               id="phoneNumber"
               name="phoneNumber"
               className="form-input"
-              value={formData.phoneNumber}
+              value={form.phoneNumber}
               onChange={handleChange}
               required
             />
@@ -123,7 +102,7 @@ function CheckoutForm() {
               name="email"
               className="form-input"
               placeholder="Email để nhận thông báo đơn hàng"
-              value={formData.email}
+              value={form.email}
               onChange={handleChange}
               required
             />
@@ -138,7 +117,7 @@ function CheckoutForm() {
               id="deliveryAddress"
               name="deliveryAddress"
               className="form-input"
-              value={formData.deliveryAddress}
+              value={form.deliveryAddress}
               onChange={handleChange}
               required
             />
@@ -153,7 +132,7 @@ function CheckoutForm() {
               name="note"
               className="form-textarea"
               placeholder="Ghi chú về đơn hàng"
-              value={formData.note}
+              value={form.note}
               onChange={handleChange}
             ></textarea>
           </div>

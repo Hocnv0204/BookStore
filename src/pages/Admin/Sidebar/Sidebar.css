@@ -1,25 +1,64 @@
 .sidebar-container {
-    width: 240px;
-    min-width: 180px;
+    width: 260px;
+    min-width: 240px;
     background: #fff;
     border-radius: 18px;
     box-shadow: 0 4px 24px rgba(30, 41, 59, 0.10);
-    padding: 32px 0 32px 0;
+    padding: 32px 0;
     margin: 24px 24px 24px 0;
     border: 1.5px solid #e5e7eb;
-    height: fit-content;
+    height: calc(100vh - 48px);
+    position: sticky;
+    top: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 24px;
+    overflow-y: auto;
 }
 
 .sidebar-title {
+    font-family: 'Inter', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    /* Very modern UI fonts */
     font-size: 22px;
-    font-weight: 700;
-    color: #00CC64;
-    margin: 0 0 16px 0;
-    letter-spacing: 1px;
+    font-weight: 600;
+    color: #333;
+    /* Dark grey for good readability */
+    margin: 0 0 20px 0;
+    letter-spacing: 0.25px;
+    /* More subtle letter spacing */
+    padding: 18px 24px;
+    text-align: left;
+    /* Or center, depending on layout */
+    display: flex;
+    /* To align icon and text */
+    align-items: center;
+    background-color: #f8f9fa;
+    /* Very light grey background for the title area */
+    border-bottom: 1px solid #eaeaea;
+    border-radius: 8px 8px 0 0;
+    /* If this title is at the top of a card-like sidebar */
+}
+
+/* You would need to add an SVG icon or font icon in your HTML/JSX for this to work */
+/* Example: <h2 class="sidebar-title"><YourIconComponent /> Your Title</h2> */
+.sidebar-title svg,
+.sidebar-title .icon-class {
+    /* If using a font icon with a class */
+    margin-right: 10px;
+    color: #00B2A9;
+    /* Accent color for the icon, can be your #00CC64 */
+    font-size: 24px;
+    /* Match or slightly larger than text */
+    flex-shrink: 0;
+    /* Prevent icon from shrinking */
+}
+
+.sidebar-nav {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px;
 }
 
 .sidebar-link {
@@ -38,11 +77,14 @@
     border: none;
     outline: none;
     cursor: pointer;
+    width: 100%;
+    white-space: nowrap;
 }
 
 .sidebar-link .sidebar-icon {
     font-size: 22px;
     color: #00CC64;
+    flex-shrink: 0;
 }
 
 .sidebar-link.active {
@@ -65,18 +107,34 @@
     color: #00CC64;
 }
 
+.sidebar-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
 @media (max-width: 900px) {
     .sidebar-container {
         width: 100%;
-        min-width: unset;
+        min-width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
         margin: 0 0 18px 0;
-        padding: 18px 0 18px 0;
+        padding: 18px 0;
         border-radius: 12px;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
     }
 
     .sidebar-link {
         font-size: 15px;
         padding: 10px 16px;
+        width: auto;
     }
 
     .sidebar-title {

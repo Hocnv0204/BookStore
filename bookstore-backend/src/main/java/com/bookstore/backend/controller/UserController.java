@@ -29,17 +29,16 @@ public class UserController {
     @GetMapping("admin/users")
     @PreAuthorize("hasRole('ADMIN')")
     ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getAllUsers(
-
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection) {
+            @RequestParam(defaultValue = "asc") String sortOrder) {
         
         // Validate and adjust page size
         size = Math.min(size, MAX_PAGE_SIZE);
         
         // Sorting
-        Sort.Direction direction = Sort.Direction.fromString(sortDirection.toUpperCase());
+        Sort.Direction direction = Sort.Direction.fromString(sortOrder.toUpperCase());
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return ResponseEntity.ok().body(
                 ApiResponse.<PageResponse<UserResponse>>builder()
@@ -105,6 +104,30 @@ public class UserController {
         return ResponseEntity.ok().body(
             ApiResponse.<Void>builder()
                 .message("Password changed successfully")
+                .build()
+        );
+    }
+
+    @GetMapping("admin/users/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<PageResponse<UserResponse>>> searchUsersByName(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortOrder) {
+        
+        size = Math.min(size, MAX_PAGE_SIZE);
+        Sort.Direction direction = Sort.Direction.fromString(sortOrder.toUpperCase());
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        
+        if (keyword == null) {
+            keyword = "";
+        }
+        
+        return ResponseEntity.ok().body(
+            ApiResponse.<PageResponse<UserResponse>>builder()
+                .result(userService.searchUsersByName(keyword.trim(), pageable))
                 .build()
         );
     }

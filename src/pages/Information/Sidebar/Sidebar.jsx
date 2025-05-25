@@ -5,7 +5,7 @@ function Sidebar({ activeItem, onItemClick, onClickAccount }) {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <h2 className="sidebar-title-user">Tài khoản</h2>
+        <h2 className="sidebar-title-user">BookStore</h2>
       </div>
       <nav className="sidebar-nav">
         <div

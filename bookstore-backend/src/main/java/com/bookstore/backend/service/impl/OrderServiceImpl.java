@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import com.bookstore.backend.dto.response.DailyRevenueDto;
+import java.util.ArrayList;
+import com.bookstore.backend.dto.CartItemDto;
 
 @Service
 @RequiredArgsConstructor
@@ -312,5 +314,115 @@ public class OrderServiceImpl implements OrderService {
                 .build())
             .sorted((a, b) -> a.getDay().compareTo(b.getDay()))
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<OrderDto> searchOrdersByCustomerName(String keyword, Pageable pageable) {
+        Page<Order> orders = orderRepository.findByReceiverNameContainingIgnoreCase(keyword, pageable);
+        return createPageResponse(orders);
+    }
+
+    private PageResponse<OrderDto> createPageResponse(Page<Order> orderPage) {
+        return PageResponse.<OrderDto>builder()
+                .content(orderPage.getContent().stream()
+                        .map(this::mapToDto)
+                        .collect(Collectors.toList()))
+                .totalElements(orderPage.getTotalElements())
+                .totalPages(orderPage.getTotalPages())
+                .pageNumber(orderPage.getNumber())
+                .pageSize(orderPage.getSize())
+                .isLast(orderPage.isLast())
+                .build();
+    }
+
+    private OrderDto mapToDto(Order order) {
+        return OrderDto.builder()
+                .id(order.getId())
+                .userId(order.getUser().getId())
+                .username(order.getUser().getUsername())
+                .receiverName(order.getReceiverName())
+                .deliveryAddress(order.getDeliveryAddress())
+                .phoneNumber(order.getPhoneNumber())
+                .email(order.getEmail())
+                .totalAmount(order.getTotalAmount())
+                .status(order.getStatus())
+                .note(order.getNote())
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
+                .items(order.getItems().stream()
+                        .map(this::mapOrderItemToDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    private OrderItemDto mapOrderItemToDto(OrderItem orderItem) {
+        return OrderItemDto.builder()
+                .id(orderItem.getId())
+                .bookId(orderItem.getBook().getId())
+                .bookTitle(orderItem.getBook().getTitle())
+                .bookImage(orderItem.getBook().getImageUrl())
+                .quantity(orderItem.getQuantity())
+                .price(orderItem.getPrice())
+                .subtotal(orderItem.getPrice() * orderItem.getQuantity())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public OrderDto createOrderFromSelectedCartItems(OrderRequest request, List<Long> cartItemIds) {
+        User user = getCurrentUser();
+        CartDto cartDto = cartService.getCart();
+
+        // Get selected cart items
+        List<CartItemDto> selectedItems = cartService.getSelectedCartItems(cartItemIds);
+        if (selectedItems.isEmpty()) {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+
+        // Create order
+        Order order = Order.builder()
+                .user(user)
+                .status(OrderStatus.PENDING)
+                .receiverName(request.getReceiverName())
+                .deliveryAddress(request.getDeliveryAddress())
+                .phoneNumber(request.getPhoneNumber())
+                .email(request.getEmail())
+                .note(request.getNote())
+                .items(new ArrayList<>())
+                .build();
+
+        // Create order items and calculate total
+        double totalAmount = 0;
+        for (CartItemDto cartItem : selectedItems) {
+            Book book = bookRepository.findById(cartItem.getBookId())
+                    .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND));
+            
+            // Check stock
+            if (book.getQuantityStock() < cartItem.getQuantity()) {
+                throw new AppException(ErrorCode.OUT_OF_STOCK);
+            }
+
+            OrderItem orderItem = OrderItem.builder()
+                    .order(order)
+                    .book(book)
+                    .quantity(cartItem.getQuantity())
+                    .price(cartItem.getPrice())
+                    .build();
+
+            order.getItems().add(orderItem);
+            totalAmount += cartItem.getPrice() * cartItem.getQuantity();
+
+            // Update book stock
+            book.setQuantityStock(book.getQuantityStock() - cartItem.getQuantity());
+            bookRepository.save(book);
+        }
+
+        order.setTotalAmount(totalAmount);
+        order = orderRepository.save(order);
+
+        // Remove selected items from cart
+        cartService.removeSelectedItems(cartItemIds);
+
+        return orderMapper.toDto(order);
     }
 }

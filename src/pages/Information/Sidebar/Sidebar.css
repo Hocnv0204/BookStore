@@ -26,11 +26,26 @@
 }
 
 .sidebar-title-user {
+    font-family: 'Inter', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    /* Very modern UI fonts */
     font-size: 22px;
-    font-weight: 700;
-    color: #0D5C91;
-    margin: 0 0 16px 0;
-    letter-spacing: 1px;
+    font-weight: 600;
+    color: #333;
+    /* Dark grey for good readability */
+    margin: 0 0 20px 0;
+    letter-spacing: 0.25px;
+    /* More subtle letter spacing */
+    padding: 18px 24px;
+    text-align: left;
+    /* Or center, depending on layout */
+    display: flex;
+    /* To align icon and text */
+    align-items: center;
+    background-color: #f8f9fa;
+    /* Very light grey background for the title area */
+    border-bottom: 1px solid #eaeaea;
+    border-radius: 8px 8px 0 0;
+    /* If this title is at the top of a card-like sidebar */
 }
 
 .sidebar-nav {

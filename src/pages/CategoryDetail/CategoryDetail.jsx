@@ -19,35 +19,45 @@ function CategoryDetail() {
   const [totalElements, setTotalElements] = useState(0);
   const [pageSize, setPageSize] = useState(5);
   const [last, setLast] = useState(true);
+  const [sortBy, setSortBy] = useState("title");
+  const [sortOrder, setSortOrder] = useState("asc");
 
-  const fetchBookByCategory = useCallback(async (categoryId, page = 0) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=5`
-      );
+  const fetchBookByCategory = useCallback(
+    async (
+      categoryId,
+      page = 0,
+      sortByParam = sortBy,
+      sortOrderParam = sortOrder
+    ) => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=5&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
+        );
 
-      const booksArray = res.data.content || [];
-      const totalPages = res.data.totalPages || 1;
-      const totalElements = res.data.totalElements || 0;
-      const pageSize = res.data.size || 5;
-      const last = res.data.last ?? true;
+        const booksArray = res.data.content || [];
+        const totalPages = res.data.totalPages || 1;
+        const totalElements = res.data.totalElements || 0;
+        const pageSize = res.data.size || 5;
+        const last = res.data.last ?? true;
 
-      setCategorizedBooks((prevBooks) => ({
-        ...prevBooks,
-        [categoryId]: booksArray,
-      }));
-      setTotalPages(totalPages);
-      setTotalElements(totalElements);
-      setPageSize(pageSize);
-      setLast(last);
-    } catch (error) {
-      console.error(`Lỗi khi lấy sách danh mục ${categoryId}:`, error);
-    }
-  }, []);
+        setCategorizedBooks((prevBooks) => ({
+          ...prevBooks,
+          [categoryId]: booksArray,
+        }));
+        setTotalPages(totalPages);
+        setTotalElements(totalElements);
+        setPageSize(pageSize);
+        setLast(last);
+      } catch (error) {
+        console.error(`Lỗi khi lấy sách danh mục ${categoryId}:`, error);
+      }
+    },
+    [sortBy, sortOrder]
+  );
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    fetchBookByCategory(id, newPage);
+    fetchBookByCategory(id, newPage, sortBy, sortOrder);
   };
 
   const fetchCategories = async () => {
@@ -68,9 +78,9 @@ function CategoryDetail() {
 
   useEffect(() => {
     if (categories.length > 0) {
-      fetchBookByCategory(id, currentPage);
+      fetchBookByCategory(id, currentPage, sortBy, sortOrder);
     }
-  }, [categories, id, currentPage, fetchBookByCategory]);
+  }, [categories, id, currentPage, fetchBookByCategory, sortBy, sortOrder]);
 
   const category = categories.find((item) => item.id === parseInt(id));
 
@@ -81,7 +91,7 @@ function CategoryDetail() {
   if (!category) {
     return <div>Category not found</div>;
   }
-  console.log(categorizedBooks[id]);
+  // console.log(categorizedBooks[id]);
   return (
     <div className="category-detail">
       <Header />
@@ -94,6 +104,35 @@ function CategoryDetail() {
         />
 
         <ProductsHeader title={category.name} />
+
+        <div className="sort-bar" style={{ marginBottom: 16 }}>
+          <label>
+            Sắp xếp:
+            <select
+              value={sortBy}
+              onChange={(e) => {
+                setSortBy(e.target.value);
+                setCurrentPage(0);
+              }}
+              className="sort-select"
+            >
+              <option value="title">Tên sách</option>
+              <option value="price">Giá</option>
+            </select>
+          </label>
+          <select
+            value={sortOrder}
+            onChange={(e) => {
+              setSortOrder(e.target.value);
+              setCurrentPage(0);
+            }}
+            className="sort-select"
+            style={{ marginLeft: 8 }}
+          >
+            <option value="asc">Tăng dần</option>
+            <option value="desc">Giảm dần</option>
+          </select>
+        </div>
 
         <BookSection
           books={categorizedBooks[id]}

@@ -10,14 +10,13 @@ import "./BookManagement.css";
 const HeaderTable = [
   "Mã Sách",
   "Tên Sách",
-  "Mô Tả",
   "Tồn Kho",
   "Giá",
   "Ảnh Sách",
   "Tác Giả",
   "Danh Mục",
   "Nhà Xuất Bản",
-  "Giới Thiệu",
+  "Nhà Phân Phối",
   "",
 ];
 
@@ -30,33 +29,72 @@ function BookManagement() {
   const [sortOrder, setSortOrder] = useState("asc");
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
-  const fetchBooks = async () => {
+  const [keyword, setKeyword] = useState("");
+
+  const fetchBooks = async (searchKeyword = keyword) => {
     try {
-      const res = await axios.get("http://localhost:8080/api/v1/books", {
-        params: { page, size, sortBy, sortOrder },
+      const params = { page, size, sortBy, sortOrder };
+      let url = "http://localhost:8080/api/v1/books";
+      if (searchKeyword && searchKeyword.trim() !== "") {
+        params.keyword = searchKeyword.trim();
+        url = `http://localhost:8080/api/v1/books/search`;
+      }
+      const res = await axios.get(url, {
+        params,
       });
-      setBooks(res.data.content);
-      console.log(res.data.content);
+      const transformedBooks = res.data.content.map((book) => ({
+        id: book.id,
+        title: book.title,
+        quantityStock: book.quantityStock,
+        price: book.price,
+        image: book.imageUrl,
+        author: book.authorName,
+        category: book.categoryName,
+        publisher: book.publisherName,
+        distributor: book.distributorName,
+      }));
+      setBooks(transformedBooks);
       setTotalPages(res.data.totalPages);
       setTotalElements(res.data.totalElements);
     } catch (error) {
       console.error("Lỗi khi lấy danh sách sách:", error);
     }
   };
+
   const handleNewBookAdded = (newBook) => {
-    console.log(
-      "New book received in BookManagement handleNewBookAdded:",
-      newBook
-    );
     if (newBook && newBook.id) {
-      setBooks((prevBooks) => [newBook, ...prevBooks]);
+      const transformedBook = {
+        id: newBook.id,
+        title: newBook.title,
+        quantityStock: newBook.quantityStock,
+        price: newBook.price,
+        image: newBook.imageUrl,
+        author: newBook.authorName,
+        category: newBook.categoryName,
+        publisher: newBook.publisherName,
+        distributor: newBook.distributorName,
+      };
+      setBooks((prevBooks) => [transformedBook, ...prevBooks]);
     } else {
       console.error("Dữ liệu sách mới không hợp lệ khi thêm:", newBook);
     }
   };
+
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
+
   useEffect(() => {
     fetchBooks();
   }, [page, size, sortBy, sortOrder]);
+
+  // Xử lý tìm kiếm
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(0);
+    fetchBooks(keyword);
+  };
 
   return (
     <div className="book-management">
@@ -74,31 +112,32 @@ function BookManagement() {
                 </button>
               </div>
               <div className="book-management-search-container">
-                <input
-                  type="text"
-                  id="searchInput"
-                  placeholder="Tìm kiếm theo mã sách..."
-                  // onKeyUp={searchBook} // Nếu có hàm searchBook
-                />
-              </div>
-              {/* Dropdown sort */}
-              <div className="book-management-sort-container">
-                <select
-                  onChange={(e) => setSortBy(e.target.value)}
-                  value={sortBy}
+                <form
+                  onSubmit={handleSearch}
+                  style={{ display: "flex", gap: 8 }}
                 >
-                  <option value="title">Sắp xếp theo tên</option>
-                  <option value="price">Sắp xếp theo giá</option>
-                  <option value="quantityStock">Sắp xếp theo tồn kho</option>
-                  <option value="id">Sắp xếp theo mã sách</option>
-                </select>
-                <select
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  value={sortOrder}
-                >
-                  <option value="asc">Tăng dần</option>
-                  <option value="desc">Giảm dần</option>
-                </select>
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Tìm kiếm theo tên sách "
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
+                  <button type="submit" className="search-button">
+                    <svg
+                      class="icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -111,6 +150,9 @@ function BookManagement() {
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
             totalElements={totalElements}
+            onSort={handleSort}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
           />
 
           {showModal && (

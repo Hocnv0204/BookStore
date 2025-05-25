@@ -1,13 +1,20 @@
 import React from "react";
 import "./CartItem.css";
 
-const CartItem = ({ cartItems, handleQuantityChange, handleDelete }) => {
+const CartItem = ({
+  cartItems,
+  handleQuantityChange,
+  handleDelete,
+  selectedItems = [],
+  onSelectItem,
+}) => {
   return (
     <div className="main-cart-item">
       <h1>GIỎ HÀNG</h1>
       <table className="cart-items">
         <thead>
           <tr>
+            <th></th>
             <th className="column-product">Sản phẩm</th>
             <th className="column-quantity">Số lượng</th>
             <th className="column-price">Thành tiền</th>
@@ -17,6 +24,13 @@ const CartItem = ({ cartItems, handleQuantityChange, handleDelete }) => {
         <tbody>
           {cartItems.map((item) => (
             <tr key={item.id} className="cart-item">
+              <td>
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.id)}
+                  onChange={() => onSelectItem(item.id)}
+                />
+              </td>
               <td className="item-product">
                 <div className="product-info">
                   <img

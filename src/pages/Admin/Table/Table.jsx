@@ -19,6 +19,9 @@ function Table({
   onPageChange,
   onEdit,
   onDelete,
+  onSort, // Add new prop for sorting
+  sortBy, // Add current sort field
+  sortOrder, // Add current sort order
 }) {
   const [objects, setObjects] = useState([]);
   const MAX_LENGTH = 50;
@@ -62,15 +65,20 @@ function Table({
     } else if (type === "category") {
       setSelectedCategory(objectToEdit);
       setIsCategoryModalOpen(true);
+    } else if (type === "publisher" && typeof onEdit === "function") {
+      onEdit(objectToEdit);
     }
   };
 
   // ✅ Thay đổi handle delete để mở confirm dialog hoặc gọi props
   const handleDeleteClick = (id) => {
     if (type === "book") {
-      setIdToDelete(id); // Lưu ID của sách cần xóa
-      setIsConfirmDialogOpen(true); // Mở hộp thoại xác nhận
-    } else if (type === "category" && typeof onDelete === "function") {
+      setIdToDelete(id);
+      setIsConfirmDialogOpen(true);
+    } else if (
+      (type === "category" || type === "publisher") &&
+      typeof onDelete === "function"
+    ) {
       onDelete(id);
     }
   };
@@ -142,6 +150,111 @@ function Table({
     setSelectedObject(null);
   };
 
+  // Add new function to handle header click
+  const handleHeaderClick = (header) => {
+    if (onSort) {
+      // Map header text to field name for all types
+      const fieldMap = {
+        // Book fields
+        "Mã Sách": "id",
+        "Tên Sách": "title",
+        "Mô Tả": "description",
+        "Tồn Kho": "quantityStock",
+        Giá: "price",
+        "Tác Giả": "author",
+        "Danh Mục": "category",
+        "Nhà Xuất Bản": "publisher",
+        "Nhà Phân Phối": "distributor",
+        // Category fields
+        "Mã Danh Mục": "id",
+        "Tên Danh Mục": "name",
+        "Ảnh Danh Mục": "image",
+        // Customer fields
+        "Mã Khách Hàng": "id",
+        "Họ Tên": "fullName",
+        Username: "username",
+        Email: "email",
+        "Giới Tính": "gender",
+        // Publisher fields
+        "Mã NXB": "id",
+        "Tên NXB": "name",
+        "Địa chỉ": "address",
+        "Số điện thoại": "phoneNumber",
+        Email: "email",
+        // Distributor fields
+        "Mã NPP": "id",
+        "Tên NPP": "name",
+        "Địa chỉ": "address",
+        "Số điện thoại": "phoneNumber",
+        Email: "email",
+        // Invoice fields
+        "Mã Hóa Đơn": "id",
+        "Khách Hàng": "receiverName",
+        "Tổng Tiền": "totalAmount",
+        "Ngày Lập": "createdAt",
+      };
+
+      const field = fieldMap[header];
+      if (field) {
+        const newOrder =
+          sortBy === field && sortOrder === "asc" ? "desc" : "asc";
+        onSort(field, newOrder);
+      }
+    }
+  };
+
+  // Add function to render sort indicator
+  const renderSortIndicator = (header) => {
+    const fieldMap = {
+      // Book fields
+      "Mã Sách": "id",
+      "Tên Sách": "title",
+      "Mô Tả": "description",
+      "Tồn Kho": "quantityStock",
+      Giá: "price",
+      "Tác Giả": "author",
+      "Danh Mục": "category",
+      "Nhà Xuất Bản": "publisher",
+      "Nhà Phân Phối": "distributor",
+      // Category fields
+      "Mã Danh Mục": "id",
+      "Tên Danh Mục": "name",
+      "Ảnh Danh Mục": "image",
+      // Customer fields
+      "Mã Khách Hàng": "id",
+      "Họ Tên": "fullName",
+      Username: "username",
+      Email: "email",
+      "Giới Tính": "gender",
+      // Publisher fields
+      "Mã NXB": "id",
+      "Tên NXB": "name",
+      "Địa chỉ": "address",
+      "Số điện thoại": "phoneNumber",
+      Email: "email",
+      // Distributor fields
+      "Mã NPP": "id",
+      "Tên NPP": "name",
+      "Địa chỉ": "address",
+      "Số điện thoại": "phoneNumber",
+      Email: "email",
+      // Invoice fields
+      "Mã Hóa Đơn": "id",
+      "Khách Hàng": "receiverName",
+      "Tổng Tiền": "totalAmount",
+      "Ngày Lập": "createdAt",
+    };
+
+    const field = fieldMap[header];
+    if (!field || field !== sortBy) return null;
+
+    return (
+      <span className="sort-indicator">
+        {sortOrder === "asc" ? " ↑" : " ↓"}
+      </span>
+    );
+  };
+
   return (
     <div className="table-container">
       <div className="table-content">
@@ -149,7 +262,19 @@ function Table({
           <thead>
             <tr>
               {HeaderTable.map((header, index) => (
-                <th key={index}>{header}</th>
+                <th
+                  key={index}
+                  onClick={() => handleHeaderClick(header)}
+                  className={
+                    sortBy &&
+                    header.toLowerCase().includes(sortBy.toLowerCase())
+                      ? "sortable active"
+                      : "sortable"
+                  }
+                >
+                  {header}
+                  {renderSortIndicator(header)}
+                </th>
               ))}
             </tr>
           </thead>
@@ -182,7 +307,9 @@ function Table({
                         )}
                       </td>
                     ))}
-                  {(type === "book" || type === "category") && (
+                  {(type === "book" ||
+                    type === "category" ||
+                    type === "publisher") && (
                     <td className="actions-cell">
                       <div className="more-actions">
                         <button
@@ -219,7 +346,11 @@ function Table({
                 <td
                   colSpan={
                     HeaderTable.length +
-                    (type === "book" || type === "category" ? 1 : 0)
+                    (type === "book" ||
+                    type === "category" ||
+                    type === "publisher"
+                      ? 1
+                      : 0)
                   }
                   style={{ textAlign: "center", padding: "20px" }}
                 >

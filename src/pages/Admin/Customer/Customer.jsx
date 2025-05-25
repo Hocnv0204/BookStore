@@ -1,11 +1,10 @@
 import Table from "../Table/Table";
 import "./Customer.css";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../../../components/Header/Header";
 import Footer from "../../../components/Footer/Footer";
 import Sidebar from "../Sidebar/Sidebar";
 // import HeaderAdmin from "../HeaderAdmin/HeaderAdmin";
-import { useState, useEffect } from "react";
 import axios from "axios";
 
 function Customer() {
@@ -14,21 +13,22 @@ function Customer() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [sortBy, setSortBy] = useState("id");
-  const [sortDirection, setSortDirection] = useState("asc");
-  const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [keyword, setKeyword] = useState("");
   const [customers, setCustomers] = useState([]);
-  const fetchUsers = async () => {
-    const response = await axios.get("http://localhost:8080/admin/users", {
+
+  const fetchUsers = async (searchKeyword = keyword) => {
+    const params = { page, size, sortBy, sortOrder };
+    let url = "http://localhost:8080/admin/users";
+    if (searchKeyword && searchKeyword.trim() !== "") {
+      params.keyword = searchKeyword.trim();
+      url = "http://localhost:8080/admin/users/search";
+    }
+    const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
       },
-      params: {
-        page,
-        size,
-        sortBy,
-        sortDirection,
-        search,
-      },
+      params,
     });
     setCustomers(
       Array.isArray(response.data.result.content)
@@ -39,9 +39,24 @@ function Customer() {
     setTotalPages(response.data.result.totalPages);
     setTotalElements(response.data.result.totalElements);
   };
+
   useEffect(() => {
     fetchUsers();
-  }, [page, size, sortBy, sortDirection, search]);
+  }, [page, size, sortBy, sortOrder]);
+
+  // Xử lý tìm kiếm
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(0);
+    fetchUsers(keyword);
+  };
+
+  // Xử lý sort khi click header
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
+
   return (
     <div className="customer">
       <Header />
@@ -52,31 +67,32 @@ function Customer() {
             <h2>Danh Sách Khách Hàng</h2>
             <div className="content-actions">
               <div className="customer-search-container">
-                <input
-                  type="text"
-                  id="searchInput"
-                  placeholder="Tìm kiếm theo tên, username hoặc email..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-              <div className="customer-sort-container">
-                <select
-                  onChange={(e) => setSortBy(e.target.value)}
-                  value={sortBy}
+                <form
+                  onSubmit={handleSearch}
+                  style={{ display: "flex", gap: 8 }}
                 >
-                  <option value="id">Sắp xếp theo mã khách hàng</option>
-                  <option value="fullName">Sắp xếp theo tên</option>
-                  <option value="username">Sắp xếp theo username</option>
-                  <option value="email">Sắp xếp theo email</option>
-                </select>
-                <select
-                  onChange={(e) => setSortDirection(e.target.value)}
-                  value={sortDirection}
-                >
-                  <option value="asc">Tăng dần</option>
-                  <option value="desc">Giảm dần</option>
-                </select>
+                  <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Tìm kiếm theo tên người dùng"
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
+                  <button type="submit" className="search-button">
+                    <svg
+                      className="icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -102,6 +118,9 @@ function Customer() {
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
             totalElements={totalElements}
+            sortBy={sortBy}
+            sortOrder={sortOrder}
+            onSort={handleSort}
           />
         </div>
       </div>

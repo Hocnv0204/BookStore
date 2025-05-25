@@ -23,11 +23,11 @@ public class BookController {
     private final BookService bookService;
     private static final int MAX_PAGE_SIZE = 20;
 
-    private Pageable getPageable(Integer page, Integer size, String sortBy, String sortDirection) {
+    private Pageable getPageable(Integer page, Integer size, String sortBy, String sortOrder) {
         int pageNumber = (page != null) ? page : 0;
         int pageSize = (size != null) ? Math.min(size, MAX_PAGE_SIZE) : 10;
         String sortField = (sortBy != null) ? sortBy : "id";
-        Sort.Direction direction = (sortDirection != null) ? Sort.Direction.fromString(sortDirection) : Sort.Direction.ASC;
+        Sort.Direction direction = (sortOrder != null) ? Sort.Direction.fromString(sortOrder) : Sort.Direction.ASC;
         return PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortField));
     }
 
@@ -36,8 +36,8 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(bookService.getAllBooks(pageable));
     }
 
@@ -71,9 +71,8 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection",
-             required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(bookService.getBooksByCategory(categoryId, pageable));
     }
 
@@ -83,8 +82,8 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(bookService.getBooksByPublisher(publisherId, pageable));
     }
 
@@ -94,8 +93,8 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(bookService.getBooksByDistributor(distributorId, pageable));
     }
 
@@ -144,8 +143,8 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortDirection", required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String sortOrder) {
+        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
         return ResponseEntity.ok(bookService.getBooksByPriceRange(minPrice, maxPrice, pageable));
     }
 

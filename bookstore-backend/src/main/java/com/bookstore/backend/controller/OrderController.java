@@ -32,6 +32,13 @@ public class OrderController {
         return ResponseEntity.ok(orderService.createOrderFromCart(request));
     }
 
+    @PostMapping("/users/orders/from-selected-items")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<OrderDto> createOrderFromSelectedItems(
+            @Valid @RequestBody OrderRequest request) {
+        return ResponseEntity.ok(orderService.createOrderFromSelectedCartItems(request, request.getCartItemIds()));
+    }
+
     @GetMapping("/users/orders/{orderId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId) {
@@ -114,5 +121,22 @@ public class OrderController {
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month) {
         return ResponseEntity.ok(orderService.getDailyRevenue(year, month));
+    }
+
+    @GetMapping("/admin/orders/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageResponse<OrderDto>> searchOrdersByCustomerName(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder) {
+        size = Math.min(size, MAX_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.Direction.fromString(sortOrder), sortBy);
+        if (keyword == null) {
+            keyword = "";
+        }
+        return ResponseEntity.ok(orderService.searchOrdersByCustomerName(keyword.trim(), pageable));
     }
 }

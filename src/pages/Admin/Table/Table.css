@@ -4,6 +4,8 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     height: 100%;
     overflow: hidden;
+    width: 100%;
+    overflow-x: auto;
 }
 
 .table thead {
@@ -16,6 +18,7 @@
 .table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 1rem;
 }
 
 .table-content {
@@ -23,12 +26,15 @@
     overflow-y: auto;
     display: block;
     table-layout: fixed;
+    width: 100%;
 }
 
 .actions-cell {
     width: 50px;
     text-align: center;
     position: relative;
+    text-align: right;
+    white-space: nowrap;
 }
 
 .table td,
@@ -38,6 +44,9 @@ th {
     text-align: center;
     display: table-cell;
     vertical-align: middle;
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .table th {
@@ -47,8 +56,10 @@ th {
     color: #666;
     background-color: #f8f9fa;
     border-bottom: 1px solid #e5e7eb;
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #374151;
 }
-
 
 .table td {
     padding: 12px 24px;
@@ -64,9 +75,6 @@ td.more-container {
     position: relative;
 }
 
-
-
-
 .book-table tr:hover {
     background-color: #f8f9fa;
 }
@@ -81,9 +89,6 @@ td.more-container {
 .book-table tr:hover .action-buttons {
     opacity: 1;
 }
-
-
-
 
 /* Style chung cho các nút trong dropdown */
 .edit-button,
@@ -125,4 +130,90 @@ td.more-container {
 .del-button:hover {
     background-color: #00CC64;
     /* Màu nền khi hover */
+}
+
+.more-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-button,
+.del-button {
+    min-width: 36px;
+    padding: 6px 10px;
+    margin: 0 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-button {
+    background-color: #00C853;
+    color: white;
+}
+
+.edit-button:hover {
+    background-color: #00b04f;
+    box-shadow: 0 2px 4px rgba(0, 200, 83, 0.3);
+}
+
+.del-button {
+    background-color: #dc3545;
+    color: white;
+}
+
+.del-button:hover {
+    background-color: #c82333;
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.edit-button svg,
+.del-button svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+
+@media (max-width: 768px) {
+
+    .table th,
+    .table td {
+        padding: 8px;
+    }
+
+    .edit-button,
+    .del-button {
+        padding: 4px 8px;
+        font-size: 12px;
+    }
+
+    .edit-button svg,
+    .del-button svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.sortable:hover {
+    background-color: #f0f0f0;
+}
+
+.sortable.active {
+    background-color: #e8e8e8;
+}
+
+.sort-indicator {
+    margin-left: 4px;
+    color: #666;
+    font-weight: bold;
 }

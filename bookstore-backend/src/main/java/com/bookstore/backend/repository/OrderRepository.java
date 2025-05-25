@@ -32,4 +32,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
            "AND oi.book.id = :bookId " +
            "AND o.status != 'CANCELLED'")
     boolean hasUserPurchasedBook(@Param("userId") Long userId, @Param("bookId") Long bookId);
+
+    @Query("SELECT o FROM Order o WHERE LOWER(o.receiverName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Order> findByReceiverNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 }

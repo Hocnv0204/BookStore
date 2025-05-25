@@ -8,15 +8,18 @@ Modal.setAppElement("#root");
 
 const AddBookModal = ({ isOpen, onClose, onSave }) => {
   const [categories, setCategories] = useState([]);
+  const [publishers, setPublishers] = useState([]);
+  const [distributors, setDistributors] = useState([]);
   const [formData, setFormData] = useState({
     title: "",
-    publisher: "",
+    publisherId: 1,
     authorName: "",
     price: "",
     quantityStock: "",
     description: "",
     categoryId: 1,
     introduction: "",
+    distributorId: 1,
   });
 
   const [image, setImage] = useState(null);
@@ -35,13 +38,36 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
     const fetchCategories = async () => {
       try {
         const res = await axios.get("http://localhost:8080/api/v1/categories");
-        setCategories(res.data.result.content); // nếu backend trả về result → content
+        setCategories(res.data.result.content);
       } catch (error) {
         console.error("Lỗi khi lấy danh mục:", error);
       }
     };
-
-    if (isOpen) fetchCategories();
+    const fetchPublishers = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/v1/publishers");
+        setPublishers(res.data.content);
+        console.log(res);
+      } catch (error) {
+        console.error("Lỗi khi lấy publisher:", error);
+      }
+    };
+    const fetchDistributors = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/distributors"
+        );
+        setDistributors(res.data.content);
+        console.log(res);
+      } catch (error) {
+        console.error("Lỗi khi lấy nhà phân phối:", error);
+      }
+    };
+    if (isOpen) {
+      fetchCategories();
+      fetchPublishers();
+      fetchDistributors();
+    }
   }, [isOpen]);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +78,8 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
       authorName: formData.authorName,
       categoryId: parseInt(formData.categoryId),
       description: formData.description,
-      publisher: formData.publisher,
+      distributorId: parseInt(formData.distributorId),
+      publisherId: parseInt(formData.publisherId),
       introduction: formData.introduction,
     };
     try {
@@ -79,7 +106,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
         }
       );
       onSave(res.data);
-      onClose(); // đóng modal
+      onClose();
     } catch (error) {
       console.error("Lỗi khi thêm sách:", error);
       alert("Lỗi khi thêm sách");
@@ -99,9 +126,34 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
           <form onSubmit={handleSubmit}>
             <label>Tên sách</label>
             <input type="text" name="title" onChange={handleChange} required />
-
+            <label>Nhà phân phối</label>
+            <select
+              name="distributorId"
+              value={formData.distributorId}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Chọn nhà phân phối --</option>
+              {distributors.map((distributor) => (
+                <option key={distributor.id} value={distributor.id}>
+                  {distributor.name}
+                </option>
+              ))}
+            </select>
             <label>Nhà xuất bản</label>
-            <input type="text" name="publisher" onChange={handleChange} />
+            <select
+              name="publisherId"
+              value={formData.publisherId}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Chọn nhà xuất bản --</option>
+              {publishers.map((pub) => (
+                <option key={pub.id} value={pub.id}>
+                  {pub.name}
+                </option>
+              ))}
+            </select>
 
             <label>Tác giả</label>
             <input

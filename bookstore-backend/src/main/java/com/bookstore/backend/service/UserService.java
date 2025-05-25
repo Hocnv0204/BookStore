@@ -18,4 +18,5 @@ public interface UserService {
     UserDetails loadUserByUsername(String username);
     UserResponse getUserProfile();
     void changePassword(ChangePasswordRequest request);
+    PageResponse<UserResponse> searchUsersByName(String keyword, Pageable pageable);
 }

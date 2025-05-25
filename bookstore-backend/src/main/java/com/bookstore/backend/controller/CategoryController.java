@@ -36,6 +36,22 @@ public class CategoryController {
                 .build()
         );
     }
+    @GetMapping("/api/v1/categories/search")
+    public ResponseEntity<ApiResponse<PageResponse<CategoryDto>>> searchCategories(
+        @RequestParam String keyword,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortDirection
+    ){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+        size = Math.min(size, MAX_PAGE_SIZE);
+        return ResponseEntity.ok().body(
+            ApiResponse.<PageResponse<CategoryDto>>builder()
+                .result(categoryService.searchCategories(keyword, pageable))
+                .build()
+        );
+    }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "/admin/categories")
     public ResponseEntity<CategoryDto> createCategory(

@@ -5,7 +5,7 @@ function Sidebar() {
   return (
     <div className="sidebar-container">
       <div className="sidebar-header">
-        <h2 className="sidebar-title">Trang Quản Lý</h2>
+        <h2 className="sidebar-title">BookStore</h2>
       </div>
       <nav className="sidebar-nav">
         <NavLink
@@ -48,6 +48,22 @@ function Sidebar() {
           }
         >
           Quản Lý Danh Mục
+        </NavLink>
+        <NavLink
+          to="/publisher"
+          className={({ isActive }) =>
+            `sidebar-link${isActive ? " active" : ""}`
+          }
+        >
+          Quản Lý Nhà Xuất Bản
+        </NavLink>
+        <NavLink
+          to="/distributor"
+          className={({ isActive }) =>
+            `sidebar-link${isActive ? " active" : ""}`
+          }
+        >
+          Quản Lý Nhà Phân Phối
         </NavLink>
       </nav>
     </div>

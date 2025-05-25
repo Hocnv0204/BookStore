@@ -1,0 +1,142 @@
+.publisher {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.publisher-container {
+    flex: 1;
+    display: flex;
+    background-color: #f8f9fa;
+    padding-top: 20px;
+    overflow: hidden;
+}
+
+.publisher-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    width: 70%;
+}
+
+.content-header {
+    margin-bottom: 24px;
+}
+
+.content-header h2 {
+    margin: 0 0 16px 0;
+    color: #333;
+    font-size: 24px;
+}
+
+.content-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.add-container {
+    flex-shrink: 0;
+}
+
+.add-container .add-publisher-btn {
+    background-color: #00C853;
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Hiệu ứng hover */
+.add-container .add-publisher-btn:hover {
+    background-color: #00b04f;
+    box-shadow: 0 4px 8px rgba(0, 200, 83, 0.3);
+}
+
+/* Hiệu ứng khi nhấn */
+.add-container .add-publisher-btn:active {
+    background-color: #009844;
+    box-shadow: none;
+    transform: scale(0.98);
+}
+
+/* Nếu có icon trong nút */
+.add-container .add-publisher-btn i {
+    font-size: 18px;
+}
+
+.publisher-search-container {
+    text-align: left;
+}
+
+#searchInput {
+    width: 300px;
+    padding: 12px 24px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: #00C853;
+}
+
+.publisher-sort-container {
+    display: flex;
+    gap: 8px;
+}
+
+.publisher-sort-container select {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.publisher-sort-container select:focus {
+    border-color: #00C853;
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.2);
+}
+
+.publisher-table-wrapper {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+@media (max-width: 768px) {
+    .publisher-container {
+        flex-direction: column;
+    }
+
+    .content-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .add-container {
+        margin-right: 0;
+    }
+
+    .publisher-search-container input {
+        width: 100%;
+    }
+
+    .publisher-sort-container {
+        flex-direction: column;
+    }
+}

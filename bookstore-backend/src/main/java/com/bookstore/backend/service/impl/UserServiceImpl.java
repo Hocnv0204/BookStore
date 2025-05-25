@@ -142,4 +142,21 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
+
+    @Override
+    public PageResponse<UserResponse> searchUsersByName(String keyword, Pageable pageable) {
+        Page<User> userPage = userRepository.findByFullNameContainingIgnoreCase(keyword, pageable);
+        List<UserResponse> userDtos = userPage.getContent().stream()
+                .map(userMapper::toUserResponse)
+                .collect(Collectors.toList());
+
+        return PageResponse.<UserResponse>builder()
+                .content(userDtos)
+                .pageNumber(userPage.getNumber())
+                .pageSize(userPage.getSize())
+                .totalElements(userPage.getTotalElements())
+                .totalPages(userPage.getTotalPages())
+                .isLast(userPage.isLast())
+                .build();
+    }
 }

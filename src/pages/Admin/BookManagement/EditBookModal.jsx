@@ -7,18 +7,21 @@ Modal.setAppElement("#root"); // Tránh lỗi accessibility
 
 const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
   const [categories, setCategories] = useState([]);
+  const [publishers, setPublishers] = useState([]);
+  const [distributors, setDistributors] = useState([]);
   const [formData, setFormData] = useState({
     id: book.id || "",
     title: book.title || "",
-    publisher: book.publisher || "",
+    publisherId: book.publisherId || "",
     authorName: book.author || "",
     price: book.price || "",
     quantityStock: book.quantityStock || "",
     description: book.description || "",
-    categoryId: book.categoryId || "", // Thêm categoryId
+    categoryId: book.categoryId || "",
     introduction: book.introduction || "",
+    distributorId: book.distributorId || "",
   });
-
+  console.log(book);
   const [image, setImage] = useState(null); // Để xử lý ảnh mới
   const accessToken = localStorage.getItem("accessToken"); // Lấy accessToken
 
@@ -27,18 +30,19 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
     setFormData({
       id: book.id || "",
       title: book.title || "",
-      publisher: book.publisher || "",
-      authorName: book.authorName || "",
+      publisherId: book.publisherId || "",
+      authorName: book.author || "",
       price: book.price || "",
       quantityStock: book.quantityStock || "",
       description: book.description || "",
       categoryId: book.categoryId || "",
       introduction: book.introduction || "",
+      distributorId: book.distributorId || "",
     });
     setImage(null); // Reset ảnh khi mở modal mới
   }, [book]);
 
-  // Fetch categories khi modal mở
+  // Fetch categories và publishers khi modal mở
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -48,8 +52,30 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
         console.error("Lỗi khi lấy danh mục:", error);
       }
     };
+    const fetchDistributors = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:8080/api/v1/distributors"
+        );
+        setDistributors(res.data.content);
+      } catch (error) {
+        console.error("Lỗi khi lấy nhà phân phối:", error);
+      }
+    };
+    const fetchPublishers = async () => {
+      try {
+        const res = await axios.get("http://localhost:8080/api/v1/publishers");
+        setPublishers(res.data.content);
+      } catch (error) {
+        console.error("Lỗi khi lấy publisher:", error);
+      }
+    };
 
-    if (isOpen) fetchCategories();
+    if (isOpen) {
+      fetchCategories();
+      fetchPublishers();
+      fetchDistributors();
+    }
   }, [isOpen]);
 
   // Xử lý khi người dùng nhập thông tin
@@ -70,10 +96,11 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       title: formData.title,
       quantityStock: parseInt(formData.quantityStock),
       price: parseFloat(formData.price),
-      authorName: formData.authorName,
+      authorName: formData.author,
       categoryId: parseInt(formData.categoryId),
       description: formData.description,
-      publisher: formData.publisher,
+      publisherId: parseInt(formData.publisherId),
+      distributorId: parseInt(formData.distributorId),
       introduction: formData.introduction,
     };
 
@@ -136,12 +163,33 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
               required
             />
             <label>Nhà xuất bản</label>
-            <input
-              type="text"
-              name="publisher"
-              value={formData.publisher}
+            <select
+              name="publisherId"
+              value={formData.publisherId}
               onChange={handleChange}
-            />
+              required
+            >
+              <option value="">-- Chọn nhà xuất bản --</option>
+              {publishers.map((pub) => (
+                <option key={pub.id} value={pub.id}>
+                  {pub.name}
+                </option>
+              ))}
+            </select>
+            <label>Nhà phân phối</label>
+            <select
+              name="distributorId"
+              value={formData.distributorId}
+              onChange={handleChange}
+              required
+            >
+              <option value="">-- Chọn nhà phân phối --</option>
+              {distributors.map((distributor) => (
+                <option key={distributor.id} value={distributor.id}>
+                  {distributor.name}
+                </option>
+              ))}
+            </select>
             <label>Tác giả</label>
             <input
               type="text"

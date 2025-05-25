@@ -192,4 +192,27 @@ public class CartServiceImpl implements CartService {
         cart.getItems().clear();
         cartRepository.save(cart);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CartItemDto> getSelectedCartItems(List<Long> cartItemIds) {
+        Cart cart = getOrCreateCart();
+        return cartItemRepository.findAllById(cartItemIds).stream()
+                .filter(item -> item.getCart().getId().equals(cart.getId()))
+                .map(cartItemMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void removeSelectedItems(List<Long> cartItemIds) {
+        Cart cart = getOrCreateCart();
+        List<CartItem> itemsToRemove = cartItemRepository.findAllById(cartItemIds).stream()
+                .filter(item -> item.getCart().getId().equals(cart.getId()))
+                .collect(Collectors.toList());
+        
+        cartItemRepository.deleteAll(itemsToRemove);
+        cart.getItems().removeAll(itemsToRemove);
+        cartRepository.save(cart);
+    }
 } 

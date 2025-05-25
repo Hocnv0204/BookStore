@@ -14,6 +14,7 @@ function Category() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [keyword, setKeyword] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [totalPages, setTotalPages] = useState(1);
@@ -24,16 +25,26 @@ function Category() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [page, size, sortBy, sortOrder]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = async (searchKeyword = keyword) => {
     try {
-      const response = await axios.get(
-        "http://localhost:8080/api/v1/categories"
+      const params = { page, size, sortBy, sortOrder };
+      let url = "http://localhost:8080/api/v1/categories";
+      if (searchKeyword && searchKeyword.trim() !== "") {
+        params.keyword = searchKeyword.trim();
+        url = `http://localhost:8080/api/v1/categories/search`;
+      }
+      const response = await axios.get(url, { params });
+      // Nếu API trả về response.data.content
+      const data = response.data.content || response.data.result?.content || [];
+      setCategories(data);
+      setTotalPages(
+        response.data.totalPages || response.data.result?.totalPages || 1
       );
-      setCategories(response.data.result.content);
-      setTotalPages(response.data.result.totalPages);
-      setTotalElements(response.data.result.totalElements);
+      setTotalElements(
+        response.data.totalElements || response.data.result?.totalElements || 0
+      );
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -74,18 +85,17 @@ function Category() {
     setIsEditModalOpen(true);
   };
 
-  const filteredCategories = categories
-    .filter((category) =>
-      category.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      let cmp = 0;
-      if (sortBy === "name") cmp = a.name.localeCompare(b.name);
-      else if (sortBy === "id") cmp = a.id - b.id;
-      else if (sortBy === "description")
-        cmp = (a.description || "").localeCompare(b.description || "");
-      return sortOrder === "asc" ? cmp : -cmp;
-    });
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
+
+  // Xử lý tìm kiếm
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setPage(0);
+    fetchCategories(keyword);
+  };
 
   const tableHeaders = ["Mã Danh Mục", "Tên Danh Mục", "Ảnh Danh Mục", ""];
 
@@ -108,36 +118,38 @@ function Category() {
                 </button>
               </div>
               <div className="category-search-container">
-                <input
-                  id="searchInput"
-                  type="text"
-                  placeholder="Tìm kiếm theo tên danh mục..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-              <div className="category-sort-container">
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
+                <form
+                  onSubmit={handleSearch}
+                  style={{ display: "flex", gap: 8 }}
                 >
-                  <option value="name">Sắp xếp theo tên</option>
-                  <option value="id">Sắp xếp theo mã</option>
-                  <option value="description">Sắp xếp theo mô tả</option>
-                </select>
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                >
-                  <option value="asc">Tăng dần</option>
-                  <option value="desc">Giảm dần</option>
-                </select>
+                  <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="Tìm kiếm theo tên danh mục "
+                    value={keyword}
+                    onChange={(e) => setKeyword(e.target.value)}
+                  />
+                  <button type="submit" className="search-button">
+                    <svg
+                      class="icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </button>
+                </form>
               </div>
             </div>
           </div>
           <div className="category-table-wrapper">
             <Table
-              ContentTable={filteredCategories}
+              ContentTable={categories}
               HeaderTable={tableHeaders}
               type="category"
               onEdit={handleEdit}
@@ -147,6 +159,9 @@ function Category() {
               pageSize={size}
               currentPage={page}
               onPageChange={(newPage) => setPage(newPage)}
+              onSort={handleSort}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
             />
           </div>
         </div>

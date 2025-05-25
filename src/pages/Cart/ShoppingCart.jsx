@@ -6,10 +6,12 @@ import CartItem from "./CartItem/CartItem";
 import CartSummary from "./CartSummary/CartSummary";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const ShoppingCart = () => {
-  const [total, setTotal] = useState(0);
   const [cartItems, setCartItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const navigate = useNavigate();
 
   const handleQuantityChange = async (itemId, newQuantity) => {
     try {
@@ -57,18 +59,34 @@ const ShoppingCart = () => {
       if (res.data && res.data.content && res.data.content.length > 0) {
         const items = res.data.content[0].items;
         setCartItems(items);
-        setTotal(calculateTotal(items));
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
       setCartItems([]);
-      setTotal(0);
     }
   };
 
   useEffect(() => {
     fetchCartItems();
   }, []);
+
+  const handleSelectItem = (itemId) => {
+    setSelectedItems((prev) =>
+      prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId]
+    );
+  };
+
+  const handleOrder = () => {
+    const cartItemIds =
+      selectedItems.length > 0
+        ? selectedItems
+        : cartItems.map((item) => item.id);
+    localStorage.setItem("selectedCartItemIds", JSON.stringify(cartItemIds));
+    navigate("/order");
+  };
+
   if (cartItems.length === 0) {
     return (
       <div className="shopping-cart">
@@ -80,6 +98,11 @@ const ShoppingCart = () => {
       </div>
     );
   }
+
+  const selectedCartItems = cartItems.filter((item) =>
+    selectedItems.includes(item.id)
+  );
+
   return (
     <div className="shopping-cart">
       <Header />
@@ -88,8 +111,10 @@ const ShoppingCart = () => {
           cartItems={cartItems}
           handleQuantityChange={handleQuantityChange}
           handleDelete={handleDelete}
+          selectedItems={selectedItems}
+          onSelectItem={handleSelectItem}
         />
-        <CartSummary total={total} />
+        <CartSummary selectedItems={selectedCartItems} onOrder={handleOrder} />
       </div>
       <Footer />
     </div>
