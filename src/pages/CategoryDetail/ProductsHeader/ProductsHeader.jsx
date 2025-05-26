@@ -5,7 +5,7 @@ function ProductsHeader({ title }) {
   return (
     <div className="products-header">
       <h1>{title}</h1>
-      <div className="sort-container">
+      {/* <div className="sort-container">
         <span>Sắp xếp:</span>
         <select className="sort-select">
           <option>Xem nhiều nhất</option>
@@ -15,7 +15,7 @@ function ProductsHeader({ title }) {
           <option>Bán chạy nhất</option>
           <option>Mới nhất</option>
         </select>
-      </div>
+      </div> */}
     </div>
   );
 }

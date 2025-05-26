@@ -26,6 +26,19 @@ function ReviewModal({ bookId, bookTitle, review, onClose, onSuccess }) {
       setEditing(false);
     }
   }, [review]);
+  useEffect(() => {
+    if (review) {
+      setRating(review.rating);
+      setComment(review.comment);
+      setImagePreview(review.imageUrl || null);
+      setEditing(false); // For existing reviews, start in view mode
+    } else {
+      setRating(5);
+      setComment("");
+      setImagePreview(null);
+      setEditing(true); // For new reviews, start in edit mode to allow image upload
+    }
+  }, [review]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
