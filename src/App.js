@@ -18,6 +18,7 @@ import Category from "./pages/Admin/Category/Category";
 import SearchResults from "./pages/SearchResults/SearchResults";
 import Publisher from "./pages/Admin/Publisher/Publisher";
 import Distributor from "./pages/Admin/Distributor/Distributor";
+import ReviewManagement from "./pages/Admin/ReviewManagement/ReviewManagement";
 function App() {
   return (
     <BrowserRouter>
@@ -41,6 +42,7 @@ function App() {
         <Route path="/search" element={<SearchResults />} />
         <Route path="/publisher" element={<Publisher />} />
         <Route path="/distributor" element={<Distributor />} />
+        <Route path="/admin/review-management" element={<ReviewManagement />} />
       </Routes>
     </BrowserRouter>
   );

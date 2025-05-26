@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -150,6 +151,29 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    @Transactional
+    public void deleteMultipleReviews(List<Long> reviewIds) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAdmin) {
+            throw new AppException(ErrorCode.UNAUTHORIZED);
+        }
+
+        List<Review> reviews = reviewRepository.findAllById(reviewIds);
+        
+        // Delete all review images
+        for (Review review : reviews) {
+            if (review.getImageUrl() != null) {
+                fileStorageService.deleteFile(review.getImageUrl(), "reviews");
+            }
+        }
+
+        reviewRepository.deleteAllById(reviewIds);
+    }
+
+    @Override
     public PageResponse<ReviewDto> getBookReviews(Long bookId, Pageable pageable) {
         if (!bookRepository.existsById(bookId)) {
             throw new AppException(ErrorCode.BOOK_NOT_FOUND);
@@ -181,6 +205,20 @@ public class ReviewServiceImpl implements ReviewService {
         }
        return createPageResponse(reviewRepository.findByUserId(userId, pageable));
     }
+
+    @Override
+    public PageResponse<ReviewDto> getAllReviews(Pageable pageable) {
+        return createPageResponse(reviewRepository.findAll(pageable));
+    }
+
+    @Override
+    public PageResponse<ReviewDto> searchReviewsByBookTitle(String keyword, Pageable pageable) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return getAllReviews(pageable);
+        }
+        return createPageResponse(reviewRepository.findByBookTitleContainingIgnoreCase(keyword.trim(), pageable));
+    }
+
     private PageResponse<ReviewDto> createPageResponse(Page<Review> reviewPage) {
         return PageResponse.<ReviewDto>builder()
                 .content(reviewPage.getContent().stream()

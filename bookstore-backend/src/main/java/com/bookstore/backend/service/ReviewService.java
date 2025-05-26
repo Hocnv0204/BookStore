@@ -6,6 +6,7 @@ import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.dto.response.ReviewStatsResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 public interface ReviewService {
     ReviewDto createReview(Long bookId, ReviewRequest request, MultipartFile image);
@@ -14,9 +15,15 @@ public interface ReviewService {
     
     void deleteReview(Long reviewId);
     
+    void deleteMultipleReviews(List<Long> reviewIds);
+    
     PageResponse<ReviewDto> getBookReviews(Long bookId, Pageable pageable);
     
     ReviewStatsResponse getBookReviewStats(Long bookId);
     
     PageResponse<ReviewDto> getUserReviews(Long userId, Pageable pageable);
+
+    PageResponse<ReviewDto> getAllReviews(Pageable pageable);
+
+    PageResponse<ReviewDto> searchReviewsByBookTitle(String keyword, Pageable pageable);
 } 

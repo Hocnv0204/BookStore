@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -46,6 +48,8 @@ public class ReviewController {
                 .result(reviewService.createReview(bookId, reviewRequest, image))
                 .build();
     }
+
+    
 
     @PutMapping(value = "users/reviews/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -79,21 +83,16 @@ public class ReviewController {
                 .build();
     }
 
-    
-    // public ApiResponse<PageResponse<ReviewDto>> getBookReviews(
-    //         @PathVariable Long bookId,
-    //         @RequestParam(defaultValue = "0") int page,
-    //         @RequestParam(defaultValue = "10") int size,
-    //         @RequestParam(defaultValue = "id") String sortBy,
-    //         @RequestParam(defaultValue = "asc") String sortOder
-    //         ) {
-    //     Pageable pageable = getPageable(page, size, sortBy, sortOrder)
-    //     return ApiResponse.<PageResponse<ReviewDto>>builder()
-    //             .code(200)
-    //             .message("Book reviews retrieved successfully")
-    //             .result(reviewService.getBookReviews(bookId, page, size))
-    //             .build();
-    // }
+    @DeleteMapping("/admin/reviews")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<Void> deleteMultipleReviews(@RequestBody List<Long> reviewIds) {
+        reviewService.deleteMultipleReviews(reviewIds);
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("Reviews deleted successfully")
+                .build();
+    }
+
     @GetMapping("/api/v1/reviews/{bookId}")
     public ResponseEntity<PageResponse<ReviewDto>> getBookReviews(
             @PathVariable Long bookId,
@@ -114,8 +113,8 @@ public class ReviewController {
                 .build();
     }
 
-    @GetMapping("/admin/reviews/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/users/reviews/{userId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ApiResponse<PageResponse<ReviewDto>> getUserReviews(
             @PathVariable Long userId,
             @RequestParam(value = "page", required = false) Integer page,
@@ -129,6 +128,38 @@ public class ReviewController {
                 .result(reviewService.getUserReviews(userId, pageable))
                 .build();
     }
+
+    @GetMapping("/admin/reviews")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<PageResponse<ReviewDto>> getAllReviews(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
+        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+        return ApiResponse.<PageResponse<ReviewDto>>builder()
+                .code(200)
+                .message("All reviews retrieved successfully")
+                .result(reviewService.getAllReviews(pageable))
+                .build();
+    }
+
+    @GetMapping("/admin/reviews/search")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ApiResponse<PageResponse<ReviewDto>> searchReviewsByBookTitle(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
+        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+        return ApiResponse.<PageResponse<ReviewDto>>builder()
+                .code(200)
+                .message("Reviews search results")
+                .result(reviewService.searchReviewsByBookTitle(keyword, pageable))
+                .build();
+    }
+
     private Pageable getPageable(Integer page, Integer size, String sortBy, String sortDirection) {
         int pageNumber = (page != null) ? page : 0;
         int pageSize = (size != null) ? Math.min(size, MAX_PAGE_SIZE) : 10;

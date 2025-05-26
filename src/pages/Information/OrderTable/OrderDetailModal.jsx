@@ -1,5 +1,239 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./OrderDetailModal.css";
+import axios from "axios";
+
+function ReviewModal({ bookId, bookTitle, review, onClose, onSuccess }) {
+  const [rating, setRating] = useState(review ? review.rating : 5);
+  const [comment, setComment] = useState(review ? review.comment : "");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(
+    review ? review.imageUrl : null
+  );
+  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [editing, setEditing] = useState(!!review);
+
+  useEffect(() => {
+    if (review) {
+      setRating(review.rating);
+      setComment(review.comment);
+      setImagePreview(review.imageUrl || null);
+      setEditing(false);
+    } else {
+      setRating(5);
+      setComment("");
+      setImagePreview(null);
+      setEditing(false);
+    }
+  }, [review]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImageFile(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagePreview(reader.result);
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMessage("");
+    setSubmitting(true);
+    try {
+      const formData = new FormData();
+      formData.append("request", JSON.stringify({ rating, comment }));
+      if (imageFile) formData.append("image", imageFile);
+      if (review) {
+        // Sửa review
+        await axios.put(
+          `http://localhost:8080/users/reviews/${review.id}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+        setMessage("Cập nhật đánh giá thành công!");
+      } else {
+        // Thêm review mới
+        await axios.post(
+          `http://localhost:8080/users/reviews/${bookId}`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+        setMessage("Đánh giá thành công!");
+      }
+      setTimeout(() => {
+        setMessage("");
+        onSuccess && onSuccess();
+        onClose();
+      }, 1200);
+    } catch (err) {
+      setMessage("Có lỗi xảy ra khi gửi đánh giá.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!review) return;
+    setSubmitting(true);
+    setMessage("");
+    try {
+      await axios.delete(`http://localhost:8080/users/reviews/${review.id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+        },
+      });
+      setMessage("Xóa đánh giá thành công!");
+      setTimeout(() => {
+        setMessage("");
+        onSuccess && onSuccess();
+        onClose();
+      }, 1200);
+    } catch (err) {
+      setMessage("Có lỗi xảy ra khi xóa đánh giá.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="review-modal-overlay">
+      <div className="review-modal">
+        <h3>{review ? "Xem/Sửa đánh giá" : `Đánh giá sách: ${bookTitle}`}</h3>
+        <form onSubmit={handleSubmit} encType="multipart/form-data">
+          <div className="star-select">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <span
+                key={star}
+                className={star <= rating ? "star active" : "star"}
+                onClick={() => setRating(star)}
+                style={{ cursor: "pointer", fontSize: 22 }}
+              >
+                ★
+              </span>
+            ))}
+          </div>
+          <textarea
+            placeholder="Nội dung đánh giá"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            rows={3}
+            required
+            style={{ width: "100%", margin: "10px 0" }}
+            disabled={review && !editing}
+          />
+          {imagePreview && (
+            <div style={{ marginBottom: 10 }}>
+              <img
+                src={imagePreview}
+                alt="preview"
+                style={{ maxWidth: 120, borderRadius: 6 }}
+              />
+              {editing && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setImageFile(null);
+                    setImagePreview(null);
+                  }}
+                  style={{ marginLeft: 8 }}
+                >
+                  Xóa ảnh
+                </button>
+              )}
+            </div>
+          )}
+          {editing && (
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ marginBottom: 10 }}
+            />
+          )}
+          <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+            {review ? (
+              editing ? (
+                <>
+                  <button
+                    type="submit"
+                    className="details-button"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Đang lưu..." : "Lưu"}
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={() => setEditing(false)}
+                  >
+                    Hủy
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="details-button"
+                    onClick={() => setEditing(true)}
+                  >
+                    Sửa đánh giá
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={handleDelete}
+                    disabled={submitting}
+                  >
+                    Xóa đánh giá
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={onClose}
+                  >
+                    Đóng
+                  </button>
+                </>
+              )
+            ) : (
+              <>
+                <button
+                  type="submit"
+                  className="details-button"
+                  disabled={submitting}
+                >
+                  {submitting ? "Đang gửi..." : "Gửi đánh giá"}
+                </button>
+                <button
+                  type="button"
+                  className="cancel-button"
+                  onClick={onClose}
+                >
+                  Hủy
+                </button>
+              </>
+            )}
+          </div>
+          {message && <div className="order-message">{message}</div>}
+        </form>
+      </div>
+    </div>
+  );
+}
 
 function OrderDetailModal({ order, onClose, loading }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -11,6 +245,48 @@ function OrderDetailModal({ order, onClose, loading }) {
     note: order.note || "",
   });
   const [editMessage, setEditMessage] = useState("");
+  const [reviewingBook, setReviewingBook] = useState(null);
+  const [userReviews, setUserReviews] = useState({});
+  const userObj = JSON.parse(localStorage.getItem("user"));
+  const userId = userObj.id;
+
+  useEffect(() => {
+    // Fetch tất cả review của user cho các bookId trong order
+    const fetchUserReviews = async () => {
+      if (!order || !order.items) return;
+      const bookIds = order.items.map((item) => item.bookId);
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/users/reviews/${userId}`,
+          {
+            params: { size: 1000 },
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+        console.log(res);
+        console.log(userId);
+        // API trả về mảng review, map về { bookId: review }
+        const reviewMap = {};
+        if (
+          res.data &&
+          res.data.result &&
+          Array.isArray(res.data.result.content)
+        ) {
+          res.data.result.content.forEach((r) => {
+            if (bookIds.includes(r.bookId)) {
+              reviewMap[r.bookId] = r;
+            }
+          });
+        }
+        setUserReviews(reviewMap);
+      } catch (err) {
+        setUserReviews({});
+      }
+    };
+    fetchUserReviews();
+  }, [order]);
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
@@ -158,23 +434,104 @@ function OrderDetailModal({ order, onClose, loading }) {
                   <th>Số lượng</th>
                   <th>Đơn giá</th>
                   <th>Thành tiền</th>
+                  <th>Đánh giá sách</th>
                 </tr>
               </thead>
               <tbody>
-                {order.items.map((item) => (
-                  <tr key={item.id}>
-                    <td>{item.bookTitle}</td>
-                    <td>{item.quantity}</td>
-                    <td>{item.price?.toLocaleString("vi-VN")} đ</td>
-                    <td>{item.subtotal?.toLocaleString("vi-VN")} đ</td>
-                  </tr>
-                ))}
+                {order.items.map((item) => {
+                  const review = userReviews[item.bookId];
+                  return (
+                    <tr key={item.id}>
+                      <td>{item.bookTitle}</td>
+                      <td>{item.quantity}</td>
+                      <td>{item.price?.toLocaleString("vi-VN")} đ</td>
+                      <td>{item.subtotal?.toLocaleString("vi-VN")} đ</td>
+                      <td>
+                        {review ? (
+                          <button
+                            className="details-button"
+                            onClick={() =>
+                              setReviewingBook({
+                                bookId: item.bookId,
+                                bookTitle: item.bookTitle,
+                                review,
+                              })
+                            }
+                          >
+                            Xem đánh giá
+                          </button>
+                        ) : order.status === "DELIVERED" ? (
+                          <button
+                            className="details-button"
+                            onClick={() =>
+                              setReviewingBook({
+                                bookId: item.bookId,
+                                bookTitle: item.bookTitle,
+                                review: null,
+                              })
+                            }
+                          >
+                            Đánh giá
+                          </button>
+                        ) : (
+                          <span style={{ color: "#aaa" }}>
+                            Chỉ đánh giá khi đã giao
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           ) : (
             <div>Không có sản phẩm trong đơn hàng.</div>
           )}
         </div>
+        {reviewingBook && (
+          <ReviewModal
+            bookId={reviewingBook.bookId}
+            bookTitle={reviewingBook.bookTitle}
+            review={reviewingBook.review}
+            onClose={() => setReviewingBook(null)}
+            onSuccess={() => {
+              // Sau khi sửa/xóa/thêm review, reload lại danh sách review
+              const fetchUserReviews = async () => {
+                if (!order || !order.items) return;
+                const bookIds = order.items.map((item) => item.bookId);
+                try {
+                  const res = await axios.get(
+                    `http://localhost:8080/users/reviews/${userId}`,
+                    {
+                      params: { size: 1000 },
+                      headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                          "accessToken"
+                        )}`,
+                      },
+                    }
+                  );
+                  const reviewMap = {};
+                  if (
+                    res.data &&
+                    res.data.result &&
+                    Array.isArray(res.data.result.content)
+                  ) {
+                    res.data.result.content.forEach((r) => {
+                      if (bookIds.includes(r.bookId)) {
+                        reviewMap[r.bookId] = r;
+                      }
+                    });
+                  }
+                  setUserReviews(reviewMap);
+                } catch (err) {
+                  setUserReviews({});
+                }
+              };
+              fetchUserReviews();
+            }}
+          />
+        )}
         {loading && <div>Đang tải chi tiết đơn hàng...</div>}
       </div>
     </div>

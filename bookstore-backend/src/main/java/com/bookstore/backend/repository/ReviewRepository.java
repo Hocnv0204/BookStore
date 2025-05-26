@@ -28,4 +28,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsByUserIdAndBookId(Long userId, Long bookId);
 
     Page<Review> findByUserId(Long userId, Pageable pageable);
+
+    @Query("SELECT r FROM Review r WHERE LOWER(r.book.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<Review> findByBookTitleContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 } 

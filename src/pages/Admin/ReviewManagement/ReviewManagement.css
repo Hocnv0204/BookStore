@@ -1,0 +1,75 @@
+.review-management {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.review-management-container {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+}
+
+.review-management-main {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.content-header h2 {
+    margin: 0;
+    color: #333;
+}
+
+.content-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.review-management-search-container {
+    position: relative;
+}
+
+.review-management-search-container input {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 300px;
+    font-size: 14px;
+}
+
+.review-management-search-container input:focus {
+    outline: none;
+    border-color: #007bff;
+}
+
+.search-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-button .icon {
+    width: 20px;
+    height: 20px;
+    color: #666;
+}
+
+.search-button:hover .icon {
+    color: #007bff;
+}

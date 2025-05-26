@@ -65,6 +65,14 @@ function Sidebar() {
         >
           Quản Lý Nhà Phân Phối
         </NavLink>
+        <NavLink
+          to="/admin/review-management"
+          className={({ isActive }) =>
+            `sidebar-link${isActive ? " active" : ""}`
+          }
+        >
+          Quản Lý Đánh Giá
+        </NavLink>
       </nav>
     </div>
   );
