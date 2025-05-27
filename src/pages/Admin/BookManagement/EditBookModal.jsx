@@ -13,7 +13,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
     id: book.id || "",
     title: book.title || "",
     publisherId: book.publisherId || "",
-    authorName: book.author || "",
+    authorName: book.authorName || "",
     price: book.price || "",
     quantityStock: book.quantityStock || "",
     description: book.description || "",
@@ -31,7 +31,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       id: book.id || "",
       title: book.title || "",
       publisherId: book.publisherId || "",
-      authorName: book.author || "",
+      authorName: book.authorName || "",
       price: book.price || "",
       quantityStock: book.quantityStock || "",
       description: book.description || "",
@@ -96,7 +96,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       title: formData.title,
       quantityStock: parseInt(formData.quantityStock),
       price: parseFloat(formData.price),
-      authorName: formData.author,
+      authorName: formData.authorName,
       categoryId: parseInt(formData.categoryId),
       description: formData.description,
       publisherId: parseInt(formData.publisherId),
@@ -128,6 +128,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
       );
       onSave(res.data); // Truyền dữ liệu sách đã cập nhật về component cha
       onClose(); // Đóng modal
+      window.location.reload();
     } catch (error) {
       console.error("Lỗi khi cập nhật sách:", error);
       alert("Lỗi khi cập nhật sách");
