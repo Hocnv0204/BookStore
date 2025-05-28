@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import BookSection from "../../components/BookSection/BookSection";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 
@@ -260,6 +261,7 @@ function SearchResults() {
         </div>
       </main>
       <Footer />
+      <ChatBot />
     </div>
   );
 }

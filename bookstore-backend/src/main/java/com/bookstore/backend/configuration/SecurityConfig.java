@@ -42,6 +42,9 @@ public class SecurityConfig {
             "/auth/reset-password",
             "/auth/change-password",
             "/auth/forgot-password",
+            "/api/gemini/**",
+            "/api/chatbot/**",
+            "/api/demo/**",
     };
 
     @Bean

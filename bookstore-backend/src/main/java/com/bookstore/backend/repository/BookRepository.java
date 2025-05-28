@@ -31,6 +31,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE LOWER(b.authorName) LIKE LOWER(CONCAT('%', :authorName, '%'))")
     Page<Book> findByAuthorNameContainingIgnoreCase(@Param("authorName") String authorName, Pageable pageable);
     
+    @Query("SELECT b FROM Book b WHERE " +
+           "LOWER(b.title) LIKE LOWER(CONCAT('%', :title, '%')) OR " +
+           "LOWER(b.authorName) LIKE LOWER(CONCAT('%', :author, '%'))")
+    Page<Book> findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCase(
+        @Param("title") String title, 
+        @Param("author") String author, 
+        Pageable pageable);
+    
     @Query("SELECT b FROM Book b WHERE LOWER(b.publisher) LIKE LOWER(CONCAT('%', :publisher, '%'))")
     Page<Book> findByPublisher(@Param("publisher")String publisher , Pageable pageable);
     
@@ -58,4 +66,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Page<Book> findByPublisherId(Long publisherId, Pageable pageable);
     Page<Book> findByDistributorId(Long distributorId, Pageable pageable);
+       List<Book> findTop20ByOrderByIdAsc();
+       List<Book> findTop20ByOrderByIdDesc();
 }

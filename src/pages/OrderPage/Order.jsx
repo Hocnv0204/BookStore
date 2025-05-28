@@ -2,6 +2,7 @@ import CheckoutForm from "./CheckoutForm/CheckoutForm";
 import OrderDetails from "./OrderDetails/OrderDetails";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import "./Order.css";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -68,6 +69,7 @@ function Order() {
         </div>
       </main>
       <Footer />
+      <ChatBot />
     </div>
   );
 }

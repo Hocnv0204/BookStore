@@ -8,6 +8,7 @@ import Pagination from "./Pagination/Pagination";
 import Comments from "./Comments/Comments";
 import Footer from "../../components/Footer/Footer";
 import BookSection from "../../components/BookSection/BookSection";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -120,6 +121,7 @@ function ProductPage() {
       </main>
 
       <Footer />
+      <ChatBot />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import OrderTable from "./OrderTable/OrderTable";
 import Sidebar from "./Sidebar/Sidebar";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import InfoModal from "./InfoModal/InfoModal"; // Modal cập nhật thông tin
 import ChangePasswordModal from "./InfoModal/ChangePasswordModal"; // Modal đổi mật khẩu
 import { useNavigate } from "react-router-dom";
@@ -126,6 +127,7 @@ function Information() {
       {modal === "password" && (
         <ChangePasswordModal onClose={() => setModal(null)} />
       )}
+      <ChatBot />
     </div>
   );
 }

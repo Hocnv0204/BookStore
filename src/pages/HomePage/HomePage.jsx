@@ -6,6 +6,7 @@ import HomePageBookSection from "./HomePageBookSection/HomePageBookSection";
 import PopularSearches from "./PopularSearches/PopularSearches";
 import Banner from "./Banner/Banner";
 import Footer from "../../components/Footer/Footer";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect, useCallback } from "react";
@@ -99,6 +100,7 @@ function HomePage() {
       </div>
 
       <Footer />
+      <ChatBot />
     </div>
   );
 }

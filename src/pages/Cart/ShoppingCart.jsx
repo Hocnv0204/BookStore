@@ -4,6 +4,7 @@ import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
 import CartItem from "./CartItem/CartItem";
 import CartSummary from "./CartSummary/CartSummary";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -41,6 +42,7 @@ const ShoppingCart = () => {
     } catch (error) {
       console.error("Error deleting item:", error);
     }
+    window.location.reload();
   };
 
   const calculateTotal = (items) => {
@@ -117,6 +119,7 @@ const ShoppingCart = () => {
         <CartSummary selectedItems={selectedCartItems} onOrder={handleOrder} />
       </div>
       <Footer />
+      <ChatBot />
     </div>
   );
 };

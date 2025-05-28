@@ -26,4 +26,4 @@ public interface CartMapper {
                 .mapToDouble(item -> item.getPrice() * item.getQuantity())
                 .sum();
     }
-} 
+}   

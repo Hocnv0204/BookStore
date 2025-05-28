@@ -5,6 +5,7 @@ import Footer from "../../components/Footer/Footer";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import BookSection from "../../components/BookSection/BookSection";
 import ProductsHeader from "./ProductsHeader/ProductsHeader";
+import ChatBot from "../../components/ChatBot/ChatBot";
 import { useParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
@@ -146,6 +147,7 @@ function CategoryDetail() {
         />
 
         <Footer />
+        <ChatBot />
       </main>
     </div>
   );

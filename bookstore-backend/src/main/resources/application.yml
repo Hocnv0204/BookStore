@@ -49,3 +49,12 @@ logging:
       version: ${VERSION}
       command: ${COMMAND}
       orderType: ${ORDER_TYPE}
+
+gemini:
+  api-key: "AIzaSyCxiDbi7JbHV1SchJRrEx-5FgIz8dbScks"
+  base-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
+  max-output-tokens: 1000
+  temperature: 0.1
+  top-p: 0.8
+  top-k: 10
+  max-history-size: 20
