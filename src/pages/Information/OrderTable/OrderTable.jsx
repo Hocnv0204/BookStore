@@ -13,32 +13,17 @@ function OrderTable({
   last = true,
   onPageChange,
   filterStatus = "all",
+  onSort, // Add new prop for sorting
+  sortBy, // Add current sort field
+  sortOrder, // Add current sort order
 }) {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [message, setMessage] = useState("");
   const [confirmCancelOrder, setConfirmCancelOrder] = useState(null);
-  const [sortBy, setSortBy] = useState("id");
-  const [sortOrder, setSortOrder] = useState("desc");
-  // Lọc theo trạng thái
-  let filteredOrders = orders;
-  if (filterStatus && filterStatus !== "all") {
-    filteredOrders = orders.filter((order) => order.status === filterStatus);
-  }
 
-  // FE sort
-  let sortedOrders = [...filteredOrders];
-  sortedOrders = sortedOrders.sort((a, b) => {
-    let v1 = a[sortBy];
-    let v2 = b[sortBy];
-    if (sortBy === "status") {
-      v1 = v1?.toLowerCase() || "";
-      v2 = v2?.toLowerCase() || "";
-    }
-    if (v1 < v2) return sortOrder === "asc" ? -1 : 1;
-    if (v1 > v2) return sortOrder === "asc" ? 1 : -1;
-    return 0;
-  });
+  // No need for client-side filtering since we're doing server-side filtering
+  const filteredOrders = orders;
   const fetchOrderById = async (id) => {
     setLoadingDetail(true);
     try {
@@ -64,7 +49,7 @@ function OrderTable({
       return;
     }
     try {
-      const res = await axios.post(
+      await axios.post(
         `http://localhost:8080/users/orders/${order.id}/cancel`,
         {},
         {
@@ -84,32 +69,52 @@ function OrderTable({
     }
   };
 
+  // Add new function to handle header click
+  const handleHeaderClick = (header) => {
+    if (onSort) {
+      // Map header text to field name for orders
+      const fieldMap = {
+        "Mã Đơn Hàng": "id",
+        "Ngày đặt": "createdAt",
+        "Người đặt": "receiverName",
+        "Số điện thoại": "phoneNumber",
+        "Tổng cộng": "totalAmount",
+        "Trạng thái": "status",
+      };
+
+      const field = fieldMap[header];
+      if (field) {
+        const newOrder =
+          sortBy === field && sortOrder === "asc" ? "desc" : "asc";
+        onSort(field, newOrder);
+      }
+    }
+  };
+
+  // Add function to render sort indicator
+  const renderSortIndicator = (header) => {
+    const fieldMap = {
+      "Mã Đơn Hàng": "id",
+      "Ngày đặt": "createdAt",
+      "Người đặt": "receiverName",
+      "Số điện thoại": "phoneNumber",
+      "Tổng cộng": "totalAmount",
+      "Trạng thái": "status",
+    };
+
+    const field = fieldMap[header];
+    if (field !== sortBy) return null;
+    return (
+      <span className="sort-indicator">
+        {sortOrder === "asc" ? " ↑" : " ↓"}
+      </span>
+    );
+  };
+
   return (
     <div className="order-table">
       <div className="table-header">
         <h2>DANH SÁCH ĐƠN HÀNG</h2>
-        <div className="order-sort-bar">
-          <label>
-            Sắp xếp:
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="order-sort-select"
-            >
-              <option value="id">Mã đơn</option>
-              <option value="totalAmount">Tổng cộng</option>
-              <option value="status">Trạng thái</option>
-            </select>
-          </label>
-          <select
-            value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
-            className="order-sort-select"
-          >
-            <option value="asc">Tăng dần</option>
-            <option value="desc">Giảm dần</option>
-          </select>
-        </div>
       </div>
 
       {message && <div className="order-message">{message}</div>}
@@ -118,28 +123,76 @@ function OrderTable({
         <table className="order-table">
           <thead>
             <tr>
-              <th>STT</th>
-              <th>Mã Đơn Hàng</th>
-              <th>Người đặt</th>
-              <th>Số điện thoại</th>
-              <th>Tổng cộng</th>
-              <th>Trạng thái</th>
+              <th
+                onClick={() => handleHeaderClick("Mã Đơn Hàng")}
+                className={sortBy === "id" ? "sortable active" : "sortable"}
+              >
+                Mã Đơn Hàng
+                {renderSortIndicator("Mã Đơn Hàng")}
+              </th>
+              <th
+                onClick={() => handleHeaderClick("Ngày đặt")}
+                className={
+                  sortBy === "createdAt" ? "sortable active" : "sortable"
+                }
+              >
+                Ngày đặt
+                {renderSortIndicator("Ngày đặt")}
+              </th>
+              <th
+                onClick={() => handleHeaderClick("Người đặt")}
+                className={
+                  sortBy === "receiverName" ? "sortable active" : "sortable"
+                }
+              >
+                Người đặt
+                {renderSortIndicator("Người đặt")}
+              </th>
+              <th
+                onClick={() => handleHeaderClick("Số điện thoại")}
+                className={
+                  sortBy === "phoneNumber" ? "sortable active" : "sortable"
+                }
+              >
+                Số điện thoại
+                {renderSortIndicator("Số điện thoại")}
+              </th>
+              <th
+                onClick={() => handleHeaderClick("Tổng cộng")}
+                className={
+                  sortBy === "totalAmount" ? "sortable active" : "sortable"
+                }
+              >
+                Tổng cộng
+                {renderSortIndicator("Tổng cộng")}
+              </th>
+              <th
+                onClick={() => handleHeaderClick("Trạng thái")}
+                className={sortBy === "status" ? "sortable active" : "sortable"}
+              >
+                Trạng thái
+                {renderSortIndicator("Trạng thái")}
+              </th>
               <th>Chi tiết đơn</th>
               <th>Hủy đơn</th>
             </tr>
           </thead>
           <tbody>
-            {sortedOrders.length === 0 ? (
+            {filteredOrders.length === 0 ? (
               <tr>
-                <td colSpan="8" className="no-records">
+                <td colSpan="7" className="no-records">
                   Không có đơn hàng
                 </td>
               </tr>
             ) : (
-              sortedOrders.map((order, index) => (
+              filteredOrders.map((order, index) => (
                 <tr key={order.id}>
-                  <td>{pageNumber * pageSize + index + 1}</td>
                   <td>{order.id}</td>
+                  <td>
+                    {order.createdAt
+                      ? new Date(order.createdAt).toLocaleDateString("vi-VN")
+                      : "N/A"}
+                  </td>
                   <td>{order.receiverName}</td>
                   <td>{order.phoneNumber}</td>
                   <td>{order.totalAmount}</td>

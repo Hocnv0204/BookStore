@@ -1,5 +1,4 @@
 import "./Sidebar.css";
-import { Link } from "react-router-dom";
 
 function Sidebar({ activeItem, onItemClick, onClickAccount }) {
   return (
@@ -10,13 +9,28 @@ function Sidebar({ activeItem, onItemClick, onClickAccount }) {
       <nav className="sidebar-nav">
         <div
           className={`sidebar-link${activeItem === "all" ? " active" : ""}`}
-          onClick={() => onItemClick("all")}
+          onClick={() => {
+            onItemClick("all");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           Tất cả đơn hàng
         </div>
         <div
+          className={`sidebar-link${activeItem === "PENDING" ? " active" : ""}`}
+          onClick={() => {
+            onItemClick("PENDING");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+        >
+          Chờ xác nhận
+        </div>
+        <div
           className={`sidebar-link${activeItem === "CONFIRM" ? " active" : ""}`}
-          onClick={() => onItemClick("CONFIRM")}
+          onClick={() => {
+            onItemClick("CONFIRM");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           Đã xác nhận
         </div>
@@ -24,7 +38,10 @@ function Sidebar({ activeItem, onItemClick, onClickAccount }) {
           className={`sidebar-link${
             activeItem === "DELIVERED" ? " active" : ""
           }`}
-          onClick={() => onItemClick("DELIVERED")}
+          onClick={() => {
+            onItemClick("DELIVERED");
+            window.scrollTo(0, 0);
+          }}
         >
           Đã giao hàng
         </div>
@@ -32,7 +49,10 @@ function Sidebar({ activeItem, onItemClick, onClickAccount }) {
           className={`sidebar-link${
             activeItem === "CANCELLED" ? " active" : ""
           }`}
-          onClick={() => onItemClick("CANCELLED")}
+          onClick={() => {
+            onItemClick("CANCELLED");
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           Đã hủy đơn
         </div>

@@ -1,23 +1,24 @@
 package com.bookstore.backend.service.impl;
 
 import com.bookstore.backend.common.enums.OrderStatus;
+import com.bookstore.backend.common.enums.PaymentMethod;
+import com.bookstore.backend.common.enums.PaymentStatus;
 import com.bookstore.backend.dto.CartDto;
 import com.bookstore.backend.dto.OrderDto;
 import com.bookstore.backend.dto.OrderItemDto;
-import com.bookstore.backend.dto.request.OrderUpdateRequest;
 import com.bookstore.backend.dto.response.PageResponse;
+import com.bookstore.backend.dto.response.OrderPaymentResponse;
 import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.common.enums.ErrorCode;
-import com.bookstore.backend.mapper.OrderItemMapper;
 import com.bookstore.backend.mapper.OrderMapper;
 import com.bookstore.backend.model.*;
 import com.bookstore.backend.repository.BookRepository;
-import com.bookstore.backend.repository.OrderItemRepository;
 import com.bookstore.backend.repository.OrderRepository;
 import com.bookstore.backend.repository.UserRepository;
 import com.bookstore.backend.service.BookService;
 import com.bookstore.backend.service.CartService;
 import com.bookstore.backend.service.OrderService;
+import com.bookstore.backend.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.bookstore.backend.dto.request.OrderRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,16 +39,22 @@ import java.time.YearMonth;
 import com.bookstore.backend.dto.response.DailyRevenueDto;
 import java.util.ArrayList;
 import com.bookstore.backend.dto.CartItemDto;
+import com.bookstore.backend.configuration.VNPayConfig;
+import com.bookstore.backend.utils.VNPayUtil;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
     private final CartService cartService;
     private final BookRepository bookRepository;
-    private final BookService bookService ; 
+    private final BookService bookService;
+    private final VNPayConfig vnPayConfig;
+    private final NotificationService notificationService; 
     
     private String getCurrentUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -76,6 +84,8 @@ public class OrderServiceImpl implements OrderService {
                 .user(currentUser)
                 .totalAmount(cart.getTotalPrice())
                 .status(OrderStatus.PENDING)
+                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : PaymentMethod.COD)
+                .paymentStatus(PaymentStatus.PENDING)
                 .build();
         
         // Convert cart items to order items
@@ -97,14 +107,21 @@ public class OrderServiceImpl implements OrderService {
         order.setEmail(request.getEmail());
         order.setNote(request.getNote());
         order.setReceiverName(request.getReceiverName());
-        orderRepository.save(order);
+        
+        Order savedOrder = orderRepository.save(order);
         
         // Clear the cart after successful order creation
         cartService.clearCart();
         // Update book stock
         bookService.updateBookStock(cart.getItems());
-        return orderMapper.toDto(order);
+        
+        // Create notifications for order creation
+        notificationService.createOrderSuccessNotification(savedOrder);
+        notificationService.createNewOrderNotification(savedOrder);
+        
+        return orderMapper.toDto(savedOrder);
     }
+    
 
     @Override
     @Transactional
@@ -165,7 +182,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        return orderMapper.toDto(orderRepository.save(order));
+        order = orderRepository.save(order);
+        
+        // Create notification for order cancellation
+        notificationService.createOrderCancelledNotification(order);
+        
+        return orderMapper.toDto(order);
     }
 
     @Override
@@ -212,6 +234,31 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
+    public PageResponse<OrderDto> getOrdersByStatus(String status, Pageable pageable) {
+        OrderStatus orderStatus;
+        try {
+            orderStatus = OrderStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new AppException(ErrorCode.INVALID_ORDER_STATUS);
+        }
+
+        Page<Order> orders = orderRepository.findByStatus(orderStatus, pageable);
+        
+        List<OrderDto> orderDtos = orders.getContent().stream()
+                .map(orderMapper::toDto)
+                .collect(Collectors.toList());
+
+        return PageResponse.<OrderDto>builder()
+                .content(orderDtos)
+                .totalElements(orders.getTotalElements())
+                .totalPages(orders.getTotalPages())
+                .pageNumber(orders.getNumber())
+                .pageSize(orders.getSize())
+                .isLast(orders.isLast())
+                .build();
+    }
+    @Override
+    @Transactional
     public OrderDto updateOrderStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
@@ -225,7 +272,12 @@ public class OrderServiceImpl implements OrderService {
         }
 
         order.setStatus(status);
-        return orderMapper.toDto(orderRepository.save(order));
+        order = orderRepository.save(order);
+        
+        // Create notification for order status change
+        notificationService.createOrderStatusChangeNotification(order);
+        
+        return orderMapper.toDto(order);
     }
     @Override
     @Transactional(readOnly = true)
@@ -349,6 +401,10 @@ public class OrderServiceImpl implements OrderService {
                 .note(order.getNote())
                 .createdAt(order.getCreatedAt())
                 .updatedAt(order.getUpdatedAt())
+                .paymentMethod(order.getPaymentMethod())
+                .paymentStatus(order.getPaymentStatus())
+                .paymentTransactionId(order.getPaymentTransactionId())
+                .paymentUrl(order.getPaymentUrl())
                 .items(order.getItems().stream()
                         .map(this::mapOrderItemToDto)
                         .collect(Collectors.toList()))
@@ -371,7 +427,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public OrderDto createOrderFromSelectedCartItems(OrderRequest request, List<Long> cartItemIds) {
         User user = getCurrentUser();
-        CartDto cartDto = cartService.getCart();
 
         // Get selected cart items
         List<CartItemDto> selectedItems = cartService.getSelectedCartItems(cartItemIds);
@@ -388,6 +443,8 @@ public class OrderServiceImpl implements OrderService {
                 .phoneNumber(request.getPhoneNumber())
                 .email(request.getEmail())
                 .note(request.getNote())
+                .paymentMethod(request.getPaymentMethod() != null ? request.getPaymentMethod() : PaymentMethod.COD)
+                .paymentStatus(PaymentStatus.PENDING)
                 .items(new ArrayList<>())
                 .build();
 
@@ -417,12 +474,131 @@ public class OrderServiceImpl implements OrderService {
             bookRepository.save(book);
         }
 
+        // Set total amount
         order.setTotalAmount(totalAmount);
+        
         order = orderRepository.save(order);
 
         // Remove selected items from cart
         cartService.removeSelectedItems(cartItemIds);
+        
+        // Create notifications for order creation
+        notificationService.createOrderSuccessNotification(order);
+        notificationService.createNewOrderNotification(order);
 
         return orderMapper.toDto(order);
     }
+
+    @Override
+    @Transactional
+    public OrderPaymentResponse createOrderWithPayment(OrderRequest request, HttpServletRequest servletRequest) {
+        // Create order based on payment method
+        OrderDto orderDto;
+        if (request.getCartItemIds() != null && !request.getCartItemIds().isEmpty()) {
+            orderDto = createOrderFromSelectedCartItems(request, request.getCartItemIds());
+        } else {
+            orderDto = createOrderFromCart(request);
+        }
+        
+        // Get the created order
+        Order order = orderRepository.findById(orderDto.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        
+        // Set payment information
+        order.setPaymentMethod(request.getPaymentMethod());
+        
+        String message;
+        String paymentUrl = null;
+        
+        if (request.getPaymentMethod() == PaymentMethod.COD) {
+            // Cash payment - order is ready for processing
+            order.setPaymentStatus(PaymentStatus.PENDING);
+            message = "Đơn hàng đã được tạo thành công. Thanh toán khi nhận hàng.";
+        } else if (request.getPaymentMethod() == PaymentMethod.VNPAY) {
+            // VNPay payment - need to redirect to payment URL
+            order.setPaymentStatus(PaymentStatus.PENDING);
+            message = "Đơn hàng đã được tạo. Vui lòng hoàn tất thanh toán.";
+            
+            // Generate VNPay payment URL and transaction ID
+            paymentUrl = generateVNPayUrl(order, servletRequest);
+            String transactionId = generateTransactionId(order.getId());
+            
+            // Save payment info to order
+            order.setPaymentUrl(paymentUrl);
+            order.setPaymentTransactionId(transactionId);
+        } else {
+            throw new AppException(ErrorCode.INVALID_REQUEST);
+        }
+        
+        orderRepository.save(order);
+        
+        return OrderPaymentResponse.builder()
+                .order(orderMapper.toDto(order))
+                .paymentUrl(paymentUrl)
+                .message(message)
+                .build();
+    }
+    
+    @Override
+    @Transactional
+    public OrderDto updatePaymentStatus(Long orderId, PaymentStatus status, String transactionId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        
+        order.setPaymentStatus(status);
+        if (transactionId != null) {
+            order.setPaymentTransactionId(transactionId);
+        }
+        
+        // If payment is successful, update order status
+        if (status == PaymentStatus.PAID) {
+            order.setStatus(OrderStatus.CONFIRM);
+            // Create success notifications
+            notificationService.createPaymentSuccessNotification(order);
+            notificationService.createPaymentReceivedNotification(order);
+        } else if (status == PaymentStatus.FAILED) {
+            order.setStatus(OrderStatus.CANCELLED);
+            // Create failure notification
+            notificationService.createPaymentFailedNotification(order);
+        }
+        
+        return orderMapper.toDto(orderRepository.save(order));
+    }
+    
+    private String generateVNPayUrl(Order order, HttpServletRequest request) {
+        try {
+            // Create VNPay payment URL using real VNPay integration
+            Map<String, String> vnpParamsMap = vnPayConfig.getVNPayConfig();
+            
+            // Set order-specific parameters
+            long amount = order.getTotalAmount().longValue() * 100L; // VNPay requires amount in VND cents
+            vnpParamsMap.put("vnp_Amount", String.valueOf(amount));
+            vnpParamsMap.put("vnp_TxnRef", order.getId().toString()); // Use order ID as transaction reference
+            vnpParamsMap.put("vnp_OrderInfo", "Thanh toan don hang " + order.getId());
+            vnpParamsMap.put("vnp_IpAddr", VNPayUtil.getIpAddress(request));
+            
+            // Build query URL
+            String queryUrl = VNPayUtil.getPaymentURL(vnpParamsMap, true);
+            String hashData = VNPayUtil.getPaymentURL(vnpParamsMap, false);
+            String vnpSecureHash = VNPayUtil.hmacSHA512(vnPayConfig.getSecretKey(), hashData);
+            queryUrl += "&vnp_SecureHash=" + vnpSecureHash;
+            
+            // Return full VNPay URL
+            return vnPayConfig.getVnp_PayUrl() + "?" + queryUrl;
+        } catch (Exception e) {
+            // Fallback to internal payment endpoint if VNPay URL generation fails
+            return String.format("/api/v1/payment/vn-pay?amount=%d&orderId=%d", 
+                                 order.getTotalAmount().longValue(), 
+                                 order.getId());
+        }
+    }
+    
+    private String generateTransactionId(Long orderId) {
+        // Generate unique transaction ID for VNPay
+        // Format: VNPAY_{orderId}_{timestamp}
+        return String.format("VNPAY_%d_%d", orderId, System.currentTimeMillis() / 1000);
+    }
+
 }
+
+    

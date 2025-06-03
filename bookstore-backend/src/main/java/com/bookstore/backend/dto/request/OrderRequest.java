@@ -1,5 +1,6 @@
 package com.bookstore.backend.dto.request;
 
+import com.bookstore.backend.common.enums.PaymentMethod;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,4 +18,5 @@ public class OrderRequest {
     private String phoneNumber;
     private String email;
     private String note;
+    private PaymentMethod paymentMethod; // Phương thức thanh toán
 }

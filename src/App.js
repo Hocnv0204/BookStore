@@ -19,6 +19,7 @@ import SearchResults from "./pages/SearchResults/SearchResults";
 import Publisher from "./pages/Admin/Publisher/Publisher";
 import Distributor from "./pages/Admin/Distributor/Distributor";
 import ReviewManagement from "./pages/Admin/ReviewManagement/ReviewManagement";
+import PaymentCallback from "./pages/PaymentCallback/PaymentCallback";
 function App() {
   return (
     <BrowserRouter>
@@ -33,16 +34,17 @@ function App() {
         <Route path="/cart" element={<ShoppingCart />} />
         <Route path="/order" element={<Order />} />
         <Route path="/information" element={<Information />} />
-        <Route path="/customer" element={<Customer />} />
+        <Route path="/admin/customers" element={<Customer />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/invoice" element={<Invoice />} />
+        <Route path="/admin/invoices" element={<Invoice />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/admin/book-management" element={<BookManagement />} />
-        <Route path="/category" element={<Category />} />
+        <Route path="/admin/books" element={<BookManagement />} />
+        <Route path="/admin/categories" element={<Category />} />
         <Route path="/search" element={<SearchResults />} />
-        <Route path="/publisher" element={<Publisher />} />
-        <Route path="/distributor" element={<Distributor />} />
-        <Route path="/admin/review-management" element={<ReviewManagement />} />
+        <Route path="/admin/publishers" element={<Publisher />} />
+        <Route path="/admin/distributors" element={<Distributor />} />
+        <Route path="/admin/reviews" element={<ReviewManagement />} />
+        <Route path="/payment/callback" element={<PaymentCallback />} />
       </Routes>
     </BrowserRouter>
   );

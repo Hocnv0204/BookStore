@@ -25,13 +25,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.bookstore.backend.service.EmailService;
+import com.bookstore.backend.service.NotificationService;
 import com.bookstore.backend.repository.VerificationCodeRepository;
 import com.bookstore.backend.model.VerificationCode;
 import com.bookstore.backend.common.enums.VerificationType;
 import org.springframework.transaction.annotation.Transactional;
 import java.text.ParseException;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -50,6 +50,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final InvalidatedTokenRepository invalidatedTokenRepository ;
     private final EmailService emailService;
     private final VerificationCodeRepository verificationCodeRepository;
+    private final NotificationService notificationService;
     @NonFinal
     @Value("${spring.jwt.signerKey}")
     protected String SIGNER_KEY ;
@@ -284,6 +285,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .roles(roles)
                 .build();
         userRepository.save(user);
+
+        // Create notification for new user registration
+        notificationService.createNewUserRegistrationNotification(user);
 
         // Mark verification code as used
         verificationCode.setUsed(true);

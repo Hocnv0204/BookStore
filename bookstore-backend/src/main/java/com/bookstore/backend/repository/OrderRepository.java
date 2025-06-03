@@ -35,4 +35,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE LOWER(o.receiverName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Order> findByReceiverNameContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+    @Query("SELECT o FROM Order o WHERE o.status = :status")
+    Page<Order> findByStatus(@Param("status") OrderStatus status, Pageable pageable);
 }

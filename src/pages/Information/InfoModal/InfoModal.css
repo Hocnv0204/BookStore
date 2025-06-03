@@ -1,216 +1,187 @@
-/* Nền mờ khi modal mở */
+/* Modal Overlay */
 .modal-overlay {
-    background: rgba(0, 0, 0, 0.6);
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     z-index: 1000;
 }
 
-/* Hộp modal */
+/* Modal Box */
 .modal-box {
     background: white;
-    padding: 25px;
-    border-radius: 10px;
-    width: 420px;
-    outline: none;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.3s ease-in-out;
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
-/* Tiêu đề modal */
+/* Modal Title */
 .modal-box h2 {
-    margin-top: 0;
-    font-size: 20px;
+    margin: 0 0 24px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: #1f2937;
     text-align: center;
-    color: #333;
 }
 
-/* Nhãn (label) */
+/* Form Labels */
 .modal-box label {
     display: block;
-    font-weight: bold;
-    margin: 10px 0 5px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #374151;
+    font-size: 14px;
 }
 
-/* Ô nhập liệu */
-.modal-box input,
-.modal-box textarea {
+/* Text Inputs */
+.modal-box input[type="text"] {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-/* Chỉnh lại input date để đồng bộ */
-.modal-box input[type="date"] {
-    font-size: 14px;
-    padding: 6px;
-}
-
-/* Khu vực nút bấm */
-.modal-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 15px;
-}
-
-/* Nút hủy */
-.modal-buttons button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-}
-
-/* Nút Hủy */
-.modal-buttons button:first-child {
-    background: #ccc;
-    color: black;
-}
-
-.modal-buttons button:first-child:hover {
-    background: #b3b3b3;
-}
-
-/* Nút Lưu */
-.save-button {
-    background: #28a745;
-    color: white;
-}
-
-.save-button:hover {
-    background: #218838;
-}
-
-/* Hiệu ứng mở modal */
-@keyframes fadeIn {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-/* Label nổi */
-.modal-box .floating-label-group {
-    position: relative;
-    margin-bottom: 18px;
-}
-
-.modal-box .floating-label-group input,
-.modal-box .floating-label-group select {
-    width: 100%;
-    padding: 12px 40px 12px 12px;
-    border: 1.5px solid #ccc;
-    border-radius: 6px;
-    font-size: 15px;
-    background: #f8fafc;
-    color: #222;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
-.modal-box .floating-label-group input:focus,
-.modal-box .floating-label-group select:focus {
+.modal-box input[type="text"]:focus {
+    outline: none;
     border-color: #00CC64;
-    box-shadow: 0 0 0 2px #e6fff3;
-    background: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 204, 100, 0.1);
 }
 
-.modal-box .floating-label {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #888;
-    font-size: 15px;
-    pointer-events: none;
-    background: transparent;
-    transition: 0.2s;
-    padding: 0 4px;
+/* Select Elements */
+.modal-box select {
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: white;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
-.modal-box .floating-label-group input:focus+.floating-label,
-.modal-box .floating-label-group input:not(:placeholder-shown)+.floating-label,
-.modal-box .floating-label-group select:focus+.floating-label,
-.modal-box .floating-label-group select:not([value=""])+.floating-label {
-    top: -10px;
-    left: 8px;
-    font-size: 12px;
-    color: #00CC64;
-    background: #fff;
+.modal-box select:focus {
+    outline: none;
+    border-color: #00CC64;
+    box-shadow: 0 0 0 3px rgba(0, 204, 100, 0.1);
 }
 
-/* Icon lịch cho ngày sinh */
-.modal-box .date-select-group {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 10px;
-    position: relative;
-}
-
-.modal-box .date-select-group .calendar-icon {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    color: #00CC64;
-    pointer-events: none;
-}
-
-.modal-box .date-select-group select {
-    width: 33%;
+/* Date Selection Container */
+.modal-box div[style*="display: flex"] select {
+    flex: 1;
     min-width: 0;
-    padding: 10px 8px 10px 32px;
-    font-size: 15px;
-    border-radius: 6px;
-    border: 1.5px solid #ccc;
-    background: #f8fafc;
-    color: #222;
-    transition: border-color 0.2s;
 }
 
-.modal-box .date-select-group select:focus {
-    border-color: #00CC64;
-    background: #fff;
+/* Gender Select */
+.modal-box select[name="gender"] {
+    width: 100%;
+    margin-bottom: 24px;
+    box-sizing: border-box;
 }
 
-/* Input lỗi */
-.modal-box input.input-error,
-.modal-box select.input-error {
-    border-color: #d32f2f;
-    background: #ffeaea;
-    color: #d32f2f;
+/* Modal Buttons Container */
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
 }
 
-.modal-box .floating-label-group input.input-error+.floating-label,
-.modal-box .floating-label-group select.input-error+.floating-label {
-    color: #d32f2f;
+/* Buttons */
+.modal-buttons button {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    min-width: 80px;
 }
 
-/* Icon trong input (ví dụ: user, email) */
-.modal-box .input-icon {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 18px;
-    color: #00CC64;
-    pointer-events: none;
+/* Cancel Button */
+.modal-buttons button:first-child {
+    background-color: #f3f4f6;
+    color: #374151;
+    border-color: #e5e7eb;
+}
+
+.modal-buttons button:first-child:hover {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+/* Save Button */
+.save-button {
+    background-color: #00CC64 !important;
+    color: white !important;
+    border-color: #00CC64 !important;
+}
+
+.save-button:hover {
+    background-color: #009B52 !important;
+    border-color: #009B52 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .modal-box {
+        margin: 16px;
+        padding: 20px;
+        width: calc(100% - 32px);
+    }
+
+    .modal-box h2 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+        flex-direction: column;
+    }
+
+    .modal-buttons button {
+        width: 100%;
+    }
+}
+
+/* Loading State (Optional) */
+.modal-buttons button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Smooth animations */
+.modal-box {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
 }

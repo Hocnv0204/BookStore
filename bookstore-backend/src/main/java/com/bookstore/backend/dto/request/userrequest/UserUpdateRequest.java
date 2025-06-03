@@ -10,10 +10,7 @@ import java.time.LocalDate;
 
 @Data
 public class UserUpdateRequest {
-    @NotBlank(message = "Username is required")
-    @Size(min = 6, max = 32, message = "Username must be 6-32 characters")
-    @Pattern(regexp = "^[A-Za-z0-9_]+$", message = "Username can only contain letters, numbers, and underscores")
-    private String username;
+    
 
     @NotBlank(message = "Full name is required")
     @Pattern(regexp = "^[\\p{L} ]+$", message = "Full name can only contain letters and spaces")

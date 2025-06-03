@@ -2,6 +2,8 @@ server:
   port: 8080
 
 spring:
+  application:
+    api-prefix: ${API_PREFIX:/api/v1}
   datasource:
     url: jdbc:mysql://localhost:3306/bookstore_db
     username: root
@@ -58,3 +60,12 @@ gemini:
   top-p: 0.8
   top-k: 10
   max-history-size: 20
+payment:
+  vnPay:
+    url: ${PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+    tmnCode: ${TMN_CODE:58X4B4HP}
+    secretKey: ${SECRET_KEY:VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ}
+    returnUrl: ${RETURN_URL:http://localhost:3000/payment/callback}
+    version: ${VERSION:2.1.0}
+    command: ${COMMAND:pay}
+    orderType: ${ORDER_TYPE:other}

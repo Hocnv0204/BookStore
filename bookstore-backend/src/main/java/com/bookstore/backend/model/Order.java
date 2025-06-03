@@ -1,6 +1,8 @@
 package com.bookstore.backend.model;
 
 import com.bookstore.backend.common.enums.OrderStatus;
+import com.bookstore.backend.common.enums.PaymentMethod;
+import com.bookstore.backend.common.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -51,14 +53,26 @@ public class Order {
     @Column
     String note;
 
+    // Payment related fields
+    @Column
+    @Enumerated(EnumType.STRING)
+    PaymentMethod paymentMethod; // CASH, VNPAY, MOMO
+    
+    @Column
+    @Enumerated(EnumType.STRING)
+    PaymentStatus paymentStatus; // PENDING, PAID, FAILED, REFUNDED
+    
+    @Column(length = 100)
+    String paymentTransactionId; // ID từ payment gateway
+    
+    @Column(length = 1000)
+    String paymentUrl; // URL thanh toán từ VNPay (increased length for long URLs)
+
     @Column(nullable = false)
     LocalDateTime createdAt;
 
     @Column(nullable = false)
     LocalDateTime updatedAt;
-
-    //paymentMethod
-    //promotion
 
     @PrePersist
     protected void onCreate() {

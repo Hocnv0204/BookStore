@@ -1,0 +1,363 @@
+.payment-callback-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.payment-callback-content {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Processing State */
+.payment-processing h2 {
+    color: #333;
+    margin: 20px 0 10px;
+    font-size: 24px;
+}
+
+.payment-processing p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 0;
+}
+
+.loading-spinner-large {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Success State */
+.payment-success .success-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: bounceIn 0.6s ease-out;
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.3);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    70% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.payment-success h2 {
+    color: #28a745;
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.success-message {
+    color: #155724;
+    font-size: 18px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.success-details {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.success-item {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    color: #155724;
+    font-size: 16px;
+}
+
+.check-icon {
+    color: #28a745;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.auto-redirect {
+    color: #666;
+    font-size: 14px;
+    margin-top: 20px;
+    font-style: italic;
+}
+
+.countdown-icon {
+    margin-right: 5px;
+}
+
+/* Failed State */
+.payment-failed .error-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.payment-failed h2 {
+    color: #dc3545;
+    font-size: 28px;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.error-message {
+    color: #721c24;
+    font-size: 18px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.failed-suggestions {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: left;
+}
+
+.failed-suggestions h4 {
+    color: #721c24;
+    margin: 0 0 15px 0;
+    font-size: 16px;
+}
+
+.failed-suggestions ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #721c24;
+}
+
+.failed-suggestions li {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+/* Buttons */
+.callback-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    border: 2px solid #667eea;
+    color: #667eea;
+    padding: 12px 30px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Payment Details */
+.payment-details {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.payment-details h4 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-row span:first-child {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.detail-value {
+    color: #495057;
+    font-weight: 600;
+    text-align: right;
+    max-width: 60%;
+    word-break: break-word;
+}
+
+.detail-value.amount {
+    color: #28a745;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.detail-value.error {
+    color: #dc3545;
+    font-weight: 700;
+}
+
+.error-details {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.error-details h4 {
+    color: #721c24;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .payment-callback-container {
+        padding: 15px;
+    }
+
+    .payment-callback-content {
+        padding: 30px 20px;
+    }
+
+    .callback-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .success-icon,
+    .error-icon {
+        font-size: 60px;
+    }
+
+    .payment-success h2,
+    .payment-failed h2 {
+        font-size: 24px;
+    }
+
+    .success-message,
+    .error-message {
+        font-size: 16px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .detail-value {
+        max-width: 100%;
+        text-align: left;
+    }
+
+    .payment-details {
+        padding: 15px;
+    }
+}

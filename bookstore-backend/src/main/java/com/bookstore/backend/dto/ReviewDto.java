@@ -20,6 +20,7 @@ public class ReviewDto {
     Integer rating;
     String comment;
     String imageUrl;
+    Long orderId;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
 } 

@@ -53,7 +53,24 @@ public enum ErrorCode {
     DISTRIBUTOR_NAME_EXISTED(404, "Distributor name already exists"),
     DISTRIBUTOR_EMAIL_EXISTED(404, "Distributor email already exists"),
     PUBLISHER_NAME_EXISTED(404, "Publisher name already exists"),
-    PUBLISHER_EMAIL_EXISTED(404, "Publisher email already exists");
+    PUBLISHER_EMAIL_EXISTED(404, "Publisher email already exists"),
+    INVALID_ORDER_STATUS(404, "Status not found"),
+    NOTIFICATION_NOT_FOUND(1035, "Notification not found", HttpStatus.NOT_FOUND),
+    NOTIFICATION_ACCESS_DENIED(1036, "Access denied to notification", HttpStatus.FORBIDDEN),
+    INVALID_NOTIFICATION_TYPE(1037, "Invalid notification type", HttpStatus.BAD_REQUEST),
+    
+    // Coupon/Discount errors
+    COUPON_NOT_FOUND(1038, "Coupon not found", HttpStatus.NOT_FOUND),
+    COUPON_CODE_EXISTS(1039, "Coupon code already exists", HttpStatus.BAD_REQUEST),
+    COUPON_EXPIRED(1040, "Coupon has expired", HttpStatus.BAD_REQUEST),
+    COUPON_INACTIVE(1041, "Coupon is not active", HttpStatus.BAD_REQUEST),
+    COUPON_USAGE_LIMIT_EXCEEDED(1042, "Coupon usage limit exceeded", HttpStatus.BAD_REQUEST),
+    COUPON_USER_LIMIT_EXCEEDED(1043, "User has exceeded the usage limit for this coupon", HttpStatus.BAD_REQUEST),
+    COUPON_MINIMUM_ORDER_NOT_MET(1044, "Order amount does not meet minimum requirement for this coupon", HttpStatus.BAD_REQUEST),
+    INVALID_COUPON_DATES(1045, "End date must be after start date", HttpStatus.BAD_REQUEST),
+    COUPON_ALREADY_APPLIED(1046, "A coupon has already been applied to this order", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_BE_MODIFIED(1047, "Order cannot be modified in its current status", HttpStatus.BAD_REQUEST),
+    NO_COUPON_APPLIED(1048, "No coupon is applied to this order", HttpStatus.BAD_REQUEST);
 
     private final int code;
     private final String message;

@@ -72,32 +72,295 @@
     background: #fafafa;
 }
 
-.edit-order-form label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 4px;
+/* Order Items Table Styling - Complete Implementation */
+.order-items-table tbody tr:hover {
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
 }
 
-.edit-order-form input {
-    width: 100%;
-    padding: 6px 10px;
-    margin-bottom: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.edit-order-btn {
-    background: #0d5c91;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 14px;
-    cursor: pointer;
+/* Table Cell Specific Styling */
+.book-title-cell {
     font-weight: 600;
-    margin-top: 12px;
-    margin-bottom: 12px;
+    color: #2c3e50;
+    padding: 16px 12px;
+    border-left: 3px solid transparent;
+    transition: all 0.3s ease;
 }
 
-.edit-order-btn:hover {
-    background: #0a4a73;
+.book-title-cell:hover {
+    border-left-color: #3498db;
+    background: linear-gradient(90deg, #f0f8ff 0%, transparent 100%);
 }
+
+.quantity-cell {
+    text-align: center;
+    font-weight: 500;
+    color: #7f8c8d;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 4px;
+    padding: 12px 8px;
+}
+
+.price-cell {
+    font-weight: 600;
+    color: #e67e22;
+    text-align: right;
+    padding: 16px 12px;
+    position: relative;
+}
+
+.price-cell::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 20px;
+    background: linear-gradient(180deg, #f39c12, #e67e22);
+    transform: translateY(-50%);
+    border-radius: 2px;
+}
+
+.subtotal-cell {
+    font-weight: 700;
+    color: #27ae60;
+    text-align: right;
+    font-size: 1.1em;
+    padding: 16px 12px;
+    background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+    position: relative;
+}
+
+.subtotal-cell::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 4px;
+    height: 30px;
+    background: linear-gradient(180deg, #2ecc71, #27ae60);
+    transform: translateY(-50%);
+    border-radius: 2px 0 0 2px;
+}
+
+.review-cell {
+    text-align: center;
+    padding: 16px 12px;
+}
+
+/* Total Amount Highlight Styling - Enhanced */
+.total-amount-highlight {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0fff0 50%, #ffffff 100%);
+    border: 2px solid #27ae60;
+    border-radius: 15px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    box-shadow:
+        0 8px 25px rgba(39, 174, 96, 0.15),
+        0 4px 12px rgba(39, 174, 96, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+    animation: totalAmountPulse 3s ease-in-out infinite;
+}
+
+.total-amount-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.total-amount-highlight .order-info-label {
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #2d5a2d;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.total-amount-value {
+    font-size: 1.8em !important;
+    font-weight: 800 !important;
+    color: #27ae60 !important;
+    text-shadow:
+        0 2px 4px rgba(39, 174, 96, 0.3),
+        0 1px 2px rgba(255, 255, 255, 0.8);
+    position: relative;
+    display: inline-block;
+    padding: 8px 16px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fff8 100%);
+    border-radius: 10px;
+    border: 1px solid rgba(39, 174, 96, 0.2);
+    box-shadow:
+        0 4px 12px rgba(39, 174, 96, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+@keyframes totalAmountPulse {
+
+    0%,
+    100% {
+        box-shadow:
+            0 8px 25px rgba(39, 174, 96, 0.15),
+            0 4px 12px rgba(39, 174, 96, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+
+    50% {
+        box-shadow:
+            0 12px 35px rgba(39, 174, 96, 0.25),
+            0 6px 20px rgba(39, 174, 96, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        transform: translateY(-1px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        left: -100%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 768px) {
+    .order-items-table {
+        font-size: 0.9em;
+    }
+
+    .order-items-table th,
+    .order-items-table td {
+        padding: 12px 8px;
+    }
+
+    .book-title-cell {
+        font-size: 0.95em;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .total-amount-highlight {
+        padding: 16px 20px;
+        margin: 16px 0;
+    }
+
+    .total-amount-value {
+        font-size: 1.5em !important;
+        padding: 6px 12px;
+    }
+
+    .total-amount-highlight .order-info-label {
+        font-size: 1.1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .order-items-table {
+        font-size: 0.8em;
+    }
+
+    .order-items-table th:nth-child(3),
+    .order-items-table td:nth-child(3) {
+        display: none;
+        /* Hide unit price on very small screens */
+    }
+
+    .total-amount-highlight {
+        padding: 12px 16px;
+    }
+
+    .total-amount-value {
+        font-size: 1.3em !important;
+    }
+}
+
+/* Additional Enhancement for Order Info Section */
+.order-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.order-info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #fafbfc 0%, #ffffff 100%);
+    border-radius: 10px;
+    border: 1px solid #e1e8ed;
+    transition: all 0.3s ease;
+}
+
+.order-info-item:hover {
+    border-color: #3498db;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.1);
+}
+
+.order-info-label {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1em;
+}
+
+.order-info-value {
+    font-weight: 500;
+    color: #34495e;
+    text-align: right;
+}
+
+/* Status and Payment Method Badges Enhancement */
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.payment-method-badge {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 500;
+    font-size: 0.9em;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.payment-method-badge.cod {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.payment-method-badge.vnpay {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.3);
+}
+
+.order-date {
+    padding: 4px 8px;
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    border-radius: 8px;
+    color: #2d3436;
+    font-weight: 500;
+    box-shadow: 0 2px 6px rgba(253, 203, 110, 0.3);
+}
+
+/* Review Modal Styling */

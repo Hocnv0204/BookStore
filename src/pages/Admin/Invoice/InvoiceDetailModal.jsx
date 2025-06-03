@@ -68,6 +68,13 @@ function InvoiceDetailModal({ invoice, onClose }) {
           <b>Email:</b> {invoice.email}
         </div>
         <div>
+          <b>Ngày lập:</b>{" "}
+          {new Date(invoice.createdAt).toLocaleDateString("vi-VN")}
+        </div>
+        <div>
+          <b>Phương thức thanh toán:</b> {invoice.paymentMethod}
+        </div>
+        <div>
           <b>Ghi chú:</b> {invoice.note}
         </div>
         <div

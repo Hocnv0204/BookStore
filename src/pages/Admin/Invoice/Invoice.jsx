@@ -36,6 +36,7 @@ function Invoice() {
         },
         params,
       });
+      console.log("Fetched orders:", response.data);
       setOrders(response.data.content);
       setTotalPages(response.data.totalPages);
       setTotalElements(response.data.totalElements);

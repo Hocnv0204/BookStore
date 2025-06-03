@@ -1,5 +1,6 @@
 import "./RecentOrdersTable.css";
-
+import React from "react";
+import InvoiceDetailModal from "../Invoice/InvoiceDetailModal";
 export default function RecentOrdersTable({ orders }) {
   const recentOrders = orders.slice(0, 5);
   return (

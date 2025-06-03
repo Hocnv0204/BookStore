@@ -169,6 +169,33 @@
     background: #fff;
 }
 
+/* Sortable header styles */
+.sortable {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: background-color 0.2s ease;
+}
+
+.sortable:hover {
+    background-color: #f0f0f0;
+}
+
+.sortable.active {
+    background-color: #e8e8e8;
+}
+
+.non-sortable {
+    cursor: default;
+    user-select: none;
+}
+
+.sort-indicator {
+    margin-left: 4px;
+    color: #666;
+    font-weight: bold;
+}
+
 @media (max-width: 700px) {
     .order-sort-bar {
         flex-direction: column;

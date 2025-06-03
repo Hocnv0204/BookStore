@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface ReviewService {
-    ReviewDto createReview(Long bookId, ReviewRequest request, MultipartFile image);
+    ReviewDto createReview(Long orderId , Long bookId, ReviewRequest request, MultipartFile image);
     
     ReviewDto updateReview(Long reviewId, ReviewRequest request, MultipartFile image);
     
@@ -24,6 +24,8 @@ public interface ReviewService {
     PageResponse<ReviewDto> getUserReviews(Long userId, Pageable pageable);
 
     PageResponse<ReviewDto> getAllReviews(Pageable pageable);
+
+    PageResponse<ReviewDto> getReviewsByOrderId(Long orderId, Pageable pageable);
 
     PageResponse<ReviewDto> searchReviewsByBookTitle(String keyword, Pageable pageable);
 } 

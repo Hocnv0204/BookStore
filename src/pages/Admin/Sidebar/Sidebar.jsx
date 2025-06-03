@@ -18,7 +18,7 @@ function Sidebar() {
           Tổng quan
         </NavLink>
         <NavLink
-          to="/admin/book-management"
+          to="/admin/books"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -26,7 +26,7 @@ function Sidebar() {
           Quản Lý Sách
         </NavLink>
         <NavLink
-          to="/customer"
+          to="/admin/customers"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -34,7 +34,7 @@ function Sidebar() {
           Quản Lý Khách Hàng
         </NavLink>
         <NavLink
-          to="/invoice"
+          to="/admin/invoices"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -42,7 +42,7 @@ function Sidebar() {
           Quản Lý Hóa Đơn
         </NavLink>
         <NavLink
-          to="/category"
+          to="/admin/categories"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -50,7 +50,7 @@ function Sidebar() {
           Quản Lý Danh Mục
         </NavLink>
         <NavLink
-          to="/publisher"
+          to="/admin/publishers"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -58,7 +58,7 @@ function Sidebar() {
           Quản Lý Nhà Xuất Bản
         </NavLink>
         <NavLink
-          to="/distributor"
+          to="/admin/distributors"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
@@ -66,12 +66,20 @@ function Sidebar() {
           Quản Lý Nhà Phân Phối
         </NavLink>
         <NavLink
-          to="/admin/review-management"
+          to="/admin/reviews"
           className={({ isActive }) =>
             `sidebar-link${isActive ? " active" : ""}`
           }
         >
           Quản Lý Đánh Giá
+        </NavLink>
+        <NavLink
+          to="/admin/coupons"
+          className={({ isActive }) =>
+            `sidebar-link${isActive ? " active" : ""}`
+          }
+        >
+          Quản Lý Coupon
         </NavLink>
       </nav>
     </div>

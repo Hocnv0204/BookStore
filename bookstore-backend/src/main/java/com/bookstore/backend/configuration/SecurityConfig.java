@@ -45,6 +45,7 @@ public class SecurityConfig {
             "/api/gemini/**",
             "/api/chatbot/**",
             "/api/demo/**",
+            "/api/v1/payment/**",
     };
 
     @Bean

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./Information.css";
 import OrderTable from "./OrderTable/OrderTable";
 import Sidebar from "./Sidebar/Sidebar";
@@ -16,6 +16,8 @@ function Information() {
   const [modal, setModal] = useState(null); // Quản lý modal nào đang mở
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState("id");
+  const [sortOrder, setSortOrder] = useState("desc");
   const [pagination, setPagination] = useState({
     pageNumber: 0,
     pageSize: 10,
@@ -32,39 +34,57 @@ function Information() {
     }
   }, []);
 
-  const fetchOrders = async (page = 0) => {
-    setLoading(true);
-    try {
-      const res = await axios.get(
-        `http://localhost:8080/users/orders?page=${page}&size=10&sortBy=totalAmount&sortOrder=asc`,
-        {
+  // Handle sorting
+  const handleSort = (field, order) => {
+    setSortBy(field);
+    setSortOrder(order);
+  };
+
+  const fetchOrders = useCallback(
+    async (page = 0) => {
+      setLoading(true);
+      try {
+        let apiUrl;
+
+        // Use different API endpoints based on activeItem (status filter)
+        if (activeItem === "all") {
+          // Fetch all orders
+          apiUrl = `http://localhost:8080/users/orders?page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+        } else {
+          // Fetch orders by specific status
+          apiUrl = `http://localhost:8080/users/orders/status?status=${activeItem}&page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+        }
+
+        const res = await axios.get(apiUrl, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
-        }
-      );
-      if (res.data) {
-        setOrders(res.data.content);
-        console.log(res.data);
-        setPagination({
-          pageNumber: res.data.pageNumber,
-          pageSize: res.data.pageSize,
-          totalElements: res.data.totalElements,
-          totalPages: res.data.totalPages,
-          last: res.data.last,
         });
+
+        if (res.data) {
+          setOrders(res.data.content);
+          console.log(res.data);
+          setPagination({
+            pageNumber: res.data.pageNumber,
+            pageSize: res.data.pageSize,
+            totalElements: res.data.totalElements,
+            totalPages: res.data.totalPages,
+            last: res.data.last,
+          });
+        }
+      } catch (error) {
+        setOrders([]);
+        console.error("Error fetching orders:", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      setOrders([]);
-      console.error("Error fetching orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [sortBy, sortOrder, activeItem]
+  );
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [fetchOrders]);
 
   const handlePageChange = (newPage) => {
     fetchOrders(newPage);
@@ -72,6 +92,11 @@ function Information() {
 
   const handleItemClick = (itemId) => {
     setActiveItem(itemId);
+    // Reset to first page when changing status filter
+    setPagination((prev) => ({
+      ...prev,
+      pageNumber: 0,
+    }));
   };
 
   const handleAccountClick = (id) => {
@@ -108,6 +133,9 @@ function Information() {
               last={pagination.last}
               onPageChange={handlePageChange}
               filterStatus={activeItem}
+              onSort={handleSort}
+              sortBy={sortBy}
+              sortOrder={sortOrder}
             />
           )}
         </main>

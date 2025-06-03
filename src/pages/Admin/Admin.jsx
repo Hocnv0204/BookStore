@@ -4,7 +4,6 @@ import Sidebar from "./Sidebar/Sidebar";
 import AdminDashBoard from "./AdminDashBoard/AdminDashBoard";
 import Header from "../../components/Header/Header";
 import Footer from "../../components/Footer/Footer";
-import BookManagement from "./BookManagement/BookManagement";
 
 function Admin() {
   return (

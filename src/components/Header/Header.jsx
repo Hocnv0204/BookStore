@@ -2,6 +2,7 @@ import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Notification from "../Notification/Notification";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -166,6 +167,10 @@ function Header() {
               )}
             </div>
           </Link>
+
+          {/* Notification component - only show for logged in users */}
+          {user && <Notification user={user} />}
+
           {user && !user.roles.includes("ADMIN") && (
             <Link to="/cart" className="header-link cart-link">
               <span>Giỏ hàng</span>

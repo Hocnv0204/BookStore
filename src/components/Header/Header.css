@@ -175,6 +175,25 @@
     color: white;
 }
 
+.dropdown-logout-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: inherit;
+}
+
+.dropdown-logout-btn:hover {
+    background: #27ae60;
+    color: white;
+}
+
 .cart-link {
     display: flex;
     align-items: center;

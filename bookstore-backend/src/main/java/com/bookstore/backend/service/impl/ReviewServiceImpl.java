@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.bookstore.backend.model.Order;
 
 @Service
 @RequiredArgsConstructor
@@ -54,44 +55,45 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public ReviewDto createReview(Long bookId, ReviewRequest request, MultipartFile image) {
+    public ReviewDto createReview(Long orderId , Long bookId, ReviewRequest request, MultipartFile image) {
         User user = getCurrentUser();
         
         Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOK_NOT_FOUND));
-
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
         // Check if user has purchased the book
         if (!orderRepository.hasUserPurchasedBook(user.getId(), bookId)) {
             throw new AppException(ErrorCode.REVIEW_NOT_ALLOWED);
         }
 
-        // Check if user has already reviewed this book
-        Review existingReview = reviewRepository.findByUserIdAndBookId(user.getId(), bookId)
-                .orElse(null);
+        // Review existingReview = reviewRepository.findByUserIdAndBookId(user.getId(), bookId)
+        //         .orElse(null);
 
         String imageUrl = null;
         if (image != null && !image.isEmpty()) {
             imageUrl = fileStorageService.storeFile(image, "reviews");
         }
 
-        if (existingReview != null) {
-            // Delete old image if exists and new image is provided
-            if (image != null && !image.isEmpty() && existingReview.getImageUrl() != null) {
-                fileStorageService.deleteFile(existingReview.getImageUrl(), "reviews");
-            }
+        // if (existingReview != null) {
+        //     // Delete old image if exists and new image is provided
+        //     if (image != null && !image.isEmpty() && existingReview.getImageUrl() != null) {
+        //         fileStorageService.deleteFile(existingReview.getImageUrl(), "reviews");
+        //     }
             
-            existingReview.setRating(request.getRating());
-            existingReview.setComment(request.getComment());
-            if (imageUrl != null) {
-                existingReview.setImageUrl(imageUrl);
-            }
-            return reviewMapper.toDto(reviewRepository.save(existingReview));
-        }
+        //     existingReview.setRating(request.getRating());
+        //     existingReview.setComment(request.getComment());
+        //     if (imageUrl != null) {
+        //         existingReview.setImageUrl(imageUrl);
+        //     }
+        //     return reviewMapper.toDto(reviewRepository.save(existingReview));
+        // }
 
         // Create new review
         Review review = Review.builder()
                 .user(user)
                 .book(book)
+                .order(order)
                 .rating(request.getRating())
                 .comment(request.getComment())
                 .imageUrl(imageUrl)
@@ -230,5 +232,13 @@ public class ReviewServiceImpl implements ReviewService {
                 .pageSize(reviewPage.getSize())
                 .isLast(reviewPage.isLast())
                 .build();
+    }
+
+    @Override
+    public PageResponse<ReviewDto> getReviewsByOrderId(Long orderId, Pageable pageable) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        return createPageResponse(reviewRepository.findByOrderId(orderId, pageable));
     }
 } 

@@ -5,8 +5,10 @@ import com.bookstore.backend.dto.OrderDto;
 import com.bookstore.backend.dto.response.MonthlyRevenueDto;
 import com.bookstore.backend.dto.response.DailyRevenueDto;
 import com.bookstore.backend.dto.response.PageResponse;
+import com.bookstore.backend.dto.response.OrderPaymentResponse;
 import com.bookstore.backend.service.OrderService;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.bookstore.backend.dto.request.OrderRequest;
 
-import java.time.Year;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,14 @@ public class OrderController {
     public ResponseEntity<OrderDto> createOrderFromSelectedItems(
             @Valid @RequestBody OrderRequest request) {
         return ResponseEntity.ok(orderService.createOrderFromSelectedCartItems(request, request.getCartItemIds()));
+    }
+
+    @PostMapping("/users/orders/with-payment")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<OrderPaymentResponse> createOrderWithPayment(
+            @Valid @RequestBody OrderRequest request,
+            HttpServletRequest servletRequest) {
+        return ResponseEntity.ok(orderService.createOrderWithPayment(request, servletRequest));
     }
 
     @GetMapping("/users/orders/{orderId}")
@@ -138,5 +147,18 @@ public class OrderController {
             keyword = "";
         }
         return ResponseEntity.ok(orderService.searchOrdersByCustomerName(keyword.trim(), pageable));
+    }
+    @GetMapping("/users/orders/status")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<PageResponse<OrderDto>> getOrdersByStatus(
+            @RequestParam String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortOrder) {
+        size = Math.min(size, MAX_PAGE_SIZE);
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.Direction.fromString(sortOrder), sortBy);
+        return ResponseEntity.ok(orderService.getOrdersByStatus(status, pageable));
     }
 }

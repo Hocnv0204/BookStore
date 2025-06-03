@@ -19,4 +19,5 @@ public class ReviewRequest {
     String comment;
     
     String imageUrl;
+
 } 

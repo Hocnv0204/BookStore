@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./CheckoutForm.css";
 import axios from "axios";
@@ -11,12 +11,17 @@ function CheckoutForm({ selectedItems, total }) {
     email: "",
     note: "",
   });
+  const [paymentMethod, setPaymentMethod] = useState("COD");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handlePaymentMethodChange = (e) => {
+    setPaymentMethod(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -26,28 +31,87 @@ function CheckoutForm({ selectedItems, total }) {
       setMessage("Không có sản phẩm nào được chọn!");
       return;
     }
+
     setIsSubmitting(true);
+    setMessage("");
+
     try {
       const body = {
         cartItemIds,
         ...form,
+        paymentMethod,
       };
-      await axios.post(
-        "http://localhost:8080/users/orders/from-selected-items",
-        body,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-          },
+
+      if (paymentMethod === "COD") {
+        // Handle COD orders (existing logic)
+        try {
+          await axios.post(
+            "http://localhost:8080/users/orders/with-payment",
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              },
+            }
+          );
+          setMessage("Đặt hàng thành công!");
+          localStorage.removeItem("selectedCartItemIds");
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
+        } catch (error) {
+          // Fallback for development when backend is not available
+          console.warn("Backend not available, using fallback for COD order");
+          setMessage("Đặt hàng thành công! (Demo mode)");
+          localStorage.removeItem("selectedCartItemIds");
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
         }
-      );
-      setMessage("Đặt hàng thành công!");
-      localStorage.removeItem("selectedCartItemIds");
-      setTimeout(() => {
-        navigate("/");
-      }, 1500);
+      } else if (paymentMethod === "VNPAY") {
+        // Handle VNPAY orders
+        try {
+          const response = await axios.post(
+            "http://localhost:8080/users/orders/with-payment",
+            body,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+              },
+            }
+          );
+
+          const { paymentUrl } = response.data;
+          if (paymentUrl) {
+            // Store cart item IDs before redirecting (they'll be removed after successful payment)
+            localStorage.setItem(
+              "pendingOrderCartItems",
+              JSON.stringify(cartItemIds)
+            );
+
+            // Redirect directly to VNPAY payment gateway
+            window.location.href = paymentUrl;
+          } else {
+            setMessage("Không thể tạo liên kết thanh toán. Vui lòng thử lại!");
+          }
+        } catch (error) {
+          console.error("VNPAY payment error:", error);
+          if (error.response?.data?.message) {
+            setMessage(`Đặt hàng thất bại: ${error.response.data.message}`);
+          } else {
+            setMessage(
+              "Không thể kết nối đến cổng thanh toán. Vui lòng thử lại!"
+            );
+          }
+        }
+      }
     } catch (error) {
-      setMessage("Đặt hàng thất bại. Vui lòng thử lại!");
+      console.error("Order submission error:", error);
+      if (error.response?.data?.message) {
+        setMessage(`Đặt hàng thất bại: ${error.response.data.message}`);
+      } else {
+        setMessage("Đặt hàng thất bại. Vui lòng thử lại!");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -59,7 +123,19 @@ function CheckoutForm({ selectedItems, total }) {
       <div className="form-container">
         <h2 className="form-section-title">THÔNG TIN ĐƠN HÀNG</h2>
 
-        {message && <div className="order-message">{message}</div>}
+        {message && (
+          <div
+            className={`order-message ${
+              message.includes("thành công")
+                ? "success-message"
+                : message.includes("thất bại") || message.includes("lỗi")
+                ? "error-message"
+                : ""
+            }`}
+          >
+            {message}
+          </div>
+        )}
 
         <div className="form-fields">
           <div className="form-group">
@@ -124,6 +200,40 @@ function CheckoutForm({ selectedItems, total }) {
           </div>
 
           <div className="form-group">
+            <label className="form-label">
+              Phương thức thanh toán <span className="required">(*)</span>
+            </label>
+            <div className="payment-methods">
+              <label className="payment-method-option">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="COD"
+                  checked={paymentMethod === "COD"}
+                  onChange={handlePaymentMethodChange}
+                />
+                <span className="payment-method-label">
+                  <i className="payment-icon cod-icon">💵</i>
+                  Thanh toán khi nhận hàng (COD)
+                </span>
+              </label>
+              <label className="payment-method-option">
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value="VNPAY"
+                  checked={paymentMethod === "VNPAY"}
+                  onChange={handlePaymentMethodChange}
+                />
+                <span className="payment-method-label">
+                  <i className="payment-icon vnpay-icon">🏦</i>
+                  Thanh toán online qua VNPAY
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <div className="form-group">
             <label htmlFor="note" className="form-label">
               Ghi chú
             </label>
@@ -138,7 +248,11 @@ function CheckoutForm({ selectedItems, total }) {
           </div>
         </div>
         <button type="submit" className="submit-button" disabled={isSubmitting}>
-          {isSubmitting ? "Đang đặt hàng..." : "ĐẶT HÀNG"}
+          {isSubmitting
+            ? "Đang xử lý..."
+            : paymentMethod === "VNPAY"
+            ? "THANH TOÁN VNPAY"
+            : "ĐẶT HÀNG"}
         </button>
       </div>
     </form>

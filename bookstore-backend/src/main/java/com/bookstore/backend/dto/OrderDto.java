@@ -1,6 +1,8 @@
 package com.bookstore.backend.dto;
 
 import com.bookstore.backend.common.enums.OrderStatus;
+import com.bookstore.backend.common.enums.PaymentMethod;
+import com.bookstore.backend.common.enums.PaymentStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -27,4 +29,10 @@ public class OrderDto {
     String email;
     String note;
     String receiverName;
+    
+    // Payment fields
+    PaymentMethod paymentMethod;
+    PaymentStatus paymentStatus;
+    String paymentTransactionId;
+    String paymentUrl;
 } 

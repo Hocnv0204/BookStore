@@ -12,15 +12,11 @@ function SideNavigation({ categories }) {
               category.title !== "coming-soon-books"
           )
           .map((category) => (
-            <Link
-              to={`/category/${category.id}`}
-              key={category.title}
-              className="category-link"
-            >
-              <li key={category.id} className="category-item">
+            <li key={category.id} className="category-item">
+              <Link to={`/category/${category.id}`} className="category-link">
                 <span>{category.name}</span>
-              </li>
-            </Link>
+              </Link>
+            </li>
           ))}
       </ul>
     </div>

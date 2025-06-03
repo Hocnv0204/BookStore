@@ -29,10 +29,11 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ObjectMapper objectMapper;
 
-    @PostMapping(value = "users/reviews/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "users/reviews/{orderId}/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ApiResponse<ReviewDto> createReview(
             @PathVariable Long bookId,
+            @PathVariable Long orderId,
             @RequestPart("request") String request,
             @RequestPart(value = "image", required = false) MultipartFile image,
             Authentication authentication) {
@@ -45,7 +46,7 @@ public class ReviewController {
         return ApiResponse.<ReviewDto>builder()
                 .code(200)
                 .message("Review created successfully")
-                .result(reviewService.createReview(bookId, reviewRequest, image))
+                .result(reviewService.createReview(orderId , bookId, reviewRequest, image))
                 .build();
     }
 
@@ -126,6 +127,22 @@ public class ReviewController {
                 .code(200)
                 .message("User reviews retrieved successfully")
                 .result(reviewService.getUserReviews(userId, pageable))
+                .build();
+    }
+
+    @GetMapping("/users/reviews/orders/{orderId}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ApiResponse<PageResponse<ReviewDto>> getReviewsByOrderId(
+            @PathVariable Long orderId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortBy", required = false) String sortBy,
+            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
+        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+        return ApiResponse.<PageResponse<ReviewDto>>builder()
+                .code(200)
+                .message("Reviews by order ID retrieved successfully")
+                .result(reviewService.getReviewsByOrderId(orderId, pageable))
                 .build();
     }
 

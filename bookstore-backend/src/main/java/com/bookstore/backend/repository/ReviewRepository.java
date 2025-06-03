@@ -31,4 +31,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE LOWER(r.book.title) LIKE LOWER(CONCAT('%', :keyword, '%'))")
     Page<Review> findByBookTitleContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
+    Page<Review> findByOrderId( Long orderId, Pageable pageable);
 } 
