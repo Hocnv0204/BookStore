@@ -2,17 +2,17 @@ package com.bookstore.backend.controller;
 
 import com.bookstore.backend.common.enums.OrderStatus;
 import com.bookstore.backend.dto.OrderDto;
+import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.MonthlyRevenueDto;
 import com.bookstore.backend.dto.response.DailyRevenueDto;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.dto.response.OrderPaymentResponse;
 import com.bookstore.backend.service.OrderService;
+import com.bookstore.backend.utils.PageableUtils;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,143 +22,218 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/orders")
 public class OrderController {
     private final OrderService orderService;
-    private static final int MAX_PAGE_SIZE = 20;
 
     // User endpoints
-    @PostMapping("/users/orders/from-cart")
+    @PostMapping("/users/from-cart")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderDto> createOrderFromCart(@RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.createOrderFromCart(request));
+    public ResponseEntity<ApiResponse<?>> createOrderFromCart(@RequestBody OrderRequest request) {
+        OrderDto order = orderService.createOrderFromCart(request);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Order created from cart successfully")
+                        .build()
+        );
     }
 
-    @PostMapping("/users/orders/from-selected-items")
+    @PostMapping("/users/from-selected-items")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderDto> createOrderFromSelectedItems(
+    public ResponseEntity<ApiResponse<?>> createOrderFromSelectedItems(
             @Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.createOrderFromSelectedCartItems(request, request.getCartItemIds()));
+        OrderDto order = orderService.createOrderFromSelectedCartItems(request, request.getCartItemIds());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Order created from selected items successfully")
+                        .build()
+        );
     }
 
-    @PostMapping("/users/orders/with-payment")
+    @PostMapping("/users/with-payment")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderPaymentResponse> createOrderWithPayment(
+    public ResponseEntity<ApiResponse<?>> createOrderWithPayment(
             @Valid @RequestBody OrderRequest request,
             HttpServletRequest servletRequest) {
-        return ResponseEntity.ok(orderService.createOrderWithPayment(request, servletRequest));
+        OrderPaymentResponse response = orderService.createOrderWithPayment(request, servletRequest);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Order created with payment successfully")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/orders/{orderId}")
+    @GetMapping("/users/{orderId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderDto> getOrderById(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
+    public ResponseEntity<ApiResponse<?>> getOrderById(@PathVariable Long orderId) {
+        OrderDto order = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Get order by id")
+                        .build()
+        );
     }
 
-    @PutMapping("/users/orders/{orderId}")
+    @PutMapping("/users/{orderId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderDto> updateOrder(
+    public ResponseEntity<ApiResponse<?>> updateOrder(
             @PathVariable Long orderId,
             @Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.updateOrder(orderId, request));
+        OrderDto order = orderService.updateOrder(orderId, request);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Order updated successfully")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/orders")
+    @GetMapping("/users")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PageResponse<OrderDto>> getUserOrders(
+    public ResponseEntity<ApiResponse<?>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(orderService.getUserOrders(pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<OrderDto> response = orderService.getUserOrders(pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get user orders")
+                        .build()
+        );
     }
 
-    @PostMapping("/users/orders/{orderId}/cancel")
+    @PostMapping("/users/{orderId}/cancel")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<OrderDto> cancelOrder(@PathVariable Long orderId) {
-        return ResponseEntity.ok(orderService.cancelOrder(orderId));
+    public ResponseEntity<ApiResponse<?>> cancelOrder(@PathVariable Long orderId) {
+        OrderDto order = orderService.cancelOrder(orderId);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Order cancelled successfully")
+                        .build()
+        );
     }
 
     // Admin endpoints
-    @GetMapping("/admin/orders")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<OrderDto>> getAllOrders(
+    public ResponseEntity<ApiResponse<?>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(orderService.getAllOrders(pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<OrderDto> response = orderService.getAllOrders(pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get all orders")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/users/{userId}/orders")
+    @GetMapping("/admin/users/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<OrderDto>> getUserOrders(
+    public ResponseEntity<ApiResponse<?>> getUserOrders(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(orderService.getUserOrders(userId, pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<OrderDto> response = orderService.getUserOrders(userId, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get orders by user")
+                        .build()
+        );
     }
 
-    @PutMapping("/admin/orders/{orderId}/status")
+    @PutMapping("/admin/{orderId}/status")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<OrderDto> updateOrderStatus(
+    public ResponseEntity<ApiResponse<?>> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestParam OrderStatus status) {
-        return ResponseEntity.ok(orderService.updateOrderStatus(orderId, status));
+        OrderDto order = orderService.updateOrderStatus(orderId, status);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(order)
+                        .message("Order status updated successfully")
+                        .build()
+        );
     }
 
     @GetMapping("/admin/revenue/monthly")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<MonthlyRevenueDto>> getMonthlyRevenue(
+    public ResponseEntity<ApiResponse<?>> getMonthlyRevenue(
             @RequestParam(required = false) Integer year) {
-        return ResponseEntity.ok(orderService.getMonthlyRevenue(year));
+        List<MonthlyRevenueDto> revenue = orderService.getMonthlyRevenue(year);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(revenue)
+                        .message("Get monthly revenue")
+                        .build()
+        );
     }
 
     @GetMapping("/admin/revenue/daily")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<DailyRevenueDto>> getDailyRevenue(
+    public ResponseEntity<ApiResponse<?>> getDailyRevenue(
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month) {
-        return ResponseEntity.ok(orderService.getDailyRevenue(year, month));
+        List<DailyRevenueDto> revenue = orderService.getDailyRevenue(year, month);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(revenue)
+                        .message("Get daily revenue")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/orders/search")
+    @GetMapping("/admin/search")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<OrderDto>> searchOrdersByCustomerName(
+    public ResponseEntity<ApiResponse<?>> searchOrdersByCustomerName(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
         if (keyword == null) {
             keyword = "";
         }
-        return ResponseEntity.ok(orderService.searchOrdersByCustomerName(keyword.trim(), pageable));
+        PageResponse<OrderDto> response = orderService.searchOrdersByCustomerName(keyword.trim(), pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Search orders by customer name")
+                        .build()
+        );
     }
-    @GetMapping("/users/orders/status")
+
+    @GetMapping("/users/status")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PageResponse<OrderDto>> getOrdersByStatus(
+    public ResponseEntity<ApiResponse<?>> getOrdersByStatus(
             @RequestParam String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(orderService.getOrdersByStatus(status, pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<OrderDto> response = orderService.getOrdersByStatus(status, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get orders by status")
+                        .build()
+        );
     }
 }

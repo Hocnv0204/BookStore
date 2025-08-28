@@ -5,97 +5,114 @@ import com.bookstore.backend.dto.request.CartItemRequest;
 import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.CartService;
+import com.bookstore.backend.utils.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/carts")
 public class CartController {
     private final CartService cartService;
-    private static final int MAX_PAGE_SIZE = 20;
 
-    @GetMapping("users/cart")
+    @GetMapping("/users")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PageResponse<CartDto>> getCart(
+    public ResponseEntity<ApiResponse<?>> getCart(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "price") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size, 
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(cartService.getCart(pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<CartDto> response = cartService.getCart(pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get user cart")
+                        .build()
+        );
     }
 
-    @PostMapping("users/cart/items")
+    @PostMapping("/users/items")
     @PreAuthorize("hasRole('USER')")
-    public ApiResponse<CartDto> addItem(@RequestBody @Valid CartItemRequest request) {
-        return ApiResponse.<CartDto>builder()
-                .code(200)
-                .message("Item added to cart successfully")
-                .result(cartService.addItem(request))
-                .build();
+    public ResponseEntity<ApiResponse<?>> addItem(@RequestBody @Valid CartItemRequest request) {
+        CartDto cart = cartService.addItem(request);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(cart)
+                        .message("Item added to cart successfully")
+                        .build()
+        );
     }
 
-    @PutMapping("users/cart/items/{bookId}")
+    @PutMapping("/users/items/{bookId}")
     @PreAuthorize("hasRole('USER')")
-    public ApiResponse<CartDto> updateItemQuantity(
+    public ResponseEntity<ApiResponse<?>> updateItemQuantity(
             @PathVariable Long bookId,
             @RequestParam Integer quantity) {
-        return ApiResponse.<CartDto>builder()
-                .code(200)
-                .message("Item quantity updated successfully")
-                .result(cartService.updateItemQuantity(bookId, quantity))
-                .build();
+        CartDto cart = cartService.updateItemQuantity(bookId, quantity);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(cart)
+                        .message("Item quantity updated successfully")
+                        .build()
+        );
     }
 
-    @DeleteMapping("users/cart/items/{bookId}")
+    @DeleteMapping("/users/items/{bookId}")
     @PreAuthorize("hasRole('USER')")
-    public ApiResponse<CartDto> removeItem(@PathVariable Long bookId) {
-        return ApiResponse.<CartDto>builder()
-                .code(200)
-                .message("Item removed from cart successfully")
-                .result(cartService.removeItem(bookId))
-                .build();
+    public ResponseEntity<ApiResponse<?>> removeItem(@PathVariable Long bookId) {
+        CartDto cart = cartService.removeItem(bookId);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(cart)
+                        .message("Item removed from cart successfully")
+                        .build()
+        );
     }
 
     // Admin endpoints
-    @GetMapping("/admin/carts")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<CartDto>> getAllCarts(
+    public ResponseEntity<ApiResponse<?>> getAllCarts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size, 
-                Sort.Direction.fromString(sortOrder), sortBy);
-        return ResponseEntity.ok(cartService.getAllCarts(pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<CartDto> response = cartService.getAllCarts(pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get all carts")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/carts/count")
+    @GetMapping("/admin/count")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Long> getTotalCarts() {
-        return ApiResponse.<Long>builder()
-                .code(200)
-                .message("Total carts retrieved successfully")
-                .result(cartService.getTotalCarts())
-                .build();
+    public ResponseEntity<ApiResponse<?>> getTotalCarts() {
+        Long count = cartService.getTotalCarts();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(count)
+                        .message("Total carts retrieved successfully")
+                        .build()
+        );
     }
 
     @GetMapping("/admin/books/{bookId}/cart-count")
     @PreAuthorize("hasRole('ADMIN')")
-    public ApiResponse<Long> getBookCartCount(@PathVariable Long bookId) {
-        return ApiResponse.<Long>builder()
-                .code(200)
-                .message("Book cart count retrieved successfully")
-                .result(cartService.getBookCartCount(bookId))
-                .build();
+    public ResponseEntity<ApiResponse<?>> getBookCartCount(@PathVariable Long bookId) {
+        Long count = cartService.getBookCartCount(bookId);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(count)
+                        .message("Book cart count retrieved successfully")
+                        .build()
+        );
     }
 } 

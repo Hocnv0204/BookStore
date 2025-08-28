@@ -1,1 +1,0 @@
-SELECT * FROM bookstore_db.books;

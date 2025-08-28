@@ -70,40 +70,6 @@ function Notification({ user }) {
       } catch (error) {
         console.error("Error fetching notifications:", error);
         // Fallback to mock data for development
-        const mockNotifications = [
-          {
-            id: 1,
-            title: "Đơn hàng mới",
-            message: "Bạn có đơn hàng mới cần xử lý",
-            time: "5 phút trước",
-            unread: true,
-            type: "order",
-          },
-          {
-            id: 2,
-            title: "Thanh toán thành công",
-            message: "Đơn hàng #12345 đã được thanh toán",
-            time: "1 giờ trước",
-            unread: true,
-            type: "payment",
-          },
-          {
-            id: 3,
-            title: "Đánh giá mới",
-            message: "Sách 'Lập trình React' nhận được đánh giá 5 sao",
-            time: "2 giờ trước",
-            unread: false,
-            type: "review",
-          },
-        ];
-
-        if (append) {
-          setNotifications((prev) => [...prev, ...mockNotifications]);
-        } else {
-          setNotifications(mockNotifications);
-        }
-        setUnreadCount(2);
-        setHasMore(false);
       } finally {
         setLoading(false);
         setLoadingMore(false);
@@ -220,7 +186,7 @@ function Notification({ user }) {
     // Poll for new notifications every 30 seconds
     const interval = setInterval(() => {
       fetchNotifications();
-    }, 30000);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, [user, fetchNotifications]); // Added both user and fetchNotifications as dependencies

@@ -2,8 +2,11 @@ package com.bookstore.backend.controller;
 
 import com.bookstore.backend.dto.BookDto;
 import com.bookstore.backend.dto.request.BookRequest;
+import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.BookService;
+import com.bookstore.backend.utils.PageableUtils;
+import com.cloudinary.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,37 +20,42 @@ import com.bookstore.backend.dto.BookSalesDto;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/books")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
     private static final int MAX_PAGE_SIZE = 20;
 
-    private Pageable getPageable(Integer page, Integer size, String sortBy, String sortOrder) {
-        int pageNumber = (page != null) ? page : 0;
-        int pageSize = (size != null) ? Math.min(size, MAX_PAGE_SIZE) : 10;
-        String sortField = (sortBy != null) ? sortBy : "id";
-        Sort.Direction direction = (sortOrder != null) ? Sort.Direction.fromString(sortOrder) : Sort.Direction.ASC;
-        return PageRequest.of(pageNumber, pageSize, Sort.by(direction, sortField));
-    }
+    
 
-    @GetMapping("api/v1/books")
-    public ResponseEntity<PageResponse<BookDto>> getAllBooks(
+    @GetMapping
+    public ResponseEntity<ApiResponse<?>> getAllBooks(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
-        return ResponseEntity.ok(bookService.getAllBooks(pageable));
+        Pageable pageable = PageableUtils.setPageable(page , size , sortOrder , sortBy ) ;
+        PageResponse<BookDto> response = bookService.getAllBooks(pageable) ;
+        return ResponseEntity.ok().body(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get all books")
+                        .build()
+        );
     }
 
-    @GetMapping("api/v1/books/{id}")
-    public ResponseEntity<BookDto> getBookById(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookById(id));
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getBookById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(bookService.getBookById(id))
+                        .message("Get book by id")
+                        .build()
+        ) ;
     }
 
-    @GetMapping("api/v1/books/search")
-    public ResponseEntity<PageResponse<BookDto>> searchBooks(
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<?>> searchBooks(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Long publisherId,
@@ -57,49 +65,73 @@ public class BookController {
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
-            @RequestParam(value = "sortOrder", required = false) String sortDirection) {
-        Pageable pageable = getPageable(page, size, sortBy, sortDirection);
+            @RequestParam(value = "sortOrder", required = false) String orderBy) {
+        Pageable pageable = PageableUtils.setPageable(page, size, orderBy, sortBy);
         if (keyword == null) {
             keyword = "";
         }
-        return ResponseEntity.ok(bookService.searchBooks(keyword.trim(), categoryId, publisherId, distributorId, minPrice, maxPrice, pageable));
+        PageResponse<BookDto> response = bookService.searchBooks(keyword.trim(), categoryId, publisherId, distributorId, minPrice, maxPrice, pageable) ;
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get book by keyword")
+                        .build()
+        );
     }
 
-    @GetMapping("api/v1/books/category/{categoryId}")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByCategory(
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<ApiResponse<?>> getBooksByCategory(
             @PathVariable Long categoryId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
-        return ResponseEntity.ok(bookService.getBooksByCategory(categoryId, pageable));
+        Pageable pageable = PageableUtils.setPageable(page , size , sortOrder , sortBy) ;
+        PageResponse<BookDto> response = bookService.getBooksByCategory(categoryId , pageable) ;
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get book by category")
+                        .build()
+        );
     }
 
-    @GetMapping("api/v1/books/publisher/{publisherId}")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByPublisher(
+    @GetMapping("/publisher/{publisherId}")
+    public ResponseEntity<ApiResponse<?>> getBooksByPublisher(
             @PathVariable Long publisherId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
-        return ResponseEntity.ok(bookService.getBooksByPublisher(publisherId, pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<BookDto> response = bookService.getBooksByPublisher(publisherId, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get books by publisher")
+                        .build()
+        );
     }
 
-    @GetMapping("api/v1/books/distributor/{distributorId}")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByDistributor(
+    @GetMapping("/distributor/{distributorId}")
+    public ResponseEntity<ApiResponse<?>> getBooksByDistributor(
             @PathVariable Long distributorId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
-        return ResponseEntity.ok(bookService.getBooksByDistributor(distributorId, pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<BookDto> response = bookService.getBooksByDistributor(distributorId, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get books by distributor")
+                        .build()
+        );
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, path = "admin/books")
-    public ResponseEntity<BookDto> createBook(
+    public ResponseEntity<ApiResponse<?>> createBook(
             @RequestPart("book") String request,
             @RequestPart("image") MultipartFile image) {
             ObjectMapper objectMapper = new ObjectMapper() ;
@@ -109,11 +141,17 @@ public class BookController {
             }catch(Exception e){
                 throw new RuntimeException("Invalid request body");
             }
-        return ResponseEntity.ok(bookService.createBook(bookRequest, image));
+        BookDto createdBook = bookService.createBook(bookRequest, image);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(createdBook)
+                        .message("Book created successfully")
+                        .build()
+        );
     }
 
-    @PutMapping(path = "admin/books/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
-    public ResponseEntity<BookDto> updateBook(
+    @PutMapping(path = "/admin/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE )
+    public ResponseEntity<ApiResponse<?>> updateBook(
             @PathVariable Long id,
             @RequestPart("book") String request,
             @RequestPart(value = "image" , required = false ) MultipartFile image ) {
@@ -127,34 +165,63 @@ public class BookController {
             e.printStackTrace();
             throw new RuntimeException("Invalid request body");
         }
-        return ResponseEntity.ok(bookService.updateBook(id, bookRequest, image));
+        BookDto updatedBook = bookService.updateBook(id, bookRequest, image);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(updatedBook)
+                        .message("Book updated successfully")
+                        .build()
+        );
     }
 
-    @DeleteMapping("admin/books/delete/{id}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
+    @DeleteMapping("/admin/delete/{id}")
+    public ResponseEntity<ApiResponse<?>> deleteBook(@PathVariable Long id) {
         bookService.deleteBook(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("Book deleted successfully")
+                        .build()
+        );
     }
 
     @GetMapping("/price-range")
-    public ResponseEntity<PageResponse<BookDto>> getBooksByPriceRange(
+    public ResponseEntity<ApiResponse<?>> getBooksByPriceRange(
             @RequestParam Double minPrice,
             @RequestParam Double maxPrice,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortBy", required = false) String sortBy,
             @RequestParam(value = "sortOrder", required = false) String sortOrder) {
-        Pageable pageable = getPageable(page, size, sortBy, sortOrder);
-        return ResponseEntity.ok(bookService.getBooksByPriceRange(minPrice, maxPrice, pageable));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<BookDto> response = bookService.getBooksByPriceRange(minPrice, maxPrice, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get books by price range")
+                        .build()
+        );
     }
 
-    @GetMapping("/api/v1/books/{id}/sales")
-    public ResponseEntity<Integer> getBookSales(@PathVariable Long id) {
-        return ResponseEntity.ok(bookService.getBookSoldQuantity(id));
+    @GetMapping("/sales/{id}")
+    public ResponseEntity<ApiResponse<?>> getBookSales(@PathVariable Long id) {
+        Integer sales = bookService.getBookSoldQuantity(id);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(sales)
+                        .message("Get book sales quantity")
+                        .build()
+        );
     }
 
-    @GetMapping("/api/v1/books/sales")
-    public ResponseEntity<List<BookSalesDto>> getAllBooksSales() {
-        return ResponseEntity.ok(bookService.getAllBooksSales());
+    @GetMapping("/sales")
+    public ResponseEntity<ApiResponse<?>> getAllBooksSales() {
+        List<BookSalesDto> sales = bookService.getAllBooksSales();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(sales)
+                        .message("Get all books sales")
+                        .build()
+        );
     }
 }

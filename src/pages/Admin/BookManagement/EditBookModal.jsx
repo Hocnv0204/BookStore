@@ -9,38 +9,50 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
   const [categories, setCategories] = useState([]);
   const [publishers, setPublishers] = useState([]);
   const [distributors, setDistributors] = useState([]);
+  const [fullBook, setFullBook] = useState([]);
   const [formData, setFormData] = useState({
-    id: book.id || "",
-    title: book.title || "",
-    publisherId: book.publisherId || "",
-    authorName: book.authorName || "",
-    price: book.price || "",
-    quantityStock: book.quantityStock || "",
-    description: book.description || "",
-    categoryId: book.categoryId || "",
-    introduction: book.introduction || "",
-    distributorId: book.distributorId || "",
+    id: fullBook.id || "",
+    title: fullBook.title || "",
+    publisherId: fullBook.publisherId || "",
+    authorName: fullBook.authorName || "",
+    price: fullBook.price || "",
+    quantityStock: fullBook.quantityStock || "",
+    description: fullBook.description || "",
+    categoryId: fullBook.categoryId || "",
+    introduction: fullBook.introduction || "",
+    distributorId: fullBook.distributorId || "",
   });
-  console.log(book);
+  const fetchFullBook = async () => {
+    const res = await axios.get(
+      `http://localhost:8080/api/v1/books/${book.id}`
+    );
+    setFullBook(res.data);
+    console.log(res.data);
+  };
+  useEffect(() => {
+    fetchFullBook();
+  }, []);
+
+  // console.log(book);
   const [image, setImage] = useState(null); // Để xử lý ảnh mới
   const accessToken = localStorage.getItem("accessToken"); // Lấy accessToken
 
   // Cập nhật formData khi prop 'book' thay đổi (khi mở modal với sách khác)
   useEffect(() => {
     setFormData({
-      id: book.id || "",
-      title: book.title || "",
-      publisherId: book.publisherId || "",
-      authorName: book.authorName || "",
-      price: book.price || "",
-      quantityStock: book.quantityStock || "",
-      description: book.description || "",
-      categoryId: book.categoryId || "",
-      introduction: book.introduction || "",
-      distributorId: book.distributorId || "",
+      id: fullBook.id || "",
+      title: fullBook.title || "",
+      publisherId: fullBook.publisherId || "",
+      authorName: fullBook.authorName || "",
+      price: fullBook.price || "",
+      quantityStock: fullBook.quantityStock || "",
+      description: fullBook.description || "",
+      categoryId: fullBook.categoryId || "",
+      introduction: fullBook.introduction || "",
+      distributorId: fullBook.distributorId || "",
     });
     setImage(null); // Reset ảnh khi mở modal mới
-  }, [book]);
+  }, [fullBook]);
 
   // Fetch categories và publishers khi modal mở
   useEffect(() => {

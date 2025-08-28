@@ -6,7 +6,7 @@ import Pagination from "../Pagination/Pagination";
 function BookSection({
   books,
   pageNumber = 0,
-  pageSize = 10,
+  pageSize = 8,
   totalElements = 0,
   totalPages = 1,
   last = true,

@@ -1,5 +1,6 @@
 package com.bookstore.backend.dto.response;
 
+import com.bookstore.backend.common.enums.ErrorCode;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
@@ -11,7 +12,12 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private int code ;
     private String message ;
-    private T result ;
+    private T data ;
+    private ApiErrorResponse apiErrorResponse ;
+
+    public ApiResponse (ErrorCode errorCode){
+        this.apiErrorResponse = new ApiErrorResponse(errorCode) ;
+    }
+
 }

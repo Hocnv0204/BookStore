@@ -233,14 +233,71 @@
     border: 1px solid rgba(226, 232, 240, 0.8);
     border-bottom-left-radius: 6px;
     backdrop-filter: blur(10px);
+    line-height: 1.6;
 }
 
-.message-content p {
+.bot-message .message-content p {
     margin: 0;
-    line-height: 1.5;
+    line-height: 1.6;
     font-size: 14px;
     position: relative;
     z-index: 1;
+    white-space: pre-line;
+}
+
+/* Style cho danh sách trong tin nhắn bot */
+.bot-message .message-content ul {
+    margin: 8px 0;
+    padding-left: 20px;
+}
+
+.bot-message .message-content li {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+/* Style cho các phần tử đặc biệt trong tin nhắn */
+.bot-message .message-content strong {
+    color: #00CC64;
+    font-weight: 600;
+}
+
+.bot-message .message-content em {
+    color: #64748b;
+    font-style: italic;
+}
+
+/* Style cho emoji và biểu tượng */
+.bot-message .message-content .emoji {
+    font-size: 1.2em;
+    margin: 0 2px;
+    vertical-align: middle;
+}
+
+/* Style cho giá tiền */
+.bot-message .message-content .price {
+    color: #00CC64;
+    font-weight: 600;
+}
+
+/* Style cho tiêu đề sách */
+.bot-message .message-content .book-title {
+    font-weight: 600;
+    color: #1a202c;
+}
+
+/* Style cho tên tác giả */
+.bot-message .message-content .author {
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* Style cho phần giới thiệu */
+.bot-message .message-content .description {
+    color: #4a5568;
+    margin: 8px 0;
+    padding-left: 12px;
+    border-left: 3px solid #00CC64;
 }
 
 .message-time {

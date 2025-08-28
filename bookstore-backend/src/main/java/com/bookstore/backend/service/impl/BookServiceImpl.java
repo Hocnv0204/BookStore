@@ -6,6 +6,7 @@ import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.mapper.BookMapper;
+import com.bookstore.backend.mapper.PageMapper;
 import com.bookstore.backend.model.Book;
 import com.bookstore.backend.model.CartItem;
 import com.bookstore.backend.model.Publisher;
@@ -37,11 +38,13 @@ public class BookServiceImpl implements BookService {
     private final DistributorRepository distributorRepository;
     private final BookMapper bookMapper;
     private final FileStorageService fileStorageService;
+    private final PageMapper pageMapper ;
 
     @Override
     public PageResponse<BookDto> getAllBooks(Pageable pageable) {
         Page<Book> bookPage = bookRepository.findAll(pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos);
     }
 
     @Override
@@ -162,51 +165,46 @@ public class BookServiceImpl implements BookService {
     @Override
     public PageResponse<BookDto> searchBooks(String keyword, Long categoryId,Long publisherId,Long distributorId, Double minPrice, Double maxPrice, Pageable pageable) {
         Page<Book> bookPage = bookRepository.searchBooks(keyword, categoryId, minPrice, maxPrice, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
     @Override
     public PageResponse<BookDto> getBooksByAuthor(String authorName, Pageable pageable) {
         Page<Book> bookPage = bookRepository.findByCategoryNameContainingIgnoreCase(authorName, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
     @Override
     public PageResponse<BookDto> getBooksByPublisher(Long publisherId, Pageable pageable) {
         Page<Book> bookPage = bookRepository.findByPublisherId(publisherId, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
     @Override
     public PageResponse<BookDto> getBooksByDistributor(Long distributorId, Pageable pageable) {
         Page<Book> bookPage = bookRepository.findByDistributorId(distributorId, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
     @Override
     public PageResponse<BookDto> getBooksByCategory(Long categoryId, Pageable pageable) {
         Page<Book> bookPage = bookRepository.findByCategoryId(categoryId, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
     @Override
     public PageResponse<BookDto> getBooksByPriceRange(Double minPrice, Double maxPrice, Pageable pageable) {
         Page<Book> bookPage = bookRepository.findByPriceBetween(minPrice, maxPrice, pageable);
-        return createPageResponse(bookPage);
+        Page<BookDto> bookDtos = bookPage.map(bookMapper::toDto) ;
+        return pageMapper.toPageResponse(bookDtos) ;
     }
 
-    private PageResponse<BookDto> createPageResponse(Page<Book> bookPage) {
-        return PageResponse.<BookDto>builder()
-                .content(bookPage.getContent().stream()
-                        .map(bookMapper::toDto)
-                        .collect(Collectors.toList()))
-                .totalElements(bookPage.getTotalElements())
-                .totalPages(bookPage.getTotalPages())
-                .pageNumber(bookPage.getNumber())
-                .pageSize(bookPage.getSize())
-                .isLast(bookPage.isLast())
-                .build();
-    }
+
 
     @Override
     public BookDto getBookByName(String name) {

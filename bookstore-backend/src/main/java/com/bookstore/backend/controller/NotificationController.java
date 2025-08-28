@@ -8,11 +8,10 @@ import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.NotificationStatsResponse;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.NotificationService;
+import com.bookstore.backend.utils.PageableUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -20,49 +19,56 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping
+@RequestMapping("/api/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
     
     private final NotificationService notificationService;
-    private static final int MAX_PAGE_SIZE = 50;
 
     // ===== USER NOTIFICATION ENDPOINTS =====
     
-    @GetMapping("/users/notifications")
+    @GetMapping("/users")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<PageResponse<NotificationDto>> getUserNotifications(
+    public ResponseEntity<ApiResponse<?>> getUserNotifications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.getUserNotifications(pageable);
         
-        return ResponseEntity.ok(notificationService.getUserNotifications(pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get user notifications")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/notifications/status/{status}")
+    @GetMapping("/users/status/{status}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PageResponse<NotificationDto>> getUserNotificationsByStatus(
+    public ResponseEntity<ApiResponse<?>> getUserNotificationsByStatus(
             @PathVariable NotificationStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.getUserNotificationsByStatus(status, pageable);
         
-        return ResponseEntity.ok(notificationService.getUserNotificationsByStatus(status, pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get user notifications by status")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/notifications/search")
+    @GetMapping("/users/search")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<PageResponse<NotificationDto>> searchUserNotifications(
+    public ResponseEntity<ApiResponse<?>> searchUserNotifications(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) NotificationType type,
             @RequestParam(required = false) NotificationStatus status,
@@ -71,63 +77,85 @@ public class NotificationController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.searchUserNotifications(search, type, status, pageable);
         
-        return ResponseEntity.ok(notificationService.searchUserNotifications(search, type, status, pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Search user notifications")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/notifications/stats")
+    @GetMapping("/users/stats")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<NotificationStatsResponse> getUserNotificationStats() {
-        return ResponseEntity.ok(notificationService.getUserNotificationStats());
+    public ResponseEntity<ApiResponse<?>> getUserNotificationStats() {
+        NotificationStatsResponse stats = notificationService.getUserNotificationStats();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(stats)
+                        .message("Get user notification stats")
+                        .build()
+        );
     }
 
-    @GetMapping("/users/notifications/unread-count")
+    @GetMapping("/users/unread-count")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<ApiResponse<Long>> getUnreadUserNotificationCount() {
-        return ResponseEntity.ok(ApiResponse.<Long>builder()
-                .result(notificationService.getUnreadUserNotificationCount())
-                .build());
+    public ResponseEntity<ApiResponse<?>> getUnreadUserNotificationCount() {
+        Long count = notificationService.getUnreadUserNotificationCount();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(count)
+                        .message("Get unread user notification count")
+                        .build()
+        );
     }
 
     // ===== ADMIN NOTIFICATION ENDPOINTS =====
 
-    @GetMapping("/admin/notifications")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<NotificationDto>> getAdminNotifications(
+    public ResponseEntity<ApiResponse<?>> getAdminNotifications(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.getAdminNotifications(pageable);
         
-        return ResponseEntity.ok(notificationService.getAdminNotifications(pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get admin notifications")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/notifications/status/{status}")
+    @GetMapping("/admin/status/{status}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<NotificationDto>> getAdminNotificationsByStatus(
+    public ResponseEntity<ApiResponse<?>> getAdminNotificationsByStatus(
             @PathVariable NotificationStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.getAdminNotificationsByStatus(status, pageable);
         
-        return ResponseEntity.ok(notificationService.getAdminNotificationsByStatus(status, pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get admin notifications by status")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/notifications/search")
+    @GetMapping("/admin/search")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<NotificationDto>> searchAdminNotifications(
+    public ResponseEntity<ApiResponse<?>> searchAdminNotifications(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) NotificationType type,
             @RequestParam(required = false) NotificationStatus status,
@@ -136,114 +164,156 @@ public class NotificationController {
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "desc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Pageable pageable = PageRequest.of(page, size,
-                Sort.Direction.fromString(sortOrder), sortBy);
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<NotificationDto> response = notificationService.searchAdminNotifications(search, type, status, pageable);
         
-        return ResponseEntity.ok(notificationService.searchAdminNotifications(search, type, status, pageable));
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Search admin notifications")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/notifications/stats")
+    @GetMapping("/admin/stats")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<NotificationStatsResponse> getAdminNotificationStats() {
-        return ResponseEntity.ok(notificationService.getAdminNotificationStats());
+    public ResponseEntity<ApiResponse<?>> getAdminNotificationStats() {
+        NotificationStatsResponse stats = notificationService.getAdminNotificationStats();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(stats)
+                        .message("Get admin notification stats")
+                        .build()
+        );
     }
 
-    @GetMapping("/admin/notifications/unread-count")
+    @GetMapping("/admin/unread-count")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Long>> getUnreadAdminNotificationCount() {
-        return ResponseEntity.ok(ApiResponse.<Long>builder()
-                .result(notificationService.getUnreadAdminNotificationCount())
-                .build());
+    public ResponseEntity<ApiResponse<?>> getUnreadAdminNotificationCount() {
+        Long count = notificationService.getUnreadAdminNotificationCount();
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(count)
+                        .message("Get unread admin notification count")
+                        .build()
+        );
     }
 
     // ===== COMMON NOTIFICATION ACTIONS =====
 
-    @GetMapping("/notifications/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<NotificationDto>> getNotificationById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.<NotificationDto>builder()
-                .result(notificationService.getNotificationById(id))
-                .build());
+    public ResponseEntity<ApiResponse<?>> getNotificationById(@PathVariable Long id) {
+        NotificationDto notification = notificationService.getNotificationById(id);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(notification)
+                        .message("Get notification by id")
+                        .build()
+        );
     }
 
-    @PutMapping("/notifications/{id}/mark-read")
+    @PutMapping("/{id}/mark-read")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<NotificationDto>> markNotificationAsRead(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.<NotificationDto>builder()
-                .message("Notification marked as read")
-                .result(notificationService.markNotificationAsRead(id))
-                .build());
+    public ResponseEntity<ApiResponse<?>> markNotificationAsRead(@PathVariable Long id) {
+        NotificationDto notification = notificationService.markNotificationAsRead(id);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(notification)
+                        .message("Notification marked as read")
+                        .build()
+        );
     }
 
-    @PutMapping("/notifications/mark-all-read")
+    @PutMapping("/mark-all-read")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> markAllNotificationsAsRead() {
+    public ResponseEntity<ApiResponse<?>> markAllNotificationsAsRead() {
         notificationService.markAllNotificationsAsRead();
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message("All notifications marked as read")
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("All notifications marked as read")
+                        .build()
+        );
     }
 
-    @PutMapping("/notifications/mark-multiple-read")
+    @PutMapping("/mark-multiple-read")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> markMultipleNotificationsAsRead(
+    public ResponseEntity<ApiResponse<?>> markMultipleNotificationsAsRead(
             @RequestBody List<Long> notificationIds) {
         notificationService.markMultipleNotificationsAsRead(notificationIds);
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message("Selected notifications marked as read")
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("Selected notifications marked as read")
+                        .build()
+        );
     }
 
-    @DeleteMapping("/notifications/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteNotification(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> deleteNotification(@PathVariable Long id) {
         notificationService.deleteNotification(id);
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message("Notification deleted successfully")
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("Notification deleted successfully")
+                        .build()
+        );
     }
 
-    @DeleteMapping("/notifications/multiple")
+    @DeleteMapping("/multiple")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteMultipleNotifications(
+    public ResponseEntity<ApiResponse<?>> deleteMultipleNotifications(
             @RequestBody List<Long> notificationIds) {
         notificationService.deleteMultipleNotifications(notificationIds);
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message("Selected notifications deleted successfully")
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("Selected notifications deleted successfully")
+                        .build()
+        );
     }
 
-    @DeleteMapping("/notifications/read")
+    @DeleteMapping("/read")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteAllReadNotifications() {
+    public ResponseEntity<ApiResponse<?>> deleteAllReadNotifications() {
         notificationService.deleteAllReadNotifications();
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message("All read notifications deleted successfully")
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message("All read notifications deleted successfully")
+                        .build()
+        );
     }
 
     // ===== CUSTOM NOTIFICATION CREATION (ADMIN ONLY) =====
 
-    @PostMapping("/admin/notifications/custom")
+    @PostMapping("/admin/custom")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<NotificationDto>> createCustomNotification(
+    public ResponseEntity<ApiResponse<?>> createCustomNotification(
             @Valid @RequestBody NotificationRequest request) {
-        return ResponseEntity.ok(ApiResponse.<NotificationDto>builder()
-                .message("Custom notification created successfully")
-                .result(notificationService.createCustomNotification(request))
-                .build());
+        NotificationDto notification = notificationService.createCustomNotification(request);
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(notification)
+                        .message("Custom notification created successfully")
+                        .build()
+        );
     }
 
     // ===== SYSTEM MAINTENANCE (ADMIN ONLY) =====
 
-    @DeleteMapping("/admin/notifications/cleanup")
+    @DeleteMapping("/admin/cleanup")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> cleanupOldNotifications(
+    public ResponseEntity<ApiResponse<?>> cleanupOldNotifications(
             @RequestParam(defaultValue = "30") int daysOld) {
         notificationService.cleanupOldNotifications(daysOld);
-        return ResponseEntity.ok(ApiResponse.<Void>builder()
-                .message(String.format("Notifications older than %d days have been cleaned up", daysOld))
-                .build());
+        return ResponseEntity.ok(
+                ApiResponse.builder()
+                        .data(null)
+                        .message(String.format("Notifications older than %d days have been cleaned up", daysOld))
+                        .build()
+        );
     }
 }

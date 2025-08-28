@@ -1,7 +1,9 @@
 package com.bookstore.backend.exception;
 
 import com.bookstore.backend.common.enums.ErrorCode;
+import com.bookstore.backend.dto.response.ApiErrorResponse;
 import com.bookstore.backend.dto.response.ApiResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -15,35 +17,35 @@ public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(Exception ex){
+    ResponseEntity<ApiResponse<?>> handlingRuntimeException(Exception ex){
         ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION ;
         // Log stacktrace chi tiết
         logger.error("Uncategorized exception: ", ex);
-        return ResponseEntity.status(errorCode.getStatus()).body(
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 ApiResponse.builder()
-                        .code(errorCode.getCode())
+                        .apiErrorResponse(new ApiErrorResponse(errorCode))
                         .message(errorCode.getMessage())
                         .build()
-        );
+        ) ;
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException e){
+    ResponseEntity<ApiResponse<?>> handlingAppException(AppException e){
         ErrorCode errorCode = e.getErrorCode() ;
-        return ResponseEntity.status(errorCode.getStatus()).body(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 ApiResponse.builder()
-                        .code(errorCode.getCode())
+                        .apiErrorResponse(new ApiErrorResponse(errorCode))
                         .message(errorCode.getMessage())
                         .build()
         ) ;
     }
 
     @ExceptionHandler(value = AccessDeniedException.class)
-    ResponseEntity<ApiResponse> handlingAccessDeniedException(AccessDeniedException e){
+    ResponseEntity<ApiResponse<?>> handlingAccessDeniedException(AccessDeniedException e){
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED ;
-        return ResponseEntity.status(errorCode.getStatus()).body(
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                 ApiResponse.builder()
-                        .code(errorCode.getCode())
+                        .apiErrorResponse(new ApiErrorResponse(errorCode))
                         .message(errorCode.getMessage())
                         .build()
         ) ;

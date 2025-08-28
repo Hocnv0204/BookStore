@@ -1,5 +1,6 @@
 package com.bookstore.backend.configuration;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -20,32 +22,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
-            "/login",
-            "/register",
-            "/category/**",
-            "/api/v1/books/**",
-            "/api/v1/reviews/**",
-            "/api/v1/categories/**",
-            "/api/v1/publishers/**",
-            "/api/v1/distributors/**",
-            "/refresh",
-            "/users/logout",
-            "/auth/send-verification-code",
-            "/auth/send-reset-password-code",
-            "/auth/verify-and-register",
-            "/auth/reset-password",
-            "/auth/change-password",
-            "/auth/forgot-password",
-            "/auth/reset-password",
-            "/auth/change-password",
-            "/auth/forgot-password",
-            "/api/gemini/**",
-            "/api/chatbot/**",
-            "/api/demo/**",
-            "/api/v1/payment/**",
+            "/api/**"
     };
 
     @Bean
@@ -67,6 +48,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
         );
 
+        // JWT Resource Server configuration
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(customJwtDecoder)
@@ -88,10 +70,7 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -104,5 +83,10 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder(10) ;
     }
 }

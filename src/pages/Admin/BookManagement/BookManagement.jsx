@@ -30,7 +30,6 @@ function BookManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
   const [keyword, setKeyword] = useState("");
-
   const fetchBooks = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };

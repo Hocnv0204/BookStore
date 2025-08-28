@@ -17,11 +17,11 @@ const Pagination = ({
 
   return (
     <div className="pagination-container">
-      <div className="pagination-info">
+      {/* <div className="pagination-info">
         Hiển thị {pageNumber * pageSize + 1} -{" "}
         {Math.min((pageNumber + 1) * pageSize, totalElements)} của{" "}
         {totalElements} kết quả
-      </div>
+      </div> */}
       <div className="pagination-controls">
         <button
           className="pagination-button"

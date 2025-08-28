@@ -18,7 +18,7 @@ function CategoryDetail() {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(8);
   const [last, setLast] = useState(true);
   const [sortBy, setSortBy] = useState("title");
   const [sortOrder, setSortOrder] = useState("asc");
@@ -32,13 +32,13 @@ function CategoryDetail() {
     ) => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=5&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
+          `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=8&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
         );
 
         const booksArray = res.data.content || [];
         const totalPages = res.data.totalPages || 1;
         const totalElements = res.data.totalElements || 0;
-        const pageSize = res.data.size || 5;
+        const pageSize = res.data.size || 10;
         const last = res.data.last ?? true;
 
         setCategorizedBooks((prevBooks) => ({

@@ -6,10 +6,9 @@ import com.bookstore.backend.dto.request.userrequest.UserUpdateRequest;
 import com.bookstore.backend.dto.response.ApiResponse;
 import com.bookstore.backend.dto.response.PageResponse;
 import com.bookstore.backend.service.UserService;
+import com.bookstore.backend.utils.PageableUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -19,115 +18,124 @@ import com.bookstore.backend.common.enums.ErrorCode;
 import com.bookstore.backend.exception.AppException;
 import com.bookstore.backend.model.User;
 import com.bookstore.backend.repository.UserRepository;
+
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
-    private static final int MAX_PAGE_SIZE = 20;
     private final UserRepository userRepository;
     
-    @GetMapping("admin/users")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<ApiResponse<PageResponse<UserResponse>>> getAllUsers(
+    public ResponseEntity<ApiResponse<?>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder) {
         
-        // Validate and adjust page size
-        size = Math.min(size, MAX_PAGE_SIZE);
-        
-        // Sorting
-        Sort.Direction direction = Sort.Direction.fromString(sortOrder.toUpperCase());
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
+        PageResponse<UserResponse> response = userService.getAllUsers(pageable);
         return ResponseEntity.ok().body(
-                ApiResponse.<PageResponse<UserResponse>>builder()
-                        .result(userService.getAllUsers(pageable))
+                ApiResponse.builder()
+                        .data(response)
+                        .message("Get all users")
                         .build()
         );
     }
 
-    @GetMapping("admin/users/{id}")
+    @GetMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    ResponseEntity<ApiResponse<UserResponse>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> getUserById(@PathVariable Long id) {
+        UserResponse user = userService.getUserById(id);
         return ResponseEntity.ok().body(
-                ApiResponse.<UserResponse>builder()
-                        .result(userService.getUserById(id))
+                ApiResponse.builder()
+                        .data(user)
+                        .message("Get user by id")
                         .build()
         );
     }
 
-    @GetMapping("users/{username}/spending")
+    @GetMapping("/{username}/spending")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN') and (authentication.principal.username == #username or hasRole('ADMIN'))")
-    ResponseEntity<ApiResponse<Integer>> getTotalSpending(@PathVariable String username) {
+    public ResponseEntity<ApiResponse<?>> getTotalSpending(@PathVariable String username) {
+        Integer spending = userService.getTotalSpending(username);
         return ResponseEntity.ok().body(
-                ApiResponse.<Integer>builder()
-                        .result(userService.getTotalSpending(username))
+                ApiResponse.builder()
+                        .data(spending)
+                        .message("Get total spending")
                         .build()
         );
     }
 
-    @PutMapping("users")
+    @PutMapping
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<UserResponse>> updateUser(@RequestBody UserUpdateRequest request) {
+    public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody UserUpdateRequest request) {
+        UserResponse user = userService.updateUser(request);
         return ResponseEntity.ok().body(
-                ApiResponse.<UserResponse>builder()
-                        .result(userService.updateUser(request))
+                ApiResponse.builder()
+                        .data(user)
+                        .message("User updated successfully")
                         .build()
         );
     }
 
-    @DeleteMapping("admin/users/{id}")
+    @DeleteMapping("/admin/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok().body(
-                ApiResponse.<Void>builder()
+                ApiResponse.builder()
+                        .data(null)
+                        .message("User deleted successfully")
                         .build()
         );
     }
 
-    @GetMapping("users/profile")
+    @GetMapping("/profile")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserProfile() {
+    public ResponseEntity<ApiResponse<?>> getUserProfile() {
+        UserResponse user = userService.getUserProfile();
         return ResponseEntity.ok().body(
-            ApiResponse.<UserResponse>builder()
-                .result(userService.getUserProfile())
+            ApiResponse.builder()
+                .data(user)
+                .message("Get user profile")
                 .build()
         );
     }
 
-    @PutMapping("users/change-password")
+    @PutMapping("/change-password")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> changePassword(@RequestBody ChangePasswordRequest request) {
+    public ResponseEntity<ApiResponse<?>> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ResponseEntity.ok().body(
-            ApiResponse.<Void>builder()
+            ApiResponse.builder()
+                .data(null)
                 .message("Password changed successfully")
                 .build()
         );
     }
 
-    @GetMapping("admin/users/search")
+    @GetMapping("/admin/search")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<PageResponse<UserResponse>>> searchUsersByName(
+    public ResponseEntity<ApiResponse<?>> searchUsersByName(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String sortOrder) {
         
-        size = Math.min(size, MAX_PAGE_SIZE);
-        Sort.Direction direction = Sort.Direction.fromString(sortOrder.toUpperCase());
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Pageable pageable = PageableUtils.setPageable(page, size, sortOrder, sortBy);
         
         if (keyword == null) {
             keyword = "";
         }
         
+        PageResponse<UserResponse> response = userService.searchUsersByName(keyword.trim(), pageable);
         return ResponseEntity.ok().body(
-            ApiResponse.<PageResponse<UserResponse>>builder()
-                .result(userService.searchUsersByName(keyword.trim(), pageable))
+            ApiResponse.builder()
+                .data(response)
+                .message("Search users by name")
                 .build()
         );
     }

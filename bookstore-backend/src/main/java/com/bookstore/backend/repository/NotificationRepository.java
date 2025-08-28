@@ -4,6 +4,8 @@ import com.bookstore.backend.common.enums.NotificationStatus;
 import com.bookstore.backend.common.enums.NotificationType;
 import com.bookstore.backend.common.enums.RecipientType;
 import com.bookstore.backend.model.Notification;
+import com.bookstore.backend.model.Order;
+import com.bookstore.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -69,6 +71,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     // Find notifications by order
     List<Notification> findByRelatedOrderIdOrderByCreatedAtDesc(Long orderId);
 
+    boolean existsByRelatedOrderAndTypeAndRecipientUser(Order order, NotificationType type, User user);
+
     // Mark notifications as read
     @Modifying
     @Query("UPDATE Notification n SET n.status = 'READ', n.readAt = :readAt WHERE n.id = :notificationId")
@@ -121,4 +125,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
                                                @Param("status") NotificationStatus status,
                                                @Param("search") String search,
                                                Pageable pageable);
+
 }

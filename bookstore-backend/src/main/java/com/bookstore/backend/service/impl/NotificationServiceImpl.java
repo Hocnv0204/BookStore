@@ -327,18 +327,24 @@ public class NotificationServiceImpl implements NotificationService {
     // Automatic notification triggers
     @Override
     public void createOrderSuccessNotification(Order order) {
-        Notification notification = Notification.builder()
-                .title("Order Created Successfully")
-                .message(String.format("Your order #%d has been created successfully. Total amount: $%.2f", 
-                        order.getId(), order.getTotalAmount()))
-                .type(NotificationType.ORDER_SUCCESS)
-                .recipientType(RecipientType.USER)
-                .recipientUser(order.getUser())
-                .relatedOrder(order)
-                .status(NotificationStatus.UNREAD)
-                .build();
-        
-        notificationRepository.save(notification);
+        boolean existingNotification = notificationRepository
+                .existsByRelatedOrderAndTypeAndRecipientUser(
+                        order, NotificationType.ORDER_SUCCESS, order.getUser());
+
+        if (!existingNotification) {
+            Notification notification = Notification.builder()
+                    .title("Đặt hàng thành công")
+                    .message(String.format("Đơn hàng #%d của bạn đã được tạo thành công. Tổng tiền: %.2f VNĐ",
+                            order.getId(), order.getTotalAmount()))
+                    .type(NotificationType.ORDER_SUCCESS)
+                    .recipientType(RecipientType.USER)
+                    .recipientUser(order.getUser())
+                    .relatedOrder(order)
+                    .status(NotificationStatus.UNREAD)
+                    .build();
+
+            notificationRepository.save(notification);
+        }
         log.info("Order success notification created for user: {} and order: {}", 
                 order.getUser().getUsername(), order.getId());
     }
@@ -346,8 +352,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createPaymentSuccessNotification(Order order) {
         Notification notification = Notification.builder()
-                .title("Payment Successful")
-                .message(String.format("Payment for order #%d has been processed successfully. Amount: $%.2f", 
+                .title("Thanh toán thành công")
+                .message(String.format("Thanh toán cho đơn hàng #%d đã được xử lý thành công. Số tiền: %.2f VNĐ", 
                         order.getId(), order.getTotalAmount()))
                 .type(NotificationType.PAYMENT_SUCCESS)
                 .recipientType(RecipientType.USER)
@@ -364,8 +370,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createOrderCancelledNotification(Order order) {
         Notification notification = Notification.builder()
-                .title("Order Cancelled")
-                .message(String.format("Your order #%d has been cancelled. If you have any questions, please contact support.", 
+                .title("Đơn hàng đã hủy")
+                .message(String.format("Đơn hàng #%d của bạn đã bị hủy. Nếu bạn có thắc mắc, vui lòng liên hệ hỗ trợ.", 
                         order.getId()))
                 .type(NotificationType.ORDER_CANCELLED)
                 .recipientType(RecipientType.USER)
@@ -385,8 +391,8 @@ public class NotificationServiceImpl implements NotificationService {
         NotificationType notificationType = getNotificationTypeFromOrderStatus(order.getStatus());
         
         Notification notification = Notification.builder()
-                .title("Order Status Update")
-                .message(String.format("Your order #%d status has been updated to: %s. %s", 
+                .title("Cập nhật trạng thái đơn hàng")
+                .message(String.format("Trạng thái đơn hàng #%d đã được cập nhật thành: %s. %s", 
                         order.getId(), order.getStatus(), statusMessage))
                 .type(notificationType)
                 .recipientType(RecipientType.USER)
@@ -403,8 +409,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createPaymentFailedNotification(Order order) {
         Notification notification = Notification.builder()
-                .title("Payment Failed")
-                .message(String.format("Payment for order #%d has failed. Please try again or contact support.", 
+                .title("Thanh toán thất bại")
+                .message(String.format("Thanh toán cho đơn hàng #%d đã thất bại. Vui lòng thử lại hoặc liên hệ hỗ trợ.", 
                         order.getId()))
                 .type(NotificationType.PAYMENT_FAILED)
                 .recipientType(RecipientType.USER)
@@ -422,8 +428,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createNewOrderNotification(Order order) {
         Notification notification = Notification.builder()
-                .title("New Order Received")
-                .message(String.format("New order #%d received from %s. Total amount: $%.2f", 
+                .title("Đơn hàng mới")
+                .message(String.format("Đơn hàng mới #%d từ %s. Tổng tiền: %.2f VNĐ", 
                         order.getId(), order.getUser().getFullName(), order.getTotalAmount()))
                 .type(NotificationType.NEW_ORDER)
                 .recipientType(RecipientType.ALL_ADMINS)
@@ -438,8 +444,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createNewUserRegistrationNotification(User user) {
         Notification notification = Notification.builder()
-                .title("New User Registration")
-                .message(String.format("New user registered: %s (%s)", 
+                .title("Người dùng mới đăng ký")
+                .message(String.format("Người dùng mới đăng ký: %s (%s)", 
                         user.getFullName(), user.getEmail()))
                 .type(NotificationType.NEW_USER_REGISTERED)
                 .recipientType(RecipientType.ALL_ADMINS)
@@ -453,8 +459,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public void createPaymentReceivedNotification(Order order) {
         Notification notification = Notification.builder()
-                .title("Payment Received")
-                .message(String.format("Payment received for order #%d from %s. Amount: $%.2f", 
+                .title("Đã nhận thanh toán")
+                .message(String.format("Đã nhận thanh toán cho đơn hàng #%d từ %s. Số tiền: %.2f VNĐ", 
                         order.getId(), order.getUser().getFullName(), order.getTotalAmount()))
                 .type(NotificationType.ORDER_PAYMENT_RECEIVED)
                 .recipientType(RecipientType.ALL_ADMINS)
@@ -504,17 +510,17 @@ public class NotificationServiceImpl implements NotificationService {
     private String getStatusMessage(OrderStatus status) {
         switch (status) {
             case PENDING:
-                return "Your order is being processed.";
+                return "Đơn hàng của bạn đang được xử lý.";
             case CONFIRM:
-                return "Your order has been confirmed and will be prepared for shipping.";
+                return "Đơn hàng của bạn đã được xác nhận và sẽ được chuẩn bị để giao hàng.";
             case SHIPPED:
-                return "Your order has been shipped and is on its way to you.";
+                return "Đơn hàng của bạn đã được gửi đi và đang trên đường đến với bạn.";
             case DELIVERED:
-                return "Your order has been delivered successfully.";
+                return "Đơn hàng của bạn đã được giao thành công.";
             case CANCELLED:
-                return "Your order has been cancelled.";
+                return "Đơn hàng của bạn đã bị hủy.";
             default:
-                return "Order status updated.";
+                return "Trạng thái đơn hàng đã được cập nhật.";
         }
     }
 
