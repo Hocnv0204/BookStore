@@ -49,10 +49,10 @@ function Information() {
         // Use different API endpoints based on activeItem (status filter)
         if (activeItem === "all") {
           // Fetch all orders
-          apiUrl = `http://localhost:8080/users/orders?page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+          apiUrl = `http://localhost:8080/api/orders/users?page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
         } else {
           // Fetch orders by specific status
-          apiUrl = `http://localhost:8080/users/orders/status?status=${activeItem}&page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+          apiUrl = `http://localhost:8080/api/orders/users/status?status=${activeItem}&page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
         }
 
         const res = await axios.get(apiUrl, {
@@ -61,15 +61,15 @@ function Information() {
           },
         });
 
-        if (res.data) {
-          setOrders(res.data.content);
+        if (res.data.data) {
+          setOrders(res.data.data.content);
           console.log(res.data);
           setPagination({
-            pageNumber: res.data.pageNumber,
-            pageSize: res.data.pageSize,
-            totalElements: res.data.totalElements,
-            totalPages: res.data.totalPages,
-            last: res.data.last,
+            pageNumber: res.data.data.pageNumber,
+            pageSize: res.data.data.pageSize,
+            totalElements: res.data.data.totalElements,
+            totalPages: res.data.data.totalPages,
+            last: res.data.data.last,
           });
         }
       } catch (error) {

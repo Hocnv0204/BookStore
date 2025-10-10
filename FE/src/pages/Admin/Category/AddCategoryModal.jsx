@@ -36,7 +36,7 @@ const AddCategoryModal = ({ isOpen, onClose, onSave }) => {
         categoryData.append("image", image);
       }
       const res = await axios.post(
-        "http://localhost:8080/admin/categories",
+        "http://localhost:8080/api/categories/admin",
         categoryData,
         {
           headers: {

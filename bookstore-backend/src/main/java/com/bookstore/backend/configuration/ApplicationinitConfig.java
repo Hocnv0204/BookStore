@@ -18,13 +18,11 @@ public class ApplicationinitConfig {
     ApplicationRunner applicationRunner(UserRepository userRepository){
         return args -> {
             if(userRepository.findByUsername("admin").isEmpty()){
-                HashSet<String> roles = new HashSet<>() ;
-                roles.add(Role.ADMIN.name()) ;
                 User user = User.builder()
                         .username("admin")
                         .fullName("Admin")
                         .password(passwordEncoder.encode("admin"))
-                        .roles(roles)
+                        .role(Role.ADMIN.toString())
                         .build() ;
                 userRepository.save(user);
             }

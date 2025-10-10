@@ -23,9 +23,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
     distributorId: fullBook.distributorId || "",
   });
   const fetchFullBook = async () => {
-    const res = await axios.get(
-      `http://localhost:8080/api/v1/books/${book.id}`
-    );
+    const res = await axios.get(`http://localhost:8080/api/books/${book.id}`);
     setFullBook(res.data);
     console.log(res.data);
   };
@@ -58,17 +56,15 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/categories");
-        setCategories(res.data.result.content); // Nếu backend trả về result → content
+        const res = await axios.get("http://localhost:8080/api/categories");
+        setCategories(res.data.data.content); // Nếu backend trả về result → content
       } catch (error) {
         console.error("Lỗi khi lấy danh mục:", error);
       }
     };
     const fetchDistributors = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:8080/api/v1/distributors"
-        );
+        const res = await axios.get("http://localhost:8080/api/distributors");
         setDistributors(res.data.content);
       } catch (error) {
         console.error("Lỗi khi lấy nhà phân phối:", error);
@@ -76,7 +72,7 @@ const EditBookModal = ({ isOpen, onClose, book, onSave }) => {
     };
     const fetchPublishers = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/v1/publishers");
+        const res = await axios.get("http://localhost:8080/api/publishers");
         setPublishers(res.data.content);
       } catch (error) {
         console.error("Lỗi khi lấy publisher:", error);

@@ -29,15 +29,15 @@ function Distributor() {
   const fetchDistributors = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/v1/distributors";
+      let url = "http://localhost:8080/api/distributors";
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/v1/distributors/search`;
+        url = `http://localhost:8080/api/distributors/search`;
       }
       const response = await axios.get(url, { params });
-      setDistributors(response.data.content);
-      setTotalPages(response.data.totalPages);
-      setTotalElements(response.data.totalElements);
+      setDistributors(response.data.data.content);
+      setTotalPages(response.data.data.totalPages);
+      setTotalElements(response.data.data.totalElements);
     } catch (error) {
       console.error("Error fetching distributors:", error);
     }
@@ -59,7 +59,7 @@ function Distributor() {
     if (window.confirm("Bạn có chắc chắn muốn xóa nhà phân phối này?")) {
       try {
         await axios.delete(
-          `http://localhost:8080/admin/distributors/${distributorId}`,
+          `http://localhost:8080/api/distributors/admin/${distributorId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

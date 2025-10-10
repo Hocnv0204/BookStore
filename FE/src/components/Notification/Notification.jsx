@@ -23,12 +23,12 @@ function Notification({ user }) {
         }
 
         // Determine API endpoint based on user role
-        const isAdmin = user?.roles.includes("ADMIN") || user?.isAdmin;
+        const isAdmin = user?.role === "ADMIN" || user?.isAdmin;
         const apiEndpoint = isAdmin
-          ? `http://localhost:8080/admin/notifications?page=${
+          ? `http://localhost:8080/api/notifications/admin?page=${
               pageNum - 1
             }&size=10`
-          : `http://localhost:8080/users/notifications?page=${
+          : `http://localhost:8080/api/notifications/users?page=${
               pageNum - 1
             }&size=10`;
 
@@ -38,7 +38,7 @@ function Notification({ user }) {
           },
         });
 
-        const { content, last, totalElements } = response.data;
+        const { content, last, totalElements } = response.data.data;
 
         // Transform API data to match component format
         const transformedNotifications = content.map((notification) => ({
@@ -82,7 +82,7 @@ function Notification({ user }) {
   const markAsRead = async (notificationId) => {
     try {
       await axios.put(
-        `http://localhost:8080/notifications/${notificationId}/mark-read`,
+        `http://localhost:8080/api/notifications/${notificationId}/mark-read`,
         {},
         {
           headers: {
@@ -118,7 +118,7 @@ function Notification({ user }) {
   const deleteNotification = async (notificationId) => {
     try {
       await axios.delete(
-        `http://localhost:8080/notifications/${notificationId}`,
+        `http://localhost:8080/api/notifications/${notificationId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

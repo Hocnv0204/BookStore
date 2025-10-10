@@ -32,14 +32,14 @@ function CategoryDetail() {
     ) => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/v1/books/category/${categoryId}?page=${page}&size=8&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
+          `http://localhost:8080/api/books/category/${categoryId}?page=${page}&size=8&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
         );
 
-        const booksArray = res.data.content || [];
-        const totalPages = res.data.totalPages || 1;
-        const totalElements = res.data.totalElements || 0;
-        const pageSize = res.data.size || 10;
-        const last = res.data.last ?? true;
+        const booksArray = res.data.data.content || [];
+        const totalPages = res.data.data.totalPages || 1;
+        const totalElements = res.data.data.totalElements || 0;
+        const pageSize = res.data.data.size || 10;
+        const last = res.data.data.last ?? true;
 
         setCategorizedBooks((prevBooks) => ({
           ...prevBooks,
@@ -64,8 +64,8 @@ function CategoryDetail() {
   const fetchCategories = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("http://localhost:8080/api/v1/categories");
-      setCategories(res.data.result.content);
+      const res = await axios.get("http://localhost:8080/api/categories");
+      setCategories(res.data.data.content);
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {

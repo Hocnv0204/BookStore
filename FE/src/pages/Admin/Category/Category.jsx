@@ -30,20 +30,23 @@ function Category() {
   const fetchCategories = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/v1/categories";
+      let url = "http://localhost:8080/api/categories";
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/v1/categories/search`;
+        url = `http://localhost:8080/api/categories/search`;
       }
       const response = await axios.get(url, { params });
+      console.log(response.data);
       // Nếu API trả về response.data.content
-      const data = response.data.content || response.data.result?.content || [];
+      const data = response.data.data.content || [];
       setCategories(data);
       setTotalPages(
-        response.data.totalPages || response.data.result?.totalPages || 1
+        response.data.data.totalPages || response.data.result?.totalPages || 1
       );
       setTotalElements(
-        response.data.totalElements || response.data.result?.totalElements || 0
+        response.data.data.totalElements ||
+          response.data.result?.totalElements ||
+          0
       );
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -64,7 +67,7 @@ function Category() {
     if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
       try {
         await axios.delete(
-          `http://localhost:8080/admin/categories/${categoryId}`,
+          `http://localhost:8080/api/categories/admin/${categoryId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

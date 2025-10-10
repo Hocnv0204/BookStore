@@ -25,7 +25,7 @@ const AddPublisherModal = ({ isOpen, onClose, onSave }) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:8080/admin/publishers",
+        "http://localhost:8080/api/publishers/admin",
         formData,
         {
           headers: {

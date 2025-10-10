@@ -17,7 +17,7 @@ const ShoppingCart = () => {
   const handleQuantityChange = async (itemId, newQuantity) => {
     try {
       await axios.put(
-        `http://localhost:8080/users/cart/items/${itemId}?quantity=${newQuantity}`,
+        `http://localhost:8080/api/carts/users/items/${itemId}?quantity=${newQuantity}`,
         {},
         {
           headers: {
@@ -33,11 +33,14 @@ const ShoppingCart = () => {
 
   const handleDelete = async (itemId) => {
     try {
-      await axios.delete(`http://localhost:8080/users/cart/items/${itemId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
+      await axios.delete(
+        `http://localhost:8080/api/carts/users/items/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
       fetchCartItems();
     } catch (error) {
       console.error("Error deleting item:", error);
@@ -52,14 +55,20 @@ const ShoppingCart = () => {
 
   const fetchCartItems = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/users/cart", {
+      const res = await axios.get("http://localhost:8080/api/carts/users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
 
-      if (res.data && res.data.content && res.data.content.length > 0) {
-        const items = res.data.content[0].items;
+      if (
+        res.data &&
+        res.data.data &&
+        res.data.data.content &&
+        res.data.data.content.length > 0
+      ) {
+        const items = res.data.data.content[0].items;
+        console.log("Fetched cart items:", items);
         setCartItems(items);
       }
     } catch (error) {

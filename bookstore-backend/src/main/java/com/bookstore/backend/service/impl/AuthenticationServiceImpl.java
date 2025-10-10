@@ -74,7 +74,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         Instant.now().plus(VALID_DURATION , ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope" , buildScope(user))
+                .claim("scope" , user.getRole())
                 .build() ;
         Payload payload = new Payload(jwtClaimsSet.toJSONObject()) ;
         JWSObject jwsObject = new JWSObject(header , payload) ;
@@ -97,7 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         Instant.now().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli()
                 ))
                 .jwtID(UUID.randomUUID().toString())
-                .claim("scope", buildScope(user))  
+                .claim("scope", user.getRole())
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -111,13 +111,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private String buildScope(User user ){
-        StringJoiner stringJoiner = new StringJoiner(" ") ;
-        if(!CollectionUtils.isEmpty(user.getRoles())){
-            user.getRoles().forEach(stringJoiner::add);
-        }
-        return stringJoiner.toString() ;
-    }
 
     private SignedJWT verifyToken(String token , boolean isRefresh) throws ParseException, JOSEException {
         JWSVerifier verifier = new MACVerifier(SIGNER_KEY.getBytes())  ;
@@ -223,7 +216,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .refreshToken(newRefreshToken)
                 .authenticated(true)
                 .build() ;
-
     }
 
     private String generateVerificationCode() {
@@ -267,14 +259,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             throw new AppException(ErrorCode.TOKEN_EXPIRED);
         }
 
-        // Check if username exists
-        if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USER_EXISTS);
-        }
-
-        // Create user
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
 
         User user = User.builder()
                 .username(request.getUsername())
@@ -282,7 +266,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .gender(request.getGender())
-                .roles(roles)
+                .role(Role.USER.toString())
                 .build();
         userRepository.save(user);
 

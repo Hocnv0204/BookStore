@@ -50,8 +50,8 @@ function ReviewManagement() {
         },
       });
 
-      if (res.data && res.data.result) {
-        const transformedReviews = res.data.result.content.map((review) => ({
+      if (res.data && res.data.data) {
+        const transformedReviews = res.data.data.content.map((review) => ({
           id: review.id,
           username: review.username,
           bookId: review.bookId,
@@ -63,8 +63,8 @@ function ReviewManagement() {
           updatedAt: new Date(review.updatedAt).toLocaleString(),
         }));
         setReviews(transformedReviews);
-        setTotalPages(res.data.result.totalPages);
-        setTotalElements(res.data.result.totalElements);
+        setTotalPages(res.data.data.totalPages);
+        setTotalElements(res.data.data.totalElements);
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách đánh giá:", error);

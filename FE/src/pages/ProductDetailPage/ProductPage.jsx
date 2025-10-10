@@ -26,25 +26,30 @@ function ProductPage() {
   const fetchBookById = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get(`http://localhost:8080/api/v1/books/${id}`);
-      if (res.data) {
-        setBook(res.data);
+      const res = await axios.get(`http://localhost:8080/api/books/${id}`);
+      if (res.data.data) {
+        setBook(res.data.data);
         // Fetch related books by author
         const relatedRes = await axios.get(
-          `http://localhost:8080/api/v1/books?authorName=${res.data.authorName}&page=0&size=5`
+          `http://localhost:8080/api/books?authorName=${res.data.authorName}&page=0&size=5`
         );
-        if (relatedRes.data && Array.isArray(relatedRes.data.content)) {
+        if (relatedRes.data && Array.isArray(relatedRes.data.data.content)) {
           setRelatedBooks(
-            relatedRes.data.content.filter((book) => book.id !== parseInt(id))
+            relatedRes.data.data.content.filter(
+              (book) => book.id !== parseInt(id)
+            )
           );
         }
         // Fetch recommended books (latest books)
         const recommendedRes = await axios.get(
-          "http://localhost:8080/api/v1/books?page=0&size=5"
+          "http://localhost:8080/api/books?page=0&size=5"
         );
-        if (recommendedRes.data && Array.isArray(recommendedRes.data.content)) {
+        if (
+          recommendedRes.data &&
+          Array.isArray(recommendedRes.data.data.content)
+        ) {
           setRecommendedBooks(
-            recommendedRes.data.content.filter(
+            recommendedRes.data.data.content.filter(
               (book) => book.id !== parseInt(id)
             )
           );
@@ -58,8 +63,8 @@ function ProductPage() {
     }
   };
   const fetchCategory = async () => {
-    const res = await axios.get(`http://localhost:8080/api/v1/categories`);
-    setCategories(res.data.result.content);
+    const res = await axios.get(`http://localhost:8080/api/categories`);
+    setCategories(res.data.data.content);
     console.log(res.data);
   };
 

@@ -22,7 +22,7 @@ function AddDistributorModal({ isOpen, onClose, onSave }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8080/admin/distributors",
+        "http://localhost:8080/api/distributors/admin",
         formData,
         {
           headers: {

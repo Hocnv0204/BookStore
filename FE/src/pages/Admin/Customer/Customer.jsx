@@ -19,10 +19,10 @@ function Customer() {
 
   const fetchUsers = async (searchKeyword = keyword) => {
     const params = { page, size, sortBy, sortOrder };
-    let url = "http://localhost:8080/admin/users";
+    let url = "http://localhost:8080/api/users/admin";
     if (searchKeyword && searchKeyword.trim() !== "") {
       params.keyword = searchKeyword.trim();
-      url = "http://localhost:8080/admin/users/search";
+      url = "http://localhost:8080/api/users/admin/search";
     }
     const response = await axios.get(url, {
       headers: {
@@ -31,13 +31,13 @@ function Customer() {
       params,
     });
     setCustomers(
-      Array.isArray(response.data.result.content)
-        ? response.data.result.content
+      Array.isArray(response.data.data.content)
+        ? response.data.data.content
         : []
     );
-    console.log(response.data.result.content);
-    setTotalPages(response.data.result.totalPages);
-    setTotalElements(response.data.result.totalElements);
+    console.log(response.data.data.content);
+    setTotalPages(response.data.data.totalPages);
+    setTotalElements(response.data.data.totalElements);
   };
 
   useEffect(() => {

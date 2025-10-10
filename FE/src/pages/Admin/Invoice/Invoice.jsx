@@ -25,10 +25,10 @@ function Invoice() {
   const fetchOrders = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/admin/orders";
+      let url = "http://localhost:8080/api/orders/admin";
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/admin/orders/search`;
+        url = `http://localhost:8080/api/orders/admin/search`;
       }
       const response = await axios.get(url, {
         headers: {
@@ -37,9 +37,9 @@ function Invoice() {
         params,
       });
       console.log("Fetched orders:", response.data);
-      setOrders(response.data.content);
-      setTotalPages(response.data.totalPages);
-      setTotalElements(response.data.totalElements);
+      setOrders(response.data.data.content);
+      setTotalPages(response.data.data.totalPages);
+      setTotalElements(response.data.data.totalElements);
     } catch (error) {
       console.error("Error fetching orders:", error);
     }

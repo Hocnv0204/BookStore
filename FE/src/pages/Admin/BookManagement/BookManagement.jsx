@@ -33,15 +33,15 @@ function BookManagement() {
   const fetchBooks = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/v1/books";
+      let url = "http://localhost:8080/api/books";
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/v1/books/search`;
+        url = `http://localhost:8080/api/books/search`;
       }
       const res = await axios.get(url, {
         params,
       });
-      const transformedBooks = res.data.content.map((book) => ({
+      const transformedBooks = res.data.data.content.map((book) => ({
         id: book.id,
         title: book.title,
         quantityStock: book.quantityStock,

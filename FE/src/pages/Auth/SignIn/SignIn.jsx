@@ -18,27 +18,34 @@ function SignIn() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:8080/login", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:8080/api/auth/login",
+        {
+          username,
+          password,
+        }
+      );
       setIsLoading(false);
       if (
+        (console.log(response),
         response.data &&
-        response.data.result &&
-        response.data.result.accessToken &&
-        response.data.result.refreshToken
+          response.data.data &&
+          response.data.data.accessToken &&
+          response.data.data.refreshToken)
       ) {
-        localStorage.setItem("accessToken", response.data.result.accessToken);
-        localStorage.setItem("refreshToken", response.data.result.refreshToken);
-        const userRes = await axios.get("http://localhost:8080/users/profile", {
-          headers: {
-            Authorization: `Bearer ${response.data.result.accessToken}`,
-          },
-        });
-        localStorage.setItem("user", JSON.stringify(userRes.data.result));
+        localStorage.setItem("accessToken", response.data.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.data.refreshToken);
+        const userRes = await axios.get(
+          "http://localhost:8080/api/users/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${response.data.data.accessToken}`,
+            },
+          }
+        );
+        console.log(userRes.data);
+        localStorage.setItem("user", JSON.stringify(userRes.data.data));
       }
-
       if (JSON.parse(localStorage.getItem("user")).username === "admin") {
         navigate("/admin");
       } else {

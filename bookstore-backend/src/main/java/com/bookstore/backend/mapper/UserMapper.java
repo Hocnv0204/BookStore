@@ -15,7 +15,6 @@ public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "password", ignore = true)
-    @Mapping(target = "roles", ignore = true)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);
 
     @Mapping(source = "id", target = "id")
@@ -24,7 +23,6 @@ public interface UserMapper {
     @Mapping(source = "email", target = "email")
     @Mapping(source = "dob", target = "dob")
     @Mapping(source = "gender", target = "gender")
-    @Mapping(source = "roles", target = "roles")
     UserResponse toUserResponse(User user);
 
 }

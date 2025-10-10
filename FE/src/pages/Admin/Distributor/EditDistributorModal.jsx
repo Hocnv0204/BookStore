@@ -33,7 +33,7 @@ function EditDistributorModal({ isOpen, onClose, distributor, onSave }) {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `http://localhost:8080/admin/distributors/${distributor.id}`,
+        `http://localhost:8080/api/distributors/admin/${distributor.id}`,
         formData,
         {
           headers: {

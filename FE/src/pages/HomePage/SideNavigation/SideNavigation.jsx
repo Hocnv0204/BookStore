@@ -4,7 +4,7 @@ function SideNavigation({ categories }) {
   return (
     <div className="side-navigation">
       <ul className="category-list">
-        {categories
+        {(categories || [])
           .filter(
             (category) =>
               category.title !== "new-books" &&

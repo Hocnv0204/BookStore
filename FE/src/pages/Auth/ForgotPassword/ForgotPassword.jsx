@@ -22,7 +22,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/send-reset-password-code",
+        "http://localhost:8080/api/auth/send-reset-password-code",
         {
           email: email,
         }

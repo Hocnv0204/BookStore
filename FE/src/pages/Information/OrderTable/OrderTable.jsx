@@ -27,12 +27,15 @@ function OrderTable({
   const fetchOrderById = async (id) => {
     setLoadingDetail(true);
     try {
-      const res = await axios.get(`http://localhost:8080/users/orders/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      setSelectedOrder(res.data);
+      const res = await axios.get(
+        `http://localhost:8080/api/orders/users/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      setSelectedOrder(res.data.data);
       console.log(res.data);
     } catch (error) {
       setSelectedOrder(null);
@@ -50,7 +53,7 @@ function OrderTable({
     }
     try {
       await axios.post(
-        `http://localhost:8080/users/orders/${order.id}/cancel`,
+        `http://localhost:8080/api/orders/users/${order.id}/cancel`,
         {},
         {
           headers: {

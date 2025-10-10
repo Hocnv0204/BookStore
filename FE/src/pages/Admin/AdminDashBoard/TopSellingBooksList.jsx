@@ -5,11 +5,11 @@ import axios from "axios";
 export default function TopSellingBooksList() {
   const [topSellingBooks, setTopSellingBooks] = useState([]);
   const fetchTopSellingBooks = async () => {
-    const response = await axios.get(
-      "http://localhost:8080/api/v1/books/sales"
-    );
+    const response = await axios.get("http://localhost:8080/api/books/sales");
     setTopSellingBooks(
-      response.data.sort((a, b) => b.soldQuantity - a.soldQuantity).slice(0, 3)
+      response.data.data
+        .sort((a, b) => b.soldQuantity - a.soldQuantity)
+        .slice(0, 3)
     );
     console.log(response.data);
   };

@@ -104,12 +104,13 @@ function SignUp() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/send-verification-code",
+        "http://localhost:8080/api/auth/send-verification-code",
         {
           email: formData.email,
         }
       );
-      if (response.data.code === 0) {
+      console.log(response);
+      if (response.status === 200) {
         setVerificationSent(true);
         setStep(2);
       }
@@ -154,18 +155,19 @@ function SignUp() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/verify-and-register",
+        "http://localhost:8080/api/auth/verify-and-register",
         dataToSubmit
       );
-      if (response.data.code === 0 && response.data.result) {
-        localStorage.setItem("accessToken", response.data.result.accessToken);
-        localStorage.setItem("refreshToken", response.data.result.refreshToken);
+      console.log(response);
+      if (response.status === 200 && response.data.data) {
+        localStorage.setItem("accessToken", response.data.data.accessToken);
+        localStorage.setItem("refreshToken", response.data.data.refreshToken);
         const userRes = await axios.get("http://localhost:8080/users/profile", {
           headers: {
-            Authorization: `Bearer ${response.data.result.accessToken}`,
+            Authorization: `Bearer ${response.data.data.accessToken}`,
           },
         });
-        localStorage.setItem("user", JSON.stringify(userRes.data.result));
+        localStorage.setItem("user", JSON.stringify(userRes.data.data));
         navigate("/");
       }
     } catch (err) {

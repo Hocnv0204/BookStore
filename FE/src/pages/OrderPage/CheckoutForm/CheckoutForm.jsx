@@ -46,7 +46,7 @@ function CheckoutForm({ selectedItems, total }) {
         // Handle COD orders (existing logic)
         try {
           await axios.post(
-            "http://localhost:8080/users/orders/with-payment",
+            "http://localhost:8080/api/orders/users/from-selected-items",
             body,
             {
               headers: {
@@ -72,7 +72,7 @@ function CheckoutForm({ selectedItems, total }) {
         // Handle VNPAY orders
         try {
           const response = await axios.post(
-            "http://localhost:8080/users/orders/with-payment",
+            "http://localhost:8080/api/orders/users/with-payment",
             body,
             {
               headers: {
@@ -81,7 +81,7 @@ function CheckoutForm({ selectedItems, total }) {
             }
           );
 
-          const { paymentUrl } = response.data;
+          const { paymentUrl } = response.data.data;
           if (paymentUrl) {
             // Store cart item IDs before redirecting (they'll be removed after successful payment)
             localStorage.setItem(

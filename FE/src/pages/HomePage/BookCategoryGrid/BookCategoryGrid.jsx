@@ -2,7 +2,7 @@ import "./BookCategoryGrid.css";
 // import { categories } from "../../../data/category";
 import { Link } from "react-router-dom";
 function BookCategoryGrid({ categories }) {
-  const filteredCategories = categories.filter(
+  const filteredCategories = (categories || []).filter(
     (category) =>
       !["new-books", "best-seller-books", "coming-soon-books"].includes(
         category.name

@@ -36,12 +36,8 @@ function OrderDetailModal({ order, onClose, loading }) {
         console.log(userId);
         // API trả về mảng review, map về { bookId: review }
         const reviewMap = {};
-        if (
-          res.data &&
-          res.data.result &&
-          Array.isArray(res.data.result.content)
-        ) {
-          res.data.result.content.forEach((r) => {
+        if (res.data && res.data.data && Array.isArray(res.data.data.content)) {
+          res.data.data.content.forEach((r) => {
             if (bookIds.includes(r.bookId)) {
               reviewMap[r.bookId] = r;
             }
@@ -65,7 +61,7 @@ function OrderDetailModal({ order, onClose, loading }) {
     setEditMessage("");
     try {
       const res = await fetch(
-        `http://localhost:8080/users/orders/${order.id}`,
+        `http://localhost:8080/api/orders/users/${order.id}`,
         {
           method: "PUT",
           headers: {
@@ -293,10 +289,10 @@ function OrderDetailModal({ order, onClose, loading }) {
                   const reviewMap = {};
                   if (
                     res.data &&
-                    res.data.result &&
-                    Array.isArray(res.data.result.content)
+                    res.data.data &&
+                    Array.isArray(res.data.data.content)
                   ) {
-                    res.data.result.content.forEach((r) => {
+                    res.data.data.content.forEach((r) => {
                       if (bookIds.includes(r.bookId)) {
                         reviewMap[r.bookId] = r;
                       }

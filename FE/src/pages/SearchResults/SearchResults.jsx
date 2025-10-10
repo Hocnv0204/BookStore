@@ -35,8 +35,8 @@ function SearchResults() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/v1/categories");
-      setCategories(res.data.result.content);
+      const res = await axios.get("http://localhost:8080/api/categories");
+      setCategories(res.data.data.content);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
@@ -71,13 +71,13 @@ function SearchResults() {
         if (customPrice.max) params.append("maxPrice", customPrice.max);
       }
 
-      const url = `http://localhost:8080/api/v1/books/search?${params.toString()}`;
+      const url = `http://localhost:8080/api/books/search?${params.toString()}`;
       const res = await axios.get(url);
 
-      setBooks(res.data.content);
+      setBooks(res.data.data.content);
       // Update pagination info from API response
-      setCurrentPage(res.data.pageNumber);
-      setTotalPages(res.data.totalPages);
+      setCurrentPage(res.data.data.pageNumber);
+      setTotalPages(res.data.data.totalPages);
     } catch (error) {
       console.error("Error fetching search results:", error);
     } finally {

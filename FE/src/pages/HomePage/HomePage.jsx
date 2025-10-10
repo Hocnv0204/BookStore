@@ -17,7 +17,7 @@ function HomePage() {
   const fetchBookByCategory = useCallback(async (categoryId) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/v1/books/category/${categoryId}`
+        `http://localhost:8080/api/books/category/${categoryId}`
       );
 
       const booksArray = res.data.content || [];
@@ -34,18 +34,20 @@ function HomePage() {
   }, []);
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:8080/api/v1/categories");
-    setCategories(res.data.result.content);
-    console.log(res.data.result.content);
+    const res = await axios.get("http://localhost:8080/api/categories");
+    setCategories(res.data.data.content);
+    console.log(res.data.content);
   };
 
   useEffect(() => {
     fetchCategories();
   }, []);
   useEffect(() => {
-    categories.forEach((cat) => {
-      fetchBookByCategory(cat.id);
-    });
+    if (Array.isArray(categories) && categories.length > 0) {
+      categories.forEach((cat) => {
+        fetchBookByCategory(cat.id);
+      });
+    }
   }, [categories, fetchBookByCategory]);
 
   return (

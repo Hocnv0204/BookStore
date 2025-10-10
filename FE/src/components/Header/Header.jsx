@@ -30,21 +30,25 @@ function Header() {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) return;
 
-      const res = await axios.get("http://localhost:8080/users/cart", {
+      const res = await axios.get("http://localhost:8080/api/carts/users", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      if (res.data && res.data.content && res.data.content.length > 0) {
-        setCart(res.data.content[0]); // Lấy cart đầu tiên từ mảng content
+      console.log("res:" + res.data.data);
+      if (
+        res.data &&
+        res.data.data.content &&
+        res.data.data.content.length > 0
+      ) {
+        setCart(res.data.data.content[0]); // Lấy cart đầu tiên từ mảng content
       }
     } catch (error) {
       console.error("Error fetching cart:", error);
       setCart(null);
     }
   };
-
+  console.log("cart" + cart);
   // Thêm useEffect để theo dõi thay đổi của cart
   useEffect(() => {
     console.log("Cart updated:", cart);
@@ -148,12 +152,10 @@ function Header() {
               </span>
               {user && isOpen && (
                 <div className="dropdown-menu">
-                  {!user.roles.includes("ADMIN") && (
+                  {user.role === "USER" && (
                     <Link to="/information">Quản lý tài khoản</Link>
                   )}
-                  {user.roles.includes("ADMIN") && (
-                    <Link to="/admin">Quản lý </Link>
-                  )}
+                  {user.role === "ADMIN" && <Link to="/admin">Quản lý </Link>}
                   <Link to="/ " onClick={() => handleLogout()}>
                     Đăng xuất
                   </Link>
@@ -171,7 +173,7 @@ function Header() {
           {/* Notification component - only show for logged in users */}
           {user && <Notification user={user} />}
 
-          {user && !user.roles.includes("ADMIN") && (
+          {user && user.role === "USER" && (
             <Link to="/cart" className="header-link cart-link">
               <span>Giỏ hàng</span>
               <svg

@@ -19,34 +19,37 @@ export default function AdminDashBoard() {
   const fetchRevenue = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/admin/revenue/daily",
+        "http://localhost:8080/api/orders/admin/revenue/daily",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
           },
         }
       );
-      setTotalRevenue(response.data);
-      console.log(response.data);
+      setTotalRevenue(response.data.data.content);
+      console.log("total revenue" + response.data);
     } catch (error) {
       console.error("Error fetching total revenue:", error);
     }
   };
   const fetchOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/admin/orders", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      setTotalOrders(response.data.totalElements);
-      setOrders(response.data.content);
+      const response = await axios.get(
+        "http://localhost:8080/api/orders/admin",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      setTotalOrders(response.data.data.totalElements);
+      setOrders(response.data.data.content);
 
       // Get today's date in YYYY-MM-DD format
       const today = new Date().toISOString().split("T")[0];
 
       // Filter orders created today and not canceled
-      const todayOrders = response.data.content.filter(
+      const todayOrders = response.data.data.content.filter(
         (order) =>
           order.createdAt.split("T")[0] === today &&
           order.status !== "CANCELLED"
@@ -62,24 +65,27 @@ export default function AdminDashBoard() {
   };
   const fetchUsers = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/admin/users", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      });
-      setTotalUsers(response.data.result.totalElements);
+      const response = await axios.get(
+        "http://localhost:8080/api/users/admin",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+          },
+        }
+      );
+      setTotalUsers(response.data.data.totalElements);
     } catch (error) {
       console.error("Error fetching total users:", error);
     }
   };
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/v1/books", {
+      const response = await axios.get("http://localhost:8080/api/books", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
-      setTotalProducts(response.data.totalElements);
+      setTotalProducts(response.data.data.totalElements);
       console.log(response);
     } catch (error) {
       console.error("Error fetching total products:", error);

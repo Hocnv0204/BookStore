@@ -51,7 +51,7 @@ const EditCategoryModal = ({ isOpen, onClose, category, onSave }) => {
         categoryData.append("image", image);
       }
       const res = await axios.put(
-        `http://localhost:8080/admin/categories/${formData.id}`,
+        `http://localhost:8080/api/categories/admin/${formData.id}`,
         categoryData,
         {
           headers: {

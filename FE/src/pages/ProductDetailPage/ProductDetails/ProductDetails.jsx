@@ -12,7 +12,7 @@ function ProductDetails({ book }) {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:8080/users/cart/items",
+        "http://localhost:8080/api/carts/users/items",
         {
           bookId: book.id,
           quantity: 1,
@@ -23,8 +23,8 @@ function ProductDetails({ book }) {
           },
         }
       );
-
-      if (response.data.code === 200) {
+      console.log("this is" + book);
+      if (response.status === 200) {
         setMessage({
           text: "Đã thêm sản phẩm vào giỏ hàng!",
           type: "success",

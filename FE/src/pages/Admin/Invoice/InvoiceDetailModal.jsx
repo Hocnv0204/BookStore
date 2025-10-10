@@ -19,7 +19,7 @@ function InvoiceDetailModal({ invoice, onClose }) {
     setError("");
     try {
       await axios.put(
-        `http://localhost:8080/admin/orders/${invoice.id}/status`,
+        `http://localhost:8080/api/orders/admin/${invoice.id}/status`,
         {},
         {
           params: { status: nextStatus },

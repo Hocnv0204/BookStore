@@ -36,24 +36,23 @@ function Comments() {
       sortOrder,
     };
     if (filterRating > 0) params.rating = filterRating;
-    const res = await axios.get(
-      `http://localhost:8080/api/v1/reviews/${bookId}`,
-      { params }
-    );
-    setReviews(res.data.content);
-    setTotalPages(res.data.totalPages);
-    setTotalElements(res.data.totalElements);
+    const res = await axios.get(`http://localhost:8080/api/reviews/${bookId}`, {
+      params,
+    });
+    setReviews(res.data.data.content);
+    setTotalPages(res.data.data.totalPages);
+    setTotalElements(res.data.data.totalElements);
     // Tính trung bình
-    if (res.data.content.length > 0) {
+    if (res.data.data.content.length > 0) {
       const avg =
-        res.data.content.reduce((sum, r) => sum + r.rating, 0) /
-        res.data.content.length;
+        res.data.data.content.reduce((sum, r) => sum + r.rating, 0) /
+        res.data.data.content.length;
       setAverageRating(avg);
     } else {
       setAverageRating(0);
     }
     // Tìm review của user hiện tại
-    const mine = res.data.content.find((r) => r.userId === currentUserId);
+    const mine = res.data.data.content.find((r) => r.userId === currentUserId);
     if (mine) {
       setMyReview(mine);
       setComment(mine.comment);

@@ -1,8 +1,10 @@
 package com.bookstore.backend.dto.response;
 
 import com.bookstore.backend.common.enums.ErrorCode;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.http.HttpStatus;
-
+@Data
 public class ApiErrorResponse {
     private int code ;
     private String message ;

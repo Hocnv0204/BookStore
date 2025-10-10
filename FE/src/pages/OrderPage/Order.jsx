@@ -18,14 +18,19 @@ function Order() {
 
   const fetchCartItems = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/users/cart", {
+      const res = await axios.get("http://localhost:8080/api/carts/users", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
       });
 
-      if (res.data && res.data.content && res.data.content.length > 0) {
-        const items = res.data.content[0].items;
+      if (
+        res.data &&
+        res.data.data &&
+        res.data.data.content &&
+        res.data.data.content.length > 0
+      ) {
+        const items = res.data.data.content[0].items;
         setCartItems(items);
         setTotal(calculateTotal(items));
       }

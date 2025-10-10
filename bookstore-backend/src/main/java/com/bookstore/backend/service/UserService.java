@@ -14,8 +14,6 @@ public interface UserService {
     PageResponse<UserResponse> getAllUsers(Pageable pageable);
     UserResponse getUserById(Long id);
     int getTotalSpending(String username);
-    UserDetailsService loadUserDetailService();
-    UserDetails loadUserByUsername(String username);
     UserResponse getUserProfile();
     void changePassword(ChangePasswordRequest request);
     PageResponse<UserResponse> searchUsersByName(String keyword, Pageable pageable);

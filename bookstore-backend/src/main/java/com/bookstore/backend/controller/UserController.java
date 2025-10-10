@@ -93,7 +93,6 @@ public class UserController {
     }
 
     @GetMapping("/profile")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse<?>> getUserProfile() {
         UserResponse user = userService.getUserProfile();
         return ResponseEntity.ok().body(
