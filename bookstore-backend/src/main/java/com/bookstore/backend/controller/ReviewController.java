@@ -28,7 +28,7 @@ public class ReviewController {
     private final ObjectMapper objectMapper;
 
     @PostMapping(value = "/users/{orderId}/{bookId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> createReview(
             @PathVariable Long bookId,
             @PathVariable Long orderId,
@@ -51,7 +51,7 @@ public class ReviewController {
     }
 
     @PutMapping(value = "/users/{reviewId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> updateReview(
             @PathVariable Long reviewId,
             @RequestPart("request") String request,
@@ -73,7 +73,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/users/{reviewId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> deleteReview(
             @PathVariable Long reviewId,
             Authentication authentication) {
@@ -87,7 +87,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> deleteMultipleReviews(@RequestBody List<Long> reviewIds) {
         reviewService.deleteMultipleReviews(reviewIds);
         return ResponseEntity.ok(
@@ -127,7 +127,7 @@ public class ReviewController {
     }
 
     @GetMapping("/users/{userId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getUserReviews(
             @PathVariable Long userId,
             @RequestParam(value = "page", required = false) Integer page,
@@ -145,7 +145,7 @@ public class ReviewController {
     }
 
     @GetMapping("/users/orders/{orderId}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getReviewsByOrderId(
             @PathVariable Long orderId,
             @RequestParam(value = "page", required = false) Integer page,
@@ -163,7 +163,7 @@ public class ReviewController {
     }
 
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getAllReviews(
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
@@ -180,7 +180,7 @@ public class ReviewController {
     }
 
     @GetMapping("/admin/search")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> searchReviewsByBookTitle(
             @RequestParam(required = false) String keyword,
             @RequestParam(value = "page", required = false) Integer page,

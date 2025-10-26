@@ -66,7 +66,7 @@ public class DistributorController {
     }
 
     @PostMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> createDistributor(@RequestBody DistributorRequest request) {
         DistributorDto created = distributorService.createDistributor(request);
         return ResponseEntity.ok(
@@ -78,7 +78,7 @@ public class DistributorController {
     }
 
     @PutMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> updateDistributor(
             @PathVariable Long id,
             @RequestBody DistributorRequest request) {
@@ -92,7 +92,7 @@ public class DistributorController {
     }
 
     @DeleteMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> deleteDistributor(@PathVariable Long id) {
         distributorService.deleteDistributor(id);
         return ResponseEntity.ok(

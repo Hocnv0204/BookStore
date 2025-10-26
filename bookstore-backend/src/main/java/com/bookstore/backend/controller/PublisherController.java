@@ -66,7 +66,7 @@ public class PublisherController {
     }
 
     @PostMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> createPublisher(@RequestBody PublisherRequest request) {
         PublisherDto created = publisherService.createPublisher(request);
         return ResponseEntity.ok(
@@ -78,7 +78,7 @@ public class PublisherController {
     }
 
     @PutMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> updatePublisher(
             @PathVariable Long id,
             @RequestBody PublisherRequest request) {
@@ -92,7 +92,7 @@ public class PublisherController {
     }
 
     @DeleteMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> deletePublisher(@PathVariable Long id) {
         publisherService.deletePublisher(id);
         return ResponseEntity.ok(

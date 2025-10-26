@@ -27,7 +27,7 @@ public class UserController {
     private final UserRepository userRepository;
     
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -45,7 +45,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getUserById(@PathVariable Long id) {
         UserResponse user = userService.getUserById(id);
         return ResponseEntity.ok().body(
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}/spending")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN') and (authentication.principal.username == #username or hasRole('ADMIN'))")
+
     public ResponseEntity<ApiResponse<?>> getTotalSpending(@PathVariable String username) {
         Integer spending = userService.getTotalSpending(username);
         return ResponseEntity.ok().body(
@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PutMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> updateUser(@RequestBody UserUpdateRequest request) {
         UserResponse user = userService.updateUser(request);
         return ResponseEntity.ok().body(
@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @DeleteMapping("/admin/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.ok().body(
@@ -104,7 +104,7 @@ public class UserController {
     }
 
     @PutMapping("/change-password")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> changePassword(@RequestBody ChangePasswordRequest request) {
         userService.changePassword(request);
         return ResponseEntity.ok().body(
@@ -116,7 +116,7 @@ public class UserController {
     }
 
     @GetMapping("/admin/search")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> searchUsersByName(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,

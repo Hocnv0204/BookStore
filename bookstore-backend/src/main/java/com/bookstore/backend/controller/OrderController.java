@@ -28,7 +28,7 @@ public class OrderController {
 
     // User endpoints
     @PostMapping("/users/from-cart")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> createOrderFromCart(@RequestBody OrderRequest request) {
         OrderDto order = orderService.createOrderFromCart(request);
         return ResponseEntity.ok(
@@ -40,7 +40,7 @@ public class OrderController {
     }
 
     @PostMapping("/users/from-selected-items")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> createOrderFromSelectedItems(
             @Valid @RequestBody OrderRequest request) {
         OrderDto order = orderService.createOrderFromSelectedCartItems(request, request.getCartItemIds());
@@ -53,7 +53,7 @@ public class OrderController {
     }
 
     @PostMapping("/users/with-payment")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> createOrderWithPayment(
             @Valid @RequestBody OrderRequest request,
             HttpServletRequest servletRequest) {
@@ -67,7 +67,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/{orderId}")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> getOrderById(@PathVariable Long orderId) {
         OrderDto order = orderService.getOrderById(orderId);
         return ResponseEntity.ok(
@@ -79,7 +79,6 @@ public class OrderController {
     }
 
     @PutMapping("/users/{orderId}")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<ApiResponse<?>> updateOrder(
             @PathVariable Long orderId,
             @Valid @RequestBody OrderRequest request) {
@@ -93,7 +92,7 @@ public class OrderController {
     }
 
     @GetMapping("/users")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> getUserOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -110,7 +109,7 @@ public class OrderController {
     }
 
     @PostMapping("/users/{orderId}/cancel")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> cancelOrder(@PathVariable Long orderId) {
         OrderDto order = orderService.cancelOrder(orderId);
         return ResponseEntity.ok(
@@ -123,7 +122,7 @@ public class OrderController {
 
     // Admin endpoints
     @GetMapping("/admin")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getAllOrders(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -140,7 +139,6 @@ public class OrderController {
     }
 
     @GetMapping("/admin/users/{userId}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<?>> getUserOrders(
             @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
@@ -158,7 +156,7 @@ public class OrderController {
     }
 
     @PutMapping("/admin/{orderId}/status")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> updateOrderStatus(
             @PathVariable Long orderId,
             @RequestParam OrderStatus status) {
@@ -172,7 +170,7 @@ public class OrderController {
     }
 
     @GetMapping("/admin/revenue/monthly")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getMonthlyRevenue(
             @RequestParam(required = false) Integer year) {
         List<MonthlyRevenueDto> revenue = orderService.getMonthlyRevenue(year);
@@ -185,7 +183,7 @@ public class OrderController {
     }
 
     @GetMapping("/admin/revenue/daily")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> getDailyRevenue(
             @RequestParam(required = false) Integer year,
             @RequestParam(required = false) Integer month) {
@@ -199,7 +197,7 @@ public class OrderController {
     }
 
     @GetMapping("/admin/search")
-    @PreAuthorize("hasRole('ADMIN')")
+
     public ResponseEntity<ApiResponse<?>> searchOrdersByCustomerName(
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
@@ -220,7 +218,7 @@ public class OrderController {
     }
 
     @GetMapping("/users/status")
-    @PreAuthorize("hasRole('USER')")
+
     public ResponseEntity<ApiResponse<?>> getOrdersByStatus(
             @RequestParam String status,
             @RequestParam(defaultValue = "0") int page,
