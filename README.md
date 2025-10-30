@@ -6,13 +6,13 @@ Hệ thống cho phép người dùng dễ dàng tìm kiếm, xem thông tin, mu
 Được thiết kế với giao diện thân thiện và hiệu năng cao, BookStore hướng tới mục tiêu mang lại trải nghiệm đọc và mua sắm tốt nhất cho người dùng.
 
 ## Demo
-![Alt text](image/Home 1.png)
+![Alt text](image/Home1.png)
 
-![Alt text](image/Home 2.png)
+![Alt text](image/Home2.png)
 
-![Alt text](image/Category detail.png)
+![Alt text](image/Categorydetail.png)
 
-![Alt text](image/Product detail.png)
+![Alt text](image/Productdetail.png)
 
 ![Alt text](image/Dashboard.png)
 
