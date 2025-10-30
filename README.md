@@ -1,19 +1,24 @@
-# Stationery E-commerce Platform
+# BookStore
 
 ## Introduction
-Nền tảng thương mại điện tử cho sản phẩm văn phòng phẩm, cung cấp giao diện hiện đại, thân thiện để khách hàng duyệt và mua hàng; đồng thời hỗ trợ quản trị viên quản lý kho, đơn hàng và tài khoản người dùng.
+BookStore là một nền tảng bán sách trực tuyến hiện đại được phát triển theo mô hình Full-Stack Web Application.
+Hệ thống cho phép người dùng dễ dàng tìm kiếm, xem thông tin, mua sách trực tuyến và thanh toán an toàn.
+Được thiết kế với giao diện thân thiện và hiệu năng cao, BookStore hướng tới mục tiêu mang lại trải nghiệm đọc và mua sắm tốt nhất cho người dùng.
 
 ## Demo
-![Alt text](image/img.png)
+![Alt text](image/Home 1.png)
 
-![Alt text](image/img1.png)
+![Alt text](image/Home 2.png)
 
-![Alt text](image/img2.png)
+![Alt text](image/Category detail.png)
 
-![Alt text](image/img3.png)
+![Alt text](image/Product detail.png)
 
-![Alt text](image/img4.png)
+![Alt text](image/Dashboard.png)
 
+![Alt text](image/BookManager.png)
+
+BookManager
 ## Technology Stack
 
 ### Backend
@@ -64,42 +69,6 @@ Nền tảng thương mại điện tử cho sản phẩm văn phòng phẩm, cu
     ├── src/                      # pages/, components/, assets/...
     ├── public/
     └── package.json
-```
-
-## Getting Started
-
-### Prerequisites
-- Java 17, Maven 3.8+
-- Node.js 18+, npm 9+
-- MySQL 8 (hoặc Docker)
-
-### Backend
-1) Cấu hình MySQL (tùy chọn dùng Docker Compose tại `bookstore-backend/docker-compose.yml`):
-```bash
-cd bookstore-backend
-docker compose up -d
-```
-2) Cập nhật cấu hình trong `src/main/resources/application.yml` nếu cần (DB URL, tài khoản, JWT, Cloudinary, VNPay, Gemini).
-3) Chạy ứng dụng:
-```bash
-mvn spring-boot:run
-# API: http://localhost:8080/api/v1
-```
-
-### Frontend
-1) Cài đặt phụ thuộc:
-```bash
-cd FE
-npm install
-```
-2) Tạo file `.env` với biến (Create React App yêu cầu prefix `REACT_APP_`):
-```
-REACT_APP_API_BASE_URL=http://localhost:8080/api/v1
-```
-3) Chạy ứng dụng:
-```bash
-npm start
-# Web: http://localhost:3000
 ```
 
 ## Contributing
