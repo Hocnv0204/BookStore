@@ -3,11 +3,14 @@ server:
 
 spring:
   application:
-    api-prefix: ${API_PREFIX:/api/v1}
+    api-prefix: /api/v1
+  profiles:
+    active: dev
+
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/bookstore_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://bookstore_db:3306/bookstore_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -23,20 +26,43 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+
   devtools:
     restart:
       enabled: true
     livereload:
       enabled: true
+
   jwt:
-    signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+    signerKey: ${JWT_SIGNER_KEY}
     valid-duration: 1800000
     refreshable-duration: 604800
 
-  cloudinary:
-    cloudinary.cloud_name: "dzvxgyg88"
-    cloudinary.api_key: "281855212738654"
-    cloudinary.api_secret: "CBx98FIol43xihZJt0fX1AKgt9E"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME}
+  api_key: ${CLOUDINARY_API_KEY}
+  api_secret: ${CLOUDINARY_API_SECRET}
+
+file:
+  upload-dir: uploads
+  allowed-extensions: .jpg,.jpeg,.png,.gif
+  max-file-size: 5242880
 
 logging:
   level:
@@ -45,19 +71,20 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 gemini:
-  api-key: "AIzaSyCxiDbi7JbHV1SchJRrEx-5FgIz8dbScks"
+  api-key: ${GEMINI_API_KEY}
   base-url: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
   max-output-tokens: 1000
   temperature: 0.1
   top-p: 0.8
   top-k: 10
   max-history-size: 20
+
 payment:
   vnPay:
-    url: ${PAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
-    tmnCode: ${TMN_CODE:58X4B4HP}
-    secretKey: ${SECRET_KEY:VRLDWNVWDNPCOEPBZUTWSEDQAGXJCNGZ}
-    returnUrl: ${RETURN_URL:http://localhost:3000/payment/callback}
-    version: ${VERSION:2.1.0}
-    command: ${COMMAND:pay}
-    orderType: ${ORDER_TYPE:other}
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    tmnCode: ${TMN_CODE}
+    secretKey: ${VNPAY_SECRET_KEY}
+    returnUrl: http://localhost:3000/payment/callback
+    version: 2.1.0
+    command: pay
+    orderType: other

@@ -20,4 +20,9 @@ public class ApiResponse<T> {
         this.apiErrorResponse = new ApiErrorResponse(errorCode) ;
     }
 
+    public ApiResponse success(String message){
+        return ApiResponse.builder()
+                .message(message)
+                .build();
+    }
 }
