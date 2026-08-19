@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import Header from "../../../components/Header/Header";
@@ -30,10 +31,10 @@ function Category() {
   const fetchCategories = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/categories";
+      let url = `${API_BASE_URL}/api/categories`;
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/categories/search`;
+        url = `${API_BASE_URL}/api/categories/search`;
       }
       const response = await axios.get(url, { params });
       console.log(response.data);
@@ -67,7 +68,7 @@ function Category() {
     if (window.confirm("Bạn có chắc chắn muốn xóa danh mục này?")) {
       try {
         await axios.delete(
-          `http://localhost:8080/api/categories/admin/${categoryId}`,
+          `${API_BASE_URL}/api/categories/admin/${categoryId}`,
           {
             headers: {
               Authorization: `Bearer ${accessToken}`,

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -36,7 +37,7 @@ function PaymentCallback() {
           // Payment successful - verify with backend
           try {
             const response = await axios.get(
-              `http://localhost:8080/api/v1/payment/vn-pay-callback`,
+              `${API_BASE_URL}/api/v1/payment/vn-pay-callback`,
               {
                 params: vnpParams,
                 headers: {

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Distributor.css";
@@ -33,7 +34,7 @@ function EditDistributorModal({ isOpen, onClose, distributor, onSave }) {
     e.preventDefault();
     try {
       const response = await axios.put(
-        `http://localhost:8080/api/distributors/admin/${distributor.id}`,
+        `${API_BASE_URL}/api/distributors/admin/${distributor.id}`,
         formData,
         {
           headers: {

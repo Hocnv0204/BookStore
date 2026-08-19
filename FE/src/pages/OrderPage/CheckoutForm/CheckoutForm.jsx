@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import "./CheckoutForm.css";
@@ -46,7 +47,7 @@ function CheckoutForm({ selectedItems, total }) {
         // Handle COD orders (existing logic)
         try {
           await axios.post(
-            "http://localhost:8080/api/orders/users/from-selected-items",
+            `${API_BASE_URL}/api/orders/users/from-selected-items`,
             body,
             {
               headers: {
@@ -72,7 +73,7 @@ function CheckoutForm({ selectedItems, total }) {
         // Handle VNPAY orders
         try {
           const response = await axios.post(
-            "http://localhost:8080/api/orders/users/with-payment",
+            `${API_BASE_URL}/api/orders/users/with-payment`,
             body,
             {
               headers: {

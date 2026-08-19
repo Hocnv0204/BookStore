@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "./ChatBot.css";
@@ -146,7 +147,7 @@ const ChatBot = () => {
       // User is logged in, load chat history from server
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/chatbot/user/${userId}/history?maxMessages=50`
+          `${API_BASE_URL}/api/chatbot/user/${userId}/history?maxMessages=50`
         );
 
         if (response.data && response.data.length > 0) {
@@ -276,7 +277,7 @@ const ChatBot = () => {
       const userId = userObj.id || 999999; // Use a high number for guest users
 
       const response = await axios.post(
-        "http://localhost:8080/api/chatbot/user/ask",
+        `${API_BASE_URL}/api/chatbot/user/ask`,
         {
           prompt: inputMessage,
           userId: userId,
@@ -329,7 +330,7 @@ const ChatBot = () => {
       const userId = userObj.id || 999999; // Use same guest user ID
 
       await axios.delete(
-        `http://localhost:8080/api/chatbot/user/${userId}/session`
+        `${API_BASE_URL}/api/chatbot/user/${userId}/session`
       );
       setMessages([]);
       clearMessagesFromStorage();

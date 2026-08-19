@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import CheckoutForm from "./CheckoutForm/CheckoutForm";
 import OrderDetails from "./OrderDetails/OrderDetails";
 import Header from "../../components/Header/Header";
@@ -18,7 +19,7 @@ function Order() {
 
   const fetchCartItems = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/carts/users", {
+      const res = await axios.get(`${API_BASE_URL}/api/carts/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

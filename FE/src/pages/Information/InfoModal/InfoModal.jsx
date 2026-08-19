@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -57,7 +58,7 @@ const InfoModal = ({ isOpen, onClose, user = {}, onSave }) => {
     try {
       const token = localStorage.getItem("accessToken");
 
-      await axios.put("http://localhost:8080/users", formData, {
+      await axios.put(`${API_BASE_URL}/users`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",

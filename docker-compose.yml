@@ -1,0 +1,49 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: bookstore_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: bookstore_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bookstore_network
+
+  bookstore_backend:
+    image: bookstore_be
+    build:
+      context: ./bookstore-backend
+      dockerfile: Dockerfile
+    container_name: bookstore_be
+    ports:
+      - "8081:8080"
+    env_file:
+       - ./bookstore-backend/.env
+    depends_on:
+      - mysql
+    networks:
+      - bookstore_network
+    restart: unless-stopped
+
+
+  bookstore_frontend:
+    image: bookstore_fe
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+    container_name: bookstore_fe
+    ports:
+      - "3000:80"
+    depends_on:
+      - bookstore_backend
+    networks:
+      - bookstore_network
+    restart: unless-stopped
+volumes:
+  mysql_data:
+networks:
+  bookstore_network:

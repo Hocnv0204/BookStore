@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import "./Notification.css";
@@ -25,10 +26,10 @@ function Notification({ user }) {
         // Determine API endpoint based on user role
         const isAdmin = user?.role === "ADMIN" || user?.isAdmin;
         const apiEndpoint = isAdmin
-          ? `http://localhost:8080/api/notifications/admin?page=${
+          ? `${API_BASE_URL}/api/notifications/admin?page=${
               pageNum - 1
             }&size=10`
-          : `http://localhost:8080/api/notifications/users?page=${
+          : `${API_BASE_URL}/api/notifications/users?page=${
               pageNum - 1
             }&size=10`;
 
@@ -82,7 +83,7 @@ function Notification({ user }) {
   const markAsRead = async (notificationId) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/notifications/${notificationId}/mark-read`,
+        `${API_BASE_URL}/api/notifications/${notificationId}/mark-read`,
         {},
         {
           headers: {
@@ -118,7 +119,7 @@ function Notification({ user }) {
   const deleteNotification = async (notificationId) => {
     try {
       await axios.delete(
-        `http://localhost:8080/api/notifications/${notificationId}`,
+        `${API_BASE_URL}/api/notifications/${notificationId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

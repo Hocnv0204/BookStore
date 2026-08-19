@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import { useState, useEffect, useCallback } from "react";
 import "./Information.css";
 import OrderTable from "./OrderTable/OrderTable";
@@ -49,10 +50,10 @@ function Information() {
         // Use different API endpoints based on activeItem (status filter)
         if (activeItem === "all") {
           // Fetch all orders
-          apiUrl = `http://localhost:8080/api/orders/users?page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+          apiUrl = `${API_BASE_URL}/api/orders/users?page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
         } else {
           // Fetch orders by specific status
-          apiUrl = `http://localhost:8080/api/orders/users/status?status=${activeItem}&page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
+          apiUrl = `${API_BASE_URL}/api/orders/users/status?status=${activeItem}&page=${page}&size=10&sortBy=${sortBy}&sortOrder=${sortOrder}`;
         }
 
         const res = await axios.get(apiUrl, {

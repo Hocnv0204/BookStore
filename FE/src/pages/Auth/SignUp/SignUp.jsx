@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState } from "react";
 import "./SignUp.css";
 import Header from "../../../components/Header/Header";
@@ -104,7 +105,7 @@ function SignUp() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/send-verification-code",
+        `${API_BASE_URL}/api/auth/send-verification-code`,
         {
           email: formData.email,
         }
@@ -155,14 +156,14 @@ function SignUp() {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/verify-and-register",
+        `${API_BASE_URL}/api/auth/verify-and-register`,
         dataToSubmit
       );
       console.log(response);
       if (response.status === 200 && response.data.data) {
         localStorage.setItem("accessToken", response.data.data.accessToken);
         localStorage.setItem("refreshToken", response.data.data.refreshToken);
-        const userRes = await axios.get("http://localhost:8080/users/profile", {
+        const userRes = await axios.get(`${API_BASE_URL}/users/profile`, {
           headers: {
             Authorization: `Bearer ${response.data.data.accessToken}`,
           },

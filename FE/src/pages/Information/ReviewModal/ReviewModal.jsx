@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ReviewModal.css";
@@ -67,7 +68,7 @@ function ReviewModal({
       if (review) {
         // Sửa review
         await axios.put(
-          `http://localhost:8080/users/reviews/${review.id}`,
+          `${API_BASE_URL}/users/reviews/${review.id}`,
           formData,
           {
             headers: {
@@ -81,7 +82,7 @@ function ReviewModal({
       } else {
         // Thêm review mới
         await axios.post(
-          `http://localhost:8080/users/reviews/${orderId}/${bookId}`,
+          `${API_BASE_URL}/users/reviews/${orderId}/${bookId}`,
           formData,
           {
             headers: {
@@ -120,7 +121,7 @@ function ReviewModal({
     setSubmitting(true);
     setMessage("");
     try {
-      await axios.delete(`http://localhost:8080/users/reviews/${review.id}`, {
+      await axios.delete(`${API_BASE_URL}/users/reviews/${review.id}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

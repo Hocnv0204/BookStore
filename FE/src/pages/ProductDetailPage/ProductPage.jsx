@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/api";
 
 function ProductPage() {
   const [book, setBook] = useState(null);
@@ -26,12 +27,12 @@ function ProductPage() {
   const fetchBookById = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get(`http://localhost:8080/api/books/${id}`);
+      const res = await axios.get(`${API_BASE_URL}/api/books/${id}`);
       if (res.data.data) {
         setBook(res.data.data);
         // Fetch related books by author
         const relatedRes = await axios.get(
-          `http://localhost:8080/api/books?authorName=${res.data.authorName}&page=0&size=5`
+          `${API_BASE_URL}/api/books?authorName=${res.data.authorName}&page=0&size=5`
         );
         if (relatedRes.data && Array.isArray(relatedRes.data.data.content)) {
           setRelatedBooks(
@@ -42,7 +43,7 @@ function ProductPage() {
         }
         // Fetch recommended books (latest books)
         const recommendedRes = await axios.get(
-          "http://localhost:8080/api/books?page=0&size=5"
+          `${API_BASE_URL}/api/books?page=0&size=5`
         );
         if (
           recommendedRes.data &&
@@ -63,7 +64,7 @@ function ProductPage() {
     }
   };
   const fetchCategory = async () => {
-    const res = await axios.get(`http://localhost:8080/api/categories`);
+    const res = await axios.get(`${API_BASE_URL}/api/categories`);
     setCategories(res.data.data.content);
     console.log(res.data);
   };

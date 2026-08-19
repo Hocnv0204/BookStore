@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import EditBookModal from "../BookManagement/EditBookModal";
 import EditCategoryModal from "../Category/EditCategoryModal";
@@ -90,7 +91,7 @@ function Table({
 
     try {
       const response = await axios.delete(
-        `http://localhost:8080/admin/books/delete/${idToDelete}`,
+        `${API_BASE_URL}/admin/books/delete/${idToDelete}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState } from "react";
 import "./ChangePasswordModal.css";
 import axios from "axios";
@@ -19,7 +20,7 @@ const ChangePasswordModal = ({ onClose }) => {
     setMessage("");
     try {
       const res = await axios.put(
-        "http://localhost:8080/users/change-password",
+        `${API_BASE_URL}/users/change-password`,
         {
           currentPassword: oldPassword,
           newPassword,

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import "./OrderDetailModal.css";
 import axios from "axios";
@@ -24,7 +25,7 @@ function OrderDetailModal({ order, onClose, loading }) {
       const bookIds = order.items.map((item) => item.bookId);
       try {
         const res = await axios.get(
-          `http://localhost:8080/users/reviews/orders/${order.id}`,
+          `${API_BASE_URL}/users/reviews/orders/${order.id}`,
           {
             params: { size: 1000 },
             headers: {
@@ -61,7 +62,7 @@ function OrderDetailModal({ order, onClose, loading }) {
     setEditMessage("");
     try {
       const res = await fetch(
-        `http://localhost:8080/api/orders/users/${order.id}`,
+        `${API_BASE_URL}/api/orders/users/${order.id}`,
         {
           method: "PUT",
           headers: {
@@ -276,7 +277,7 @@ function OrderDetailModal({ order, onClose, loading }) {
                 const bookIds = order.items.map((item) => item.bookId);
                 try {
                   const res = await axios.get(
-                    `http://localhost:8080/users/reviews/${userId}`,
+                    `${API_BASE_URL}/users/reviews/${userId}`,
                     {
                       params: { size: 1000 },
                       headers: {

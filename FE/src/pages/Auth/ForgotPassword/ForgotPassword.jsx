@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState } from "react";
 import "./ForgotPassword.css";
 import Header from "../../../components/Header/Header";
@@ -22,7 +23,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/send-reset-password-code",
+        `${API_BASE_URL}/api/auth/send-reset-password-code`,
         {
           email: email,
         }
@@ -57,7 +58,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/auth/reset-password",
+        `${API_BASE_URL}/auth/reset-password`,
         {
           email: email,
           verificationCode: verificationCode,

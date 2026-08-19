@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Table from "../Table/Table";
@@ -35,11 +36,11 @@ function ReviewManagement() {
   const fetchReviews = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/admin/reviews";
+      let url = `${API_BASE_URL}/admin/reviews`;
 
       // Nếu có từ khóa tìm kiếm, sử dụng API search
       if (searchKeyword && searchKeyword.trim() !== "") {
-        url = "http://localhost:8080/admin/reviews/search";
+        url = `${API_BASE_URL}/admin/reviews/search`;
         params.keyword = searchKeyword.trim();
       }
 
@@ -86,7 +87,7 @@ function ReviewManagement() {
 
     try {
       const response = await axios.delete(
-        `http://localhost:8080/users/reviews/${reviewIdToDelete}`,
+        `${API_BASE_URL}/users/reviews/${reviewIdToDelete}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,

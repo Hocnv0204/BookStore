@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -37,7 +38,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/categories");
+        const res = await axios.get(`${API_BASE_URL}/api/categories`);
         setCategories(res.data.data.content);
       } catch (error) {
         console.error("Lỗi khi lấy danh mục:", error);
@@ -45,7 +46,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
     };
     const fetchPublishers = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/publishers");
+        const res = await axios.get(`${API_BASE_URL}/api/publishers`);
         setPublishers(res.data.data.content);
         console.log(res);
       } catch (error) {
@@ -54,7 +55,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
     };
     const fetchDistributors = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/distributors");
+        const res = await axios.get(`${API_BASE_URL}/api/distributors`);
         setDistributors(res.data.data.content);
         console.log(res);
       } catch (error) {
@@ -94,7 +95,7 @@ const AddBookModal = ({ isOpen, onClose, onSave }) => {
       }
 
       const res = await axios.post(
-        "http://localhost:8080/api/books/admin/books",
+        `${API_BASE_URL}/api/books/admin/books`,
         bookData,
         {
           headers: {

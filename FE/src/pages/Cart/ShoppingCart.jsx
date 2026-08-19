@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import React from "react";
 import "./ShoppingCart.css";
 import Header from "../../components/Header/Header";
@@ -17,7 +18,7 @@ const ShoppingCart = () => {
   const handleQuantityChange = async (itemId, newQuantity) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/carts/users/items/${itemId}?quantity=${newQuantity}`,
+        `${API_BASE_URL}/api/carts/users/items/${itemId}?quantity=${newQuantity}`,
         {},
         {
           headers: {
@@ -34,7 +35,7 @@ const ShoppingCart = () => {
   const handleDelete = async (itemId) => {
     try {
       await axios.delete(
-        `http://localhost:8080/api/carts/users/items/${itemId}`,
+        `${API_BASE_URL}/api/carts/users/items/${itemId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -55,7 +56,7 @@ const ShoppingCart = () => {
 
   const fetchCartItems = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/carts/users", {
+      const res = await axios.get(`${API_BASE_URL}/api/carts/users`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },

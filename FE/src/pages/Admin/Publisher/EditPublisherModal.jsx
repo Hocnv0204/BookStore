@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -39,7 +40,7 @@ const EditPublisherModal = ({ isOpen, onClose, publisher, onSave }) => {
     if (!formData.id) return;
     try {
       const res = await axios.put(
-        `http://localhost:8080/admin/publishers/${formData.id}`,
+        `${API_BASE_URL}/admin/publishers/${formData.id}`,
         formData,
         {
           headers: {

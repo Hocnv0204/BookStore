@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import "./HomePage.css";
 import Header from "../../components/Header/Header";
 import SideNavigation from "./SideNavigation/SideNavigation";
@@ -17,7 +18,7 @@ function HomePage() {
   const fetchBookByCategory = useCallback(async (categoryId) => {
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/books/category/${categoryId}`
+        `${API_BASE_URL}/api/books/category/${categoryId}`
       );
 
       const booksArray = res.data.content || [];
@@ -34,7 +35,7 @@ function HomePage() {
   }, []);
 
   const fetchCategories = async () => {
-    const res = await axios.get("http://localhost:8080/api/categories");
+    const res = await axios.get(`${API_BASE_URL}/api/categories`);
     setCategories(res.data.data.content);
     console.log(res.data.content);
   };

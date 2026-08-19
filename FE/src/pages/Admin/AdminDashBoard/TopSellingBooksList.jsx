@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import "./TopSellingBooksList.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -5,7 +6,7 @@ import axios from "axios";
 export default function TopSellingBooksList() {
   const [topSellingBooks, setTopSellingBooks] = useState([]);
   const fetchTopSellingBooks = async () => {
-    const response = await axios.get("http://localhost:8080/api/books/sales");
+    const response = await axios.get(`${API_BASE_URL}/api/books/sales`);
     setTopSellingBooks(
       response.data.data
         .sort((a, b) => b.soldQuantity - a.soldQuantity)

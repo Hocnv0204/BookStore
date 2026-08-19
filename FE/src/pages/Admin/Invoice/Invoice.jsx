@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import Table from "../Table/Table";
 import "./Invoice.css";
 import React, { useState, useEffect } from "react";
@@ -25,10 +26,10 @@ function Invoice() {
   const fetchOrders = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/orders/admin";
+      let url = `${API_BASE_URL}/api/orders/admin`;
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/orders/admin/search`;
+        url = `${API_BASE_URL}/api/orders/admin/search`;
       }
       const response = await axios.get(url, {
         headers: {

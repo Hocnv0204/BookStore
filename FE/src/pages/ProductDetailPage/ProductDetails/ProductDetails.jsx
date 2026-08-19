@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState } from "react";
 import "./ProductDetails.css";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +13,7 @@ function ProductDetails({ book }) {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "http://localhost:8080/api/carts/users/items",
+        `${API_BASE_URL}/api/carts/users/items`,
         {
           bookId: book.id,
           quantity: 1,

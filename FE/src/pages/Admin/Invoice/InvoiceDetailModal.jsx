@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState } from "react";
 import axios from "axios";
 import "./InvoiceDetailModal.css";
@@ -19,7 +20,7 @@ function InvoiceDetailModal({ invoice, onClose }) {
     setError("");
     try {
       await axios.put(
-        `http://localhost:8080/api/orders/admin/${invoice.id}/status`,
+        `${API_BASE_URL}/api/orders/admin/${invoice.id}/status`,
         {},
         {
           params: { status: nextStatus },

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useEffect, useState, useRef } from "react";
 import "./Comments.css";
 import Pagination from "../../../components/Pagination/Pagination";
@@ -36,7 +37,7 @@ function Comments() {
       sortOrder,
     };
     if (filterRating > 0) params.rating = filterRating;
-    const res = await axios.get(`http://localhost:8080/api/reviews/${bookId}`, {
+    const res = await axios.get(`${API_BASE_URL}/api/reviews/${bookId}`, {
       params,
     });
     setReviews(res.data.data.content);
@@ -82,7 +83,7 @@ function Comments() {
     try {
       if (myReview && editing) {
         await axios.put(
-          `http://localhost:8080/users/reviews/${myReview.id}`,
+          `${API_BASE_URL}/users/reviews/${myReview.id}`,
           formData,
           {
             headers: { "Content-Type": "multipart/form-data" },
@@ -91,7 +92,7 @@ function Comments() {
         );
       } else if (!myReview) {
         await axios.post(
-          `http://localhost:8080/users/reviews/${bookId}`,
+          `${API_BASE_URL}/users/reviews/${bookId}`,
           formData,
           {
             headers: {

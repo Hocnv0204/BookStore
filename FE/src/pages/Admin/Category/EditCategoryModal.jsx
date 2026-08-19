@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -51,7 +52,7 @@ const EditCategoryModal = ({ isOpen, onClose, category, onSave }) => {
         categoryData.append("image", image);
       }
       const res = await axios.put(
-        `http://localhost:8080/api/categories/admin/${formData.id}`,
+        `${API_BASE_URL}/api/categories/admin/${formData.id}`,
         categoryData,
         {
           headers: {

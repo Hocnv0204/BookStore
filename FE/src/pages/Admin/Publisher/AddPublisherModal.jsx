@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import React, { useState } from "react";
 import Modal from "react-modal";
 import axios from "axios";
@@ -25,7 +26,7 @@ const AddPublisherModal = ({ isOpen, onClose, onSave }) => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        "http://localhost:8080/api/publishers/admin",
+        `${API_BASE_URL}/api/publishers/admin`,
         formData,
         {
           headers: {

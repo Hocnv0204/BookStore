@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import Header from "../../../components/Header/Header";
@@ -31,11 +32,11 @@ function Publisher() {
   const fetchPublishers = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/publishers";
+      let url = `${API_BASE_URL}/api/publishers`;
 
       if (searchKeyword.trim()) {
         params.keyword = searchKeyword.trim();
-        url = "http://localhost:8080/api/publishers/search";
+        url = `${API_BASE_URL}/api/publishers/search`;
       }
 
       const response = await axios.get(url, { params });
@@ -73,7 +74,7 @@ function Publisher() {
     if (window.confirm("Bạn có chắc chắn muốn xóa nhà xuất bản này?")) {
       try {
         await axios.delete(
-          `http://localhost:8080/api/publishers/admin/${publisherId}`,
+          `${API_BASE_URL}/api/publishers/admin/${publisherId}`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }

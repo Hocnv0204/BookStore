@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import React from "react";
 import "./CategoryDetail.css";
 import Header from "../../components/Header/Header";
@@ -32,7 +33,7 @@ function CategoryDetail() {
     ) => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/api/books/category/${categoryId}?page=${page}&size=8&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
+          `${API_BASE_URL}/api/books/category/${categoryId}?page=${page}&size=8&sortBy=${sortByParam}&sortOrder=${sortOrderParam}`
         );
 
         const booksArray = res.data.data.content || [];
@@ -64,7 +65,7 @@ function CategoryDetail() {
   const fetchCategories = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("http://localhost:8080/api/categories");
+      const res = await axios.get(`${API_BASE_URL}/api/categories`);
       setCategories(res.data.data.content);
     } catch (error) {
       console.error("Error fetching categories:", error);

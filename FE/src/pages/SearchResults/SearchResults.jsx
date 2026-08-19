@@ -7,6 +7,7 @@ import BookSection from "../../components/BookSection/BookSection";
 import ChatBot from "../../components/ChatBot/ChatBot";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
 
 const PRICE_RANGES = [
   { label: "0đ - 150,000đ", min: 0, max: 150000 },
@@ -35,7 +36,7 @@ function SearchResults() {
   // Fetch categories
   const fetchCategories = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/categories");
+      const res = await axios.get(`${API_BASE_URL}/api/categories`);
       setCategories(res.data.data.content);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -71,7 +72,7 @@ function SearchResults() {
         if (customPrice.max) params.append("maxPrice", customPrice.max);
       }
 
-      const url = `http://localhost:8080/api/books/search?${params.toString()}`;
+      const url = `${API_BASE_URL}/api/books/search?${params.toString()}`;
       const res = await axios.get(url);
 
       setBooks(res.data.data.content);

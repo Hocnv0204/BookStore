@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../config/api.js";
 import "./Header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -30,7 +31,7 @@ function Header() {
       const accessToken = localStorage.getItem("accessToken");
       if (!accessToken) return;
 
-      const res = await axios.get("http://localhost:8080/api/carts/users", {
+      const res = await axios.get(`${API_BASE_URL}/api/carts/users`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

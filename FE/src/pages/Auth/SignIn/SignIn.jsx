@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import "./SignIn.css";
 import Header from "../../../components/Header/Header";
@@ -19,7 +20,7 @@ function SignIn() {
 
     try {
       const response = await axios.post(
-        "http://localhost:8080/api/auth/login",
+        `${API_BASE_URL}/api/auth/login`,
         {
           username,
           password,
@@ -36,7 +37,7 @@ function SignIn() {
         localStorage.setItem("accessToken", response.data.data.accessToken);
         localStorage.setItem("refreshToken", response.data.data.refreshToken);
         const userRes = await axios.get(
-          "http://localhost:8080/api/users/profile",
+          `${API_BASE_URL}/api/users/profile`,
           {
             headers: {
               Authorization: `Bearer ${response.data.data.accessToken}`,

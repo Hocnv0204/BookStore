@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import "./OrderTable.css";
 import { useState } from "react";
 import axios from "axios";
@@ -28,7 +29,7 @@ function OrderTable({
     setLoadingDetail(true);
     try {
       const res = await axios.get(
-        `http://localhost:8080/api/orders/users/${id}`,
+        `${API_BASE_URL}/api/orders/users/${id}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -53,7 +54,7 @@ function OrderTable({
     }
     try {
       await axios.post(
-        `http://localhost:8080/api/orders/users/${order.id}/cancel`,
+        `${API_BASE_URL}/api/orders/users/${order.id}/cancel`,
         {},
         {
           headers: {

@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import Table from "../Table/Table";
 import "./Customer.css";
 import React, { useState, useEffect } from "react";
@@ -19,10 +20,10 @@ function Customer() {
 
   const fetchUsers = async (searchKeyword = keyword) => {
     const params = { page, size, sortBy, sortOrder };
-    let url = "http://localhost:8080/api/users/admin";
+    let url = `${API_BASE_URL}/api/users/admin`;
     if (searchKeyword && searchKeyword.trim() !== "") {
       params.keyword = searchKeyword.trim();
-      url = "http://localhost:8080/api/users/admin/search";
+      url = `${API_BASE_URL}/api/users/admin/search`;
     }
     const response = await axios.get(url, {
       headers: {

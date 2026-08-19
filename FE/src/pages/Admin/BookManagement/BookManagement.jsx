@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Table from "../Table/Table";
@@ -33,10 +34,10 @@ function BookManagement() {
   const fetchBooks = async (searchKeyword = keyword) => {
     try {
       const params = { page, size, sortBy, sortOrder };
-      let url = "http://localhost:8080/api/books";
+      let url = `${API_BASE_URL}/api/books`;
       if (searchKeyword && searchKeyword.trim() !== "") {
         params.keyword = searchKeyword.trim();
-        url = `http://localhost:8080/api/books/search`;
+        url = `${API_BASE_URL}/api/books/search`;
       }
       const res = await axios.get(url, {
         params,

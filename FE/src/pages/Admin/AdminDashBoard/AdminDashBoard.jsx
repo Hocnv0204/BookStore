@@ -1,3 +1,4 @@
+import { API_BASE_URL } from "../../../config/api.js";
 import OverviewWidget from "./OverviewWidget";
 import RecentOrdersTable from "./RecentOrdersTable";
 import TopSellingBooksList from "./TopSellingBooksList";
@@ -19,7 +20,7 @@ export default function AdminDashBoard() {
   const fetchRevenue = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/orders/admin/revenue/daily",
+        `${API_BASE_URL}/api/orders/admin/revenue/daily`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -35,7 +36,7 @@ export default function AdminDashBoard() {
   const fetchOrders = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/orders/admin",
+        `${API_BASE_URL}/api/orders/admin`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -66,7 +67,7 @@ export default function AdminDashBoard() {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:8080/api/users/admin",
+        `${API_BASE_URL}/api/users/admin`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -80,7 +81,7 @@ export default function AdminDashBoard() {
   };
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/books", {
+      const response = await axios.get(`${API_BASE_URL}/api/books`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
         },
